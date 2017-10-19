@@ -1,0 +1,28 @@
+.list-container{
+    border: 2px solid black;
+    display: inline-block;
+    width: 25%;
+}
+
+.top-list{
+    counter-reset: section;                     /* Set a counter named 'section', and it`s initial value is 0. */    
+    list-style: none;    
+}
+
+.top-list li:before{
+    counter-increment: section;                 /* Increment the value of section counter by 1 */
+    content: counter(section);                  /* Display the value of section counter */
+    margin-right: 5px;
+}
+
+.top-list li{
+    max-width: 50%;
+    overflow-x: hidden;
+}
+.top-list li:hover{
+    background-color: lightgrey;
+}
+
+.top-list li:hover:before{
+    background-color: lightgrey;
+}

@@ -719,7 +719,7 @@ window.sfx = new SFX();
 window.entityManager = new EntityManager();
 var fadeAnimationProgress = new ProgressManager(0, function () { });
 var isFadeOut = true;
-var screenSize = { width: 1056, height: 1056 };
+var screenSize = { width: 1056, height: 1056 }; //1056 1056
 var stairs;
 
 window.combatController = new CombatController();
@@ -973,10 +973,10 @@ function render(elapsedTime, ctx) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
 
-    ctx.fillRect(1060, 0, 732, 1116);
+    ctx.fillRect(1060, 0, 732, canvas.height); //1060 0 732 1116 CHANGED
 
     ctx.fillStyle = "white";
-    ctx.fillRect(1057, 0, 2, 1116);
+    ctx.fillRect(1057, 0, 2, canvas.height); //1057 0 2 1116 CHANGED
     window.terminal.render(elapsedTime, ctx);
 
     gui.render(elapsedTime, ctx);
@@ -1176,7 +1176,7 @@ function Armor(aName, aLevel) {
     this.position = { x: -1, y: -1 };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = 'assets//spritesheets/powerup.png';
+    this.spritesheet.src = 'assets/spritesheets/powerup.png';
     this.resolveCollision = false;
 
     this.currY = 0;
@@ -2268,7 +2268,6 @@ function Game(screen, updateFunction, renderFunction) {
   this.backBuffer.width = screen.width;
   this.backBuffer.height = screen.height;
   this.backCtx = this.backBuffer.getContext('2d');
-
   // Start the game loop
   this.oldTime = performance.now();
   this.paused = false;
@@ -4723,7 +4722,7 @@ function Weapon(aName, aLevel) {
     this.position = { x: -1, y: -1 };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = 'assets//spritesheets/powerup.png';
+    this.spritesheet.src = 'assets/spritesheets/powerup.png';
     this.resolveCollision = false;
 
     this.currY = 0;

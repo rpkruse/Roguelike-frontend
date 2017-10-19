@@ -19,6 +19,7 @@ function Game(screen, updateFunction, renderFunction) {
   // Set up buffers
   this.frontBuffer = screen;
   this.frontCtx = screen.getContext('2d');
+
   this.backBuffer = document.createElement('canvas');
   this.backBuffer.width = screen.width;
   this.backBuffer.height = screen.height;

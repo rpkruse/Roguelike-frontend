@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import 'material-design-lite/material.js';
 
 
 @Component({

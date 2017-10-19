@@ -3,6 +3,8 @@ import { Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
 import { PlayComponent } from './play/play.component';
+import { ProfileComponent } from './profile/profile.component'; //ADD A SESSION GUARD TO ME
+import { StatsComponent } from './stats/stats.component'; //ADD A SESSION GUARD TO ME
 
 //import { LoginComponent } from './login/login.component';
 
@@ -16,7 +18,10 @@ import { PlayComponent } from './play/play.component';
 export const rootRouterConfig: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
-  { path: 'play', component: PlayComponent }
+  { path: 'play', component: PlayComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'stats', component: StatsComponent }
+  
   //{ path: 'listen/:id', canActivate: [ SessionGuard ], component: PlayComponent },
   //{ path: 'playlist', canActivate: [ SessionGuard ], component: PlaylistComponent,
   //},
