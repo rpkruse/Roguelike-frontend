@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 import 'material-design-lite/material.js';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css', '/game.css']
 })
-export class AppComponent {
-  title = 'app';
+export class AppComponent{
+  private _playing: boolean = false;
 
-  private _showHub = false;
+  constructor(private _router: Router){}
 
-  private clickMe(){
-    this._showHub = !this._showHub;
+  clickedPlay(){
+    this._playing = !this._playing;
   }
 }
