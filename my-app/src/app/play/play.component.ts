@@ -2,8 +2,6 @@ import { Component, OnInit, HostListener, OnDestroy, ViewChild, ElementRef} from
 
 import { StorageService } from '../shared/session-storage.service';
 
-//import '../assets/bundle.js'
-
 @Component({
   selector: 'play',
   styleUrls: ['./play.component.css'],

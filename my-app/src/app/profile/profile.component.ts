@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import 'material-design-lite/material.js';
 
+declare var window: any;
 
 @Component({
   selector: 'profile',
@@ -8,5 +8,8 @@ import 'material-design-lite/material.js';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent{
+  ngAfterViewInit(){
+    window.componentHandler.upgradeAllRegistered();
+  }
 
 }

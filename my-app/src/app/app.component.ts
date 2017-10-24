@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { StorageService } from './shared/session-storage.service';
 
-import 'material-design-lite/material.js';
+
+declare var window: any;
 
 @Component({
   selector: 'app-root',
@@ -29,6 +30,10 @@ export class AppComponent implements OnInit{
     });
 
     this._storage.setPlaying('_playing', false);
+  }
+
+  ngAfterViewInit(){
+    window.componentHandler.upgradeAllRegistered();
   }
 
   playClicked(){

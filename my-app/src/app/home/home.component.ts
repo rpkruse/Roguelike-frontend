@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import 'material-design-lite/material.js';
+import { Component, OnInit } from '@angular/core';
 
+declare var window: any;
 
 @Component({
   selector: 'home',
@@ -8,6 +8,10 @@ import 'material-design-lite/material.js';
   templateUrl: './home.component.html'
 })
 export class HomeComponent{
+
+  ngAfterViewInit(){
+    window.componentHandler.upgradeAllRegistered();
+  }
 
   /*
     Will pull the last page of the list from the DB for top_n to display
