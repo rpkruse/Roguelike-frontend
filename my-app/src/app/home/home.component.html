@@ -2,124 +2,144 @@
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-red.min.css" />
 
 <div class="container-fluid">
-
     <div class="row">
-        <div class="col-md-4 table-responsive container-bordered">
-            <h4 class="text-justify">Top Player</h4>
-            <table class="table table-condensed table-hover">
+        <div class="col-md-4 panel panel-default container-bordered">
+            <div class="panel-heading">
+                <h4 class="text-center">Top Players</h4>
+            </div>
+            <table class="table table-condensed table-fixed">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Score</th>
+                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Score</th>                            
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>120</td>
+                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">230</td>                            
                     </tr>
                     <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>100</td>
+                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">200</td>                            
                     </tr>
                     <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>100</td>
-                        </tr>
+                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">150</td>                            
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">100</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">98</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">50</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
+                    </tr>
                 </tbody>
-            </table>   
+            </table>
+            <div class="previous">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_PLAYERS')">
+                    <span aria-hidden="true">&larr;</span>Previous
+                </button>
+            </div>
+            <div class="next">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"  (click)="next('TOP_PLAYERS')">
+                    Next
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
+            </div>
         </div>
-        <div class="table-responsive col-md-4 container-bordered">
-            <h4 class="text-justify">Most Kills</h4>
-            <table class="table table-condensed table-hover">
+        <div class="col-md-4 panel panel-default container-bordered">
+            <div class="panel-heading">
+                <h4 class="text-center">Top Kills</h4>
+            </div>
+            <table class="table table-condensed table-fixed">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Kills</th>
+                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Kills</th>                            
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>20</td>
+                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
                     </tr>
                     <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>15</td>
+                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">20</td>                            
                     </tr>
                     <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>15</td>
-                        </tr>
-                        <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>15</td>
-                            </tr>
-                            <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>15</td>
-                                </tr>
-                                <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>15</td>
-                                    </tr>
-                                    <tr>
-                                            <th scope="row">2</th>
-                                            <td>Jacob</td>
-                                            <td>15</td>
-                                        </tr>
-                                        <tr>
-                                                <th scope="row">2</th>
-                                                <td>Jacob</td>
-                                                <td>15</td>
-                                            </tr>
-                                            <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>15</td>
-                                                </tr>
+                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">15</td>                            
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">10</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">9</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">5</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">2</td>                            
+                    </tr>
                 </tbody>
-            </table>   
+            </table>
+            <div class="previous">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_KILLS')">
+                    <span aria-hidden="true">&larr;</span>Previous
+                </button>
+            </div>
+            <div class="next">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_KILLS')">
+                    Next
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
+            </div>
         </div>
-        <div class="table-responsive col-md-4 container-bordered">
-            <h4 class="text-justify">Highest Level</h4>
-            <table class="table table-condensed table-hover">
+        <div class="col-md-4 panel panel-default container-bordered">
+            <div class="panel-heading">
+                <h4 class="text-center">Highest Level</h4>
+            </div>
+            <table class="table table-condensed table-fixed">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Level</th>
+                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Level</th>                            
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>5</td>
+                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">230</td>                            
                     </tr>
                     <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>4</td>
+                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">200</td>                            
                     </tr>
                     <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>4</td>
-                        </tr>
+                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">150</td>                            
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">100</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">98</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">50</td>                            
+                    </tr>
+                     <tr>
+                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
+                    </tr>
                 </tbody>
-            </table>   
+            </table>
+            <div class="previous">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_LEVEL')">
+                    <span aria-hidden="true">&larr;</span>Previous
+                </button>
+            </div>
+            <div class="next">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_LEVEL')">
+                    Next
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -14,10 +14,10 @@
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation -->
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" (click)="playClicked()" [routerLink]="['/play']">Play</a>
-          <a class="mdl-navigation__link" [routerLink]="['/profile']">Profile</a>
-          <a class="mdl-navigation__link" [routerLink]="['/stats']">Stats</a>
-          <a class="mdl-navigation__link" href="">Logout</a>
+          <a class="mdl-layout__tab" (click)="playClicked()" [routerLink]="['/play']">Play</a>
+          <a class="mdl-layout__tab" [routerLink]="['/profile']">Profile</a>
+          <a class="mdl-layout__tab" [routerLink]="['/stats']">Stats</a>
+          <a class="mdl-layout__tab" href="">Logout</a>
         </nav>
       </div>
     </header>
@@ -26,8 +26,7 @@
     <div class="mdl-layout__drawer">
       <span class="mdl-layout-title">Profile name here</span>
       <nav class="mdl-navigation">
-        <!--<a class="mdl-navigation__link" target="_blank" (click)="playClicked()" [routerLink]="['/play']">Play</a>-->
-        <a class="mdl-navigation__link" target="_blank" (click)="playClicked()" [routerLink]="['/play']">Play</a>
+        <a class="mdl-navigation__link" (click)="playClicked()" [routerLink]="['/play']">Play</a>
         <a class="mdl-navigation__link" [routerLink]="['/profile']">Profile</a>
         <a class="mdl-navigation__link" [routerLink]="['/stats']">Stats</a>
         <a class="mdl-navigation__link" href="">Logout</a>
