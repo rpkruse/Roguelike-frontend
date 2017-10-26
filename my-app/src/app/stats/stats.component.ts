@@ -21,7 +21,7 @@ export class StatsComponent implements OnInit{
 
   ngOnInit(){
     //Load the data here
-    this._apiService.getAllEntities('character_class.json')
+    this._apiService.getAllEntities<ICharacter_Class>('character_class.json')
       .subscribe(
         classes => this.classes = classes,
         err => console.log("error"),
@@ -30,7 +30,7 @@ export class StatsComponent implements OnInit{
         }
       );
 
-    this._apiService.getAllEntities('character.json')
+    this._apiService.getAllEntities<ICharacter>('character.json')
       .subscribe(
         characters => this.characters = characters,
         err => console.log("error"),

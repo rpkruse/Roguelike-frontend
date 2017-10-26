@@ -13,7 +13,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { StatsComponent } from './stats/stats.component';
 
 import { StorageService } from './shared/session-storage.service';
-
+import { SortingCharacterPipe } from './shared/SortingCharacterPipe'
 import { ApiService } from './shared/api.service';
 
 @NgModule({ //PIE CHART: https://www.npmjs.com/package/ng2modules-easypiechart
@@ -22,7 +22,8 @@ import { ApiService } from './shared/api.service';
     HomeComponent,
     PlayComponent,
     ProfileComponent,
-    StatsComponent
+    StatsComponent,
+    SortingCharacterPipe
   ],
   imports: [
     BrowserModule,
@@ -31,7 +32,8 @@ import { ApiService } from './shared/api.service';
   ],
   providers: [
     StorageService,
-    ApiService
+    ApiService,
+    SortingCharacterPipe
   ],
   bootstrap: [AppComponent]
 })

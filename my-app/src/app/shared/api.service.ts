@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
+
 
 import { ICharacter_Class } from '../interfaces/Character_Class';
 @Injectable()
@@ -19,14 +22,14 @@ export class ApiService {
             .map
     }*/
 
-    getAllEntities(path: string): Observable<any>{
-        return this._http.get(this._api + path)
-            .catch(this.handleError);
+    getAllEntities<T>(path: string): Observable<T[]>{
+        return this._http.get(this._api + path) as Observable<T[]>;
     }
 
-    /*private handleResponse(res: Response){
-        return res.text() === "" ? res : res.json();
-    }*/
+    private handleResponse(res: Response){
+        return res.json();
+    }
+
     /*getAll(path: string): Observable<ICharacter[]> {
         return this._http.get<ICharacter[]>(this._productUrl + path)
             .do(data => console.log('All: ' + JSON.stringify(data)))

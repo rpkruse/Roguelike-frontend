@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 import { ApiService } from '../shared/api.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
+
+import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
 
 declare var window: any;
 
@@ -13,9 +16,9 @@ declare var window: any;
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit{
-  private classes: ICharacter_Class[] = [];
-  private characters: ICharacter[] = [];
-  private character_history: ICharacter_History[] = [];
+  private classes: Observable<ICharacter_Class[]>;
+  private characters: Observable<ICharacter[]>
+  private character_history: Observable<ICharacter_History[]>;
 
   private topPlayerPage: number;
   private topKillsPage: number;
@@ -35,97 +38,17 @@ export class HomeComponent implements OnInit{
   constructor(private _apiService: ApiService) {}
 
   ngOnInit(){
-    this.topPlayerPage = 1;
-    this.topKillsPage = 1;
-    this.topLevelPage = 1;
+    this.topPlayerPage = 0;
+    this.topKillsPage = 0;
+    this.topLevelPage = 0;
     
-    //Load the data here
-    this._apiService.getAllEntities('character_class.json')
-      .subscribe(
-        classes => this.classes = classes,
-        err => console.log("error"),
-        () => {
-          console.log("Finished loading classes!");
-        }
-      );
-
-    this._apiService.getAllEntities('character.json')
-      .subscribe(
-        characters => this.characters = characters,
-        err => console.log("error"),
-        () => {
-          console.log("Finished loading characters!");
-        }
-      );
-    
-    this._apiService.getAllEntities('character_history.json')
-      .subscribe(
-        character_history => this.character_history = character_history,
-        err => console.log("error"),
-        () => {
-          console.log("Finished loading character history!");
-        }
-      );
+    this.classes = this._apiService.getAllEntities<ICharacter_Class>('character_class.json');
+    this.characters = this._apiService.getAllEntities<ICharacter>('character.json');
+    this.character_history = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
   }
   
   ngAfterViewInit(){
      window.componentHandler.upgradeAllRegistered();
-  }
-
-  private getTopPlayers(): ICharacter_History[]
-  {
-    let ch: ICharacter_History[] = [];
-    let startPage: number = this.numPerPage * this.topPlayerPage;
-    let endPage: number = startPage + this.numPerPage;
-
-    for(let i = startPage; i<endPage; i++){
-      if(this.topPlayerPage < Math.ceil(this.character_history.length / this.numPerPage)){ //Make sure we don't go out of bounds
-        ch.push(this.character_history[i]);
-      }else{
-        ch.push(this.character_history[i]);
-        this.playerNextEnabled = false;
-      }
-    }
-
-    return(ch);
-  }
-
-  private getTopKills(): ICharacter_History[]
-  {
-    let ch: ICharacter_History[] = [];
-    let startPage: number = this.numPerPage * this.topKillsPage;
-    let endPage: number = startPage + this.numPerPage;
-
-    this.killNextEnabled = true;
-
-    for(let i = startPage; i<endPage; i++){
-      if(this.topKillsPage < Math.ceil(this.character_history.length / this.numPerPage)){ //Make sure we don't go out of bounds
-        ch.push(this.character_history[i]);
-      }else{
-        ch.push(this.character_history[i]);
-        this.killNextEnabled = false;
-      }
-    }
-
-    return(ch);
-  }
-
-  private getTopLevel(): ICharacter_History[]
-  {
-    let ch: ICharacter_History[] = [];
-    let startPage: number = this.numPerPage * this.topLevelPage;
-    let endPage: number = startPage + this.numPerPage;
-
-    for(let i = startPage; i<endPage; i++){
-      if(this.topLevelPage < Math.ceil(this.character_history.length / this.numPerPage)){ //Make sure we don't go out of bounds
-        ch.push(this.character_history[i]);
-      }else{
-        ch.push(this.character_history[i]);
-        this.levelNextEnabled = false;
-      }
-    }
-
-    return(ch);
   }
 
    /*
@@ -136,7 +59,7 @@ export class HomeComponent implements OnInit{
     console.log(this.topKillsPage);
     if(clicked === "TOP_PLAYERS"){
       this.topPlayerPage++;
-      this.playerBackEnabled = this.topPlayerPage > 1;
+      this.playerBackEnabled = this.topPlayerPage > 0;
     }else if(clicked === "TOP_KILLS"){
       this.topKillsPage++;
       this.killBackEnabled = this.topKillsPage > 1;
@@ -152,9 +75,9 @@ export class HomeComponent implements OnInit{
   */
   private previous(clicked: string){
     if(clicked === "TOP_PLAYERS"){
-      if(this.topPlayerPage > 1)
+      if(this.topPlayerPage > 0)
         this.topPlayerPage--;
-      this.playerBackEnabled = this.topPlayerPage > 1;      
+      this.playerBackEnabled = this.topPlayerPage > 0;      
     }else if(clicked === "TOP_KILLS"){
       if(this.topKillsPage > 1)
         this.topKillsPage--;
