@@ -20,7 +20,6 @@ export class PlayComponent implements OnInit, OnDestroy{
     unloadHandler(){
         //this._storage.setValue('_playing', false);   
         this._storage.setPlaying('_playing', false);     
-        alert("TEST");
     }
 
     ngOnInit(): void {
@@ -37,7 +36,6 @@ export class PlayComponent implements OnInit, OnDestroy{
 
     //Fire on page change
     ngOnDestroy(): void{
-        //alert("Are you sure?");
-        //console.log(this.canvasRef);
+        document
     }
 }

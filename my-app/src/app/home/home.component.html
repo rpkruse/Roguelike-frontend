@@ -1,5 +1,6 @@
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="classes && characters && character_history && classes.length && characters.length && character_history.length">
     <div class="row">
+        <!-- Top Players Table -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
                 <h4 class="text-center">Top Players</h4>
@@ -11,44 +12,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">230</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">200</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">150</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">100</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">98</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">50</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
-                    </tr>
+                    <ng-container *ngFor="let character of getTopPlayers(); let i = index">
+                        <tr>
+                            <td class="col-xs-2">{{i+1 + ((topPlayerPage-1) * numPerPage)}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
             <div class="previous">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_PLAYERS')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_PLAYERS')"  [disabled]="!playerBackEnabled">
                     <span aria-hidden="true">&larr;</span>Previous
                 </button>
             </div>
             <div class="next">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"  (click)="next('TOP_PLAYERS')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"  (click)="next('TOP_PLAYERS')"  [disabled]="!playerNextEnabled">
                     Next
                     <span aria-hidden="true">&rarr;</span>
                 </button>
             </div>
         </div>
+
+        <!-- Top Kills Players -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
-                <h4 class="text-center">Top Kills</h4>
+                <h4 class="text-center">Most Kills</h4>
             </div>
             <table class="table table-condensed table-fixed">
                 <thead>
@@ -57,41 +44,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">20</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">15</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">10</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">9</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">5</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">2</td>                            
-                    </tr>
+                    <ng-container *ngFor="let character of getTopKills(); let i = index">
+                        <tr>
+                            <td class="col-xs-2">{{i+1 + ((topKillsPage-1) * numPerPage)}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
             <div class="previous">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_KILLS')">
+                <button ng-disabled="true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_KILLS')" [disabled]="!killBackEnabled">
                     <span aria-hidden="true">&larr;</span>Previous
                 </button>
             </div>
             <div class="next">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_KILLS')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_KILLS')" [disabled]="!killNextEnabled">
                     Next
                     <span aria-hidden="true">&rarr;</span>
                 </button>
             </div>
         </div>
+
+        <!--Top Level Tabel -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
                 <h4 class="text-center">Highest Level</h4>
@@ -103,36 +76,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="col-xs-2">1</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">23</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">2</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">20</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">3</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">15</td>                            
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">4</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">10</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">5</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">9</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">6</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">5</td>                            
-                    </tr>
-                     <tr>
-                        <td class="col-xs-2">7</td><td class="col-xs-8">Mike Adams</td><td class="col-xs-2 text-center">2</td>                            
-                    </tr>
+                    <ng-container *ngFor="let character of getTopLevel(); let i = index">
+                        <tr>
+                            <td class="col-xs-2">{{i+1 + ((topLevelPage-1) * numPerPage)}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.level}}</td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
             <div class="previous">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_LEVEL')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_LEVEL')" [disabled]="!levelBackEnabled">
                     <span aria-hidden="true">&larr;</span>Previous
                 </button>
             </div>
             <div class="next">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_LEVEL')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_LEVEL')" [disabled]="!levelNextEnabled">
                     Next
                     <span aria-hidden="true">&rarr;</span>
                 </button>

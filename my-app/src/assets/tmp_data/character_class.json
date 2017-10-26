@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Knight", 
+    "health": 25, 
+    "atk_bonus": 0, 
+    "dmg_bonus": 1,
+    "def_bonus": 2
+  },
+  {
+      "name": "Archer",
+      "health": 10,
+      "atk_bonus": 2,
+      "dmg_bonus": 0,
+      "def_bonus": 1
+  },
+  {   "name": "Mage",
+      "health": 10,
+      "atk_bonus": -1,
+      "dmg_bonus": 2,
+      "def_bonus": 1
+  }
+]

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { rootRouterConfig } from './app.routes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 
@@ -13,7 +14,9 @@ import { StatsComponent } from './stats/stats.component';
 
 import { StorageService } from './shared/session-storage.service';
 
-@NgModule({
+import { ApiService } from './shared/api.service';
+
+@NgModule({ //PIE CHART: https://www.npmjs.com/package/ng2modules-easypiechart
   declarations: [
     AppComponent,
     HomeComponent,
@@ -23,10 +26,12 @@ import { StorageService } from './shared/session-storage.service';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true })
   ],
   providers: [
-    StorageService
+    StorageService,
+    ApiService
   ],
   bootstrap: [AppComponent]
 })
