@@ -62,10 +62,10 @@ export class HomeComponent implements OnInit{
       this.playerBackEnabled = this.topPlayerPage > 0;
     }else if(clicked === "TOP_KILLS"){
       this.topKillsPage++;
-      this.killBackEnabled = this.topKillsPage > 1;
+      this.killBackEnabled = this.topKillsPage > 0;
     }else if(clicked === "TOP_LEVEL"){
       this.topLevelPage++;
-      this.levelBackEnabled = this.topLevelPage > 1;
+      this.levelBackEnabled = this.topLevelPage > 0;
     }
   }
 
@@ -79,13 +79,13 @@ export class HomeComponent implements OnInit{
         this.topPlayerPage--;
       this.playerBackEnabled = this.topPlayerPage > 0;      
     }else if(clicked === "TOP_KILLS"){
-      if(this.topKillsPage > 1)
+      if(this.topKillsPage > 0)
         this.topKillsPage--;
-      this.killBackEnabled = this.topKillsPage > 1;
+      this.killBackEnabled = this.topKillsPage > 0;
     }else if(clicked === "TOP_LEVEL"){
-      if(this.topLevelPage > 1)
+      if(this.topLevelPage > 0)
         this.topLevelPage--;
-      this.levelBackEnabled = this.topLevelPage > 1;
+      this.levelBackEnabled = this.topLevelPage > 0;
     }
   }
 

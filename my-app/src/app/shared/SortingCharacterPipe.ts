@@ -2,25 +2,25 @@ import { ICharacter_History } from '../interfaces/Character_History';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'sortingCompanies'
+  name: 'sortingCharacter'
 })
 export class SortingCharacterPipe implements PipeTransform {
 
-  transform(companies: ICharacter_History[], path: string[], order: number, ): ICharacter_History[] {
+  transform(characters: any[], args: string): any[] {
 
     // Check if is not null
-    if (!companies || !path || !order) return companies;
+    if (!characters || !args) return characters;
 
-    return companies.sort((a: ICharacter_History, b: ICharacter_History) => {
-      // We go for each property followed by path
-      path.forEach(property => {
-        a = a[property];
-        b = b[property];
-      })
-
-      // Order * (-1): We change our order
-      return a > b ? order : order * (- 1);
-    })
+    return characters.sort((a: any, b: any) => {
+      //flipped b/c we want to start with highest
+      if(a[args] > b[args]){
+        return -1;
+      }else if(a[args] < b[args]){
+        return 1;
+      }else{
+        return 0
+      }
+    });
   }
 
 }

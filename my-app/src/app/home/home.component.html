@@ -13,7 +13,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngFor="let character of character_history | async; index as i"><!-- let character of classes | async; let i = index -->
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'score'; index as i"><!-- let character of classes | async; let i = index -->
                         <tr *ngIf="i >= this.numPerPage * this.topPlayerPage && i <= (this.numPerPage * this.topPlayerPage) + this.numPerPage - 1">
                             <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
                         </tr>
@@ -36,18 +36,18 @@
         <!-- Top Kills Players -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
-                <h4 class="text-center">Most Kills</h4>
+                <h4 class="text-center">Most Deaths</h4>
             </div>
             <table class="table table-condensed table-fixed">
                 <thead>
                     <tr>
-                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Kills</th>                            
+                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Deaths</th>                            
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngFor="let character of character_history | async; index as i">
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'killed_by'; index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topKillsPage && i <= (this.numPerPage * this.topKillsPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.killed_by}}</td>
                         </tr>
                     </ng-container>
                 </tbody>
@@ -76,10 +76,10 @@
                         <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Level</th>                            
                     </tr>
                 </thead>
-                <tbody> <!-- *ngFor="let character of character_history | async | SortingCharacterPipe:['level']:1; index as i" -->
-                    <ng-container *ngFor="let character of character_history | async; index as i">
+                <tbody> 
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'level';  index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topLevelPage && i <= (this.numPerPage * this.topLevelPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1 + ((topLevelPage-1) * numPerPage)}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.level}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.id}}</td><td class="col-xs-2 text-center">{{character.level}}</td>
                         </tr>
                     </ng-container>
                 </tbody>

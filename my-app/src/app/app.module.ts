@@ -33,7 +33,6 @@ import { ApiService } from './shared/api.service';
   providers: [
     StorageService,
     ApiService,
-    SortingCharacterPipe
   ],
   bootstrap: [AppComponent]
 })
