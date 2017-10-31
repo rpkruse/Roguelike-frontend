@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
 
   @HostListener('window:beforeunload')
   unloadHandler(){
-      this._storage.clearAll();       
+      //this._storage.clearAll();       
   }
 
   ngOnInit() {

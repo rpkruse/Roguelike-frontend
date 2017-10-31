@@ -35,4 +35,17 @@ export class UserService{
             return this.user.display_name;
         return "";
     }
+
+    public performApiACtion(action: Observable<any>, errorMessage: string): any{
+        let s: Subscription;
+        let d: any;
+        s = action.subscribe(
+            data => d = data,
+            err => console.log(errorMessage),
+            () => {
+                s.unsubscribe
+                return d;
+            }
+        )
+    }
 }
