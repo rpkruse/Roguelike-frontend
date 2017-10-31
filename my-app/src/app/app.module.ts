@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { rootRouterConfig } from './app.routes';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 
@@ -15,6 +15,8 @@ import { StatsComponent } from './stats/stats.component';
 import { StorageService } from './shared/session-storage.service';
 import { SortingCharacterPipe } from './shared/SortingCharacterPipe'
 import { ApiService } from './shared/api.service';
+
+import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
 @NgModule({ //PIE CHART: https://www.npmjs.com/package/ng2modules-easypiechart
   declarations: [
@@ -28,11 +30,13 @@ import { ApiService } from './shared/api.service';
   imports: [
     BrowserModule,
     HttpClientModule,
+    NgProgressModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true })
   ],
   providers: [
     StorageService,
     ApiService,
+    { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
