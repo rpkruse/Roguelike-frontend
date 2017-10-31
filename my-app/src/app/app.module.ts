@@ -11,10 +11,14 @@ import { HomeComponent } from './home/home.component';
 import { PlayComponent } from './play/play.component';
 import { ProfileComponent } from './profile/profile.component';
 import { StatsComponent } from './stats/stats.component';
+import { LoginComponent } from './login/login.component';
 
 import { StorageService } from './shared/session-storage.service';
 import { SortingCharacterPipe } from './shared/SortingCharacterPipe'
+import { SessionGuard } from './shared/session-guard.service'
 import { ApiService } from './shared/api.service';
+import { UserService } from './user/user.service';
+
 
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
@@ -25,7 +29,8 @@ import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
     PlayComponent,
     ProfileComponent,
     StatsComponent,
-    SortingCharacterPipe
+    LoginComponent,
+    SortingCharacterPipe,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +41,8 @@ import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
   providers: [
     StorageService,
     ApiService,
+    UserService,
+    SessionGuard,
     { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

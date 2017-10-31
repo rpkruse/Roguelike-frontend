@@ -4,6 +4,7 @@ import { Subscription } from "rxjs";
 import { Observable } from 'rxjs/Observable';
 
 import { StorageService } from './shared/session-storage.service';
+import { UserService } from './user/user.service';
 
 
 declare var window: any;
@@ -17,7 +18,7 @@ export class AppComponent implements OnInit{
   private _sub: Subscription;
   private _playing: boolean;
 
-  constructor(private _router: Router, private _storage: StorageService){}
+  constructor(private _router: Router, private _storage: StorageService, private _userService: UserService){}
 
   @HostListener('window:beforeunload')
   unloadHandler(){

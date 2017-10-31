@@ -1,9 +1,6 @@
 export interface ICharacter_History{
-    id: number;
+    user_email: string;
     character_id: number;
     score: number;
-    level: number;
-    killed_by: number;
+    level_id: number;
 }
-
-//{"id":1,"character_id":60,"score":79,"level":96,"killed_by":4},

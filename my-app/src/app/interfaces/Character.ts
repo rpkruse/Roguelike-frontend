@@ -1,11 +1,11 @@
 export interface ICharacter{
     id: number;
-    health: number;
-    name: string;
     atk_bonus: number;
     dmg_bonus: number;
+    name: string;
+    health: number;
     def_bonus: number;
-    character_class: string;
+    weapon: number; //We can change these to objects if we do the API a certain way
+    armor: number; //We can change these to objects if we do the API a certain way
+    killed_by: number;//Can change to actual object with backend
 }
-
-//{"id":967,"health":88,"name":"Johann","atk_bonus":58,"dmg_bonus":4,"def_bonus":65,"character_class":"Mage"},

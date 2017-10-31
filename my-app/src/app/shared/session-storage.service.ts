@@ -1,6 +1,9 @@
 /*
-    What is stored:
-        _playing - If we are currently playing the game or not
+    What is stored (per sesson):
+        user: The current user 
+        loggedIn: If we are logged in our not
+    What is stored (forever):
+        savedUsername: if the user clicks remember me, it will save it here and we will load it
 */
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/share';
@@ -37,7 +40,7 @@ export class StorageService{
         if(value){
             value = JSON.stringify(value);
         }
-        localStorage.setItem(key, value);
+        sessionStorage.setItem(key, value);
     }
 
     /*
@@ -46,7 +49,7 @@ export class StorageService{
         @return any - Returns the value of the key or null if the key is not in storage
     */
     public getValue(key: string): any{
-        let value: string = localStorage.getItem(key);
+        let value: string = sessionStorage.getItem(key);
 
         if(value && value != "undefined" && value != "null"){
             return JSON.parse(value);
@@ -59,7 +62,7 @@ export class StorageService{
         Returns if the key is in the session storage or not
     */
     public hasValue(key: string): boolean{
-        if(localStorage.getItem(key) === null){
+        if(sessionStorage.getItem(key) === null){
             return false;
         }
         return true;
@@ -69,13 +72,34 @@ export class StorageService{
         Removes the key and its corresponding value from session storage
     */
     public removeValue(key: string): void{
-        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
     }
 
     /*
         Clears the whole storage
     */
     public clearAll(): void{
-        localStorage.clear();
+        sessionStorage.clear();
+    }
+
+    public saveToLocal(key: string, value: any): void{
+        if(value){
+            value = JSON.stringify(value);
+        }
+        localStorage.setItem(key, value);
+    }
+
+    public getFromLocal(key: string): any{
+        let value = localStorage.getItem(key);
+
+        if(value && value != "undefined" && value != "null"){
+            return JSON.parse(value);
+        }
+
+        return null;
+    }
+
+    public removeFromLocal(key: string): void{
+        localStorage.removeItem(key);
     }
 }
