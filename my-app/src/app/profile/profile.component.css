@@ -1,0 +1,12 @@
+.character-button{
+    max-width: 25vw;
+}
+
+.container-bordered{
+    border: 2px solid black;
+}
+
+.list-group{
+    height: 100%;
+    max-width: 25vw;
+}

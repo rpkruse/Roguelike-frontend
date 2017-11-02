@@ -3,27 +3,53 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
+import { ICharacter_Class } from '../interfaces/Character_Class';
+import { ICharacter } from '../interfaces/Character';
+import { ICharacter_History } from '../interfaces/Character_History';
+import { IUser } from '../user/User';
+
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
+import 'rxjs/Rx';
 
-
-import { ICharacter_Class } from '../interfaces/Character_Class';
 @Injectable()
 export class ApiService {
     private _api = './assets/tmp_data/';
 
     constructor(private _http: HttpClient) { }
 
+    //Works well, but super slow
+    getCharacterHistoriesWithUser(): Observable<ICharacter_History[]>{
+        return this.getAllEntities<ICharacter_History>('character_history.json')
+            .flatMap((CHs: ICharacter_History[]) => {
+                return Observable.forkJoin(
+                    CHs.map((ch: ICharacter_History) => {
+                        return this.assignCharacterHistoryValues(ch.user_id)
+                            .map((res: IUser) => {
+                                //console.log(res);
+                                let user: IUser = res;
+                                ch.user = user;
+                                return ch;
+                            });
+                    })
+                )
+            })
+    }
 
-    /* getSingleEntity(path: string, id: number): Observable<any>{
-        return this.getAllEntities(path)
-            .map
-    }*/
+    //works, but slow
+    assignCharacterHistoryValues(id: number): Observable<IUser>{
+        return this.getAllEntities<IUser>('user.json').map((users: IUser[]) =>
+            users.find(u => u.id === id));
+    }
 
     getAllEntities<T>(path: string): Observable<T[]>{
         return this._http.get(this._api + path) as Observable<T[]>;
+    }
+
+    getAllEntities2<T>(path: string){
+        return this._http.get<T[]>(this._api + path);
     }
 
     private handleResponse(res: Response){

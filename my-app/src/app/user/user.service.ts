@@ -31,11 +31,19 @@ export class UserService{
     }
 
     public getUserName(): string{
+        this.user = this._storage.getValue('user');
         if(this.user)
             return this.user.display_name;
         return "";
     }
 
+    public getID(): number{
+        this.user = this._storage.getValue('user');
+        if(this.user)
+            return this.user.id;
+        return null;
+    }
+    
     public performApiACtion(action: Observable<any>, errorMessage: string): any{
         let s: Subscription;
         let d: any;

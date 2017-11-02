@@ -1,8 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { IUser } from '../user/user';
+import { Observable } from 'rxjs/Observable';
 
-import { UserService } from '../user/user.service';
+import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
+import { ICharacter_Class } from '../interfaces/Character_Class';
+import { ICharacter } from '../interfaces/Character';
+import { ICharacter_History } from '../interfaces/Character_History';
+import { IUser } from '../user/User';
+
+import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
+import { UserService } from '../user/user.service';
+import { Subscription } from "rxjs";
+
+import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
 
 declare var window: any;
 
@@ -13,14 +25,40 @@ declare var window: any;
 })
 export class ProfileComponent implements OnInit{
 
-  constructor(private _userService: UserService, private _storage: StorageService){}
+  private character_history: ICharacter_History[] = [];
+  private characters: ICharacter[] = [];
+
+  private selectedCharacter: ICharacter;
+
+  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
   
   ngOnInit(){
+    let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
+    let char = this._apiService.getAllEntities<ICharacter>('character.json');
 
+    Observable.forkJoin([ch, char]).subscribe(results => {
+      //results[0] --> ICharacter_History[]
+      //results[1] --> ICharacter[]
+
+      let filterByUserID = results[0].filter(x => x.user_id === this._userService.getID());
+
+      for(let i=0; i<filterByUserID.length; i++){
+        filterByUserID[i].character = results[1].find(x => x.id === filterByUserID[i].character_id);
+      }
+
+      this.character_history = filterByUserID;
+    });
   }
 
   ngAfterViewInit(){
     window.componentHandler.upgradeAllRegistered();
+  }
+
+  characterClicked(index: number){
+    if(index < this.character_history.length){
+      this.selectedCharacter = this.character_history[index].character;
+      console.log(this.selectedCharacter);
+    }
   }
 
 }

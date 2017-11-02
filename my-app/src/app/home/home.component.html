@@ -12,10 +12,10 @@
                         <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Score</th>                            
                     </tr>
                 </thead>
-                <tbody>
-                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'score'; index as i"><!-- let character of classes | async; let i = index -->
+                <tbody *ngIf = "this.character_history && character_history.length">
+                    <ng-container *ngFor="let character of character_history | sortingCharacter: 'score'; index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topPlayerPage && i <= (this.numPerPage * this.topPlayerPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.character_id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.user.display_name}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
                         </tr>
                     </ng-container>
                 </tbody>
@@ -76,10 +76,10 @@
                         <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Level</th>                            
                     </tr>
                 </thead>
-                <tbody> 
-                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'level_id';  index as i">
+                <tbody *ngIf = "character_history && character_history.length"> 
+                    <ng-container *ngFor="let character of character_history | sortingCharacter: 'level_id';  index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topLevelPage && i <= (this.numPerPage * this.topLevelPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.character_id}}</td><td class="col-xs-2 text-center">{{character.level_id}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.user.display_name}}</td><td class="col-xs-2 text-center">{{character.level_id}}</td>
                         </tr>
                     </ng-container>
                 </tbody>

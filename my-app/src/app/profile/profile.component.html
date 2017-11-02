@@ -1,5 +1,37 @@
 <div class="container-fluid">
     <div class="row">
-        
+        <div class="page-header">
+            <h1><small>{{this._userService.getUserName()}}</small></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+            <div class="mdl-tabs__tab-bar">
+                <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
+                <a href="#lannisters-panel" class="mdl-tabs__tab">Past Characters</a>
+                <a href="#targaryens-panel" class="mdl-tabs__tab">Games</a>
+            </div>
+            <div class="mdl-tabs__panel is-active" id="current-panel">
+                <div class="list-group container-bordered">
+                    <button type="button" class="list-group-item character-button" *ngFor="let character of character_history; index as i" (click)="characterClicked(i)">
+                        {{character.character.name}}
+                    </button>
+                </div>
+            </div>
+            <div class="mdl-tabs__panel" id="lannisters-panel">
+              <ul>
+                <li>Tywin</li>
+                <li>Cersei</li>
+                <li>Jamie</li>
+                <li>Tyrion</li>
+              </ul>
+            </div>
+            <div class="mdl-tabs__panel" id="targaryens-panel">
+              <ul>
+                <li>Viserys</li>
+                <li>Daenerys</li>
+              </ul>
+            </div>
+        </div>
     </div>
 </div>

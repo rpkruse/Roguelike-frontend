@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit{
     for(let i=0; i < this.users.length; i++){
       u = this.users[i];
 
-      if(u.id === this.username && u.password === this.password){
+      if(u.email === this.username && u.password === this.password){
         this.user = u;
 
         this._storage.setValue('user', this.user);
