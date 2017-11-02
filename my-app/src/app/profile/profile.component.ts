@@ -28,6 +28,7 @@ export class ProfileComponent implements OnInit{
   private character_history: ICharacter_History[] = [];
   private characters: ICharacter[] = [];
 
+  private user: IUser;
   private selectedCharacter: ICharacter;
 
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
@@ -47,6 +48,8 @@ export class ProfileComponent implements OnInit{
       }
 
       this.character_history = filterByUserID;
+
+      this.user = this._userService.getUser();
     });
   }
 

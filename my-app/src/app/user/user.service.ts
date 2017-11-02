@@ -43,6 +43,13 @@ export class UserService{
             return this.user.id;
         return null;
     }
+
+    public getUser(): IUser{
+        this.user = this._storage.getValue('user');
+        if(this.user)
+            return this.user;
+        return null;
+    }
     
     public performApiACtion(action: Observable<any>, errorMessage: string): any{
         let s: Subscription;

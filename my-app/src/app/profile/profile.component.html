@@ -5,6 +5,23 @@
         </div>
     </div>
     <div class="row">
+        <div class="panel panel-default input-group">
+            <div class="panel-heading">
+                <h3 class="panel-title">Profile Details:</h3>
+            </div>
+            <div class="panel-body">
+                <!-- Fix below, we get undefined error...need to add check above to make sure we pull after we get the usr obj-->
+                <span class="input-group-addon" id="basic">Email</span>
+                <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
+            </div>
+            <!--<div class="panel-body">
+                Email: {{this.user.email}}
+            </div>
+            <div class="panel-body">Display Name: {{this.user.display_name}}</div>-->
+
+        </div>
+    </div>
+    <!--<div class="row">
         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
             <div class="mdl-tabs__tab-bar">
                 <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
@@ -33,5 +50,5 @@
               </ul>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
