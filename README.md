@@ -11,3 +11,6 @@ Roguelike frontend for CIS 560
 * run npm start to fire up dev server
 * open browser to http://localhost:3000
 * if you want to use other port, open package.json file, then change port in --port 3000 script
+
+NOTE:
+The game is under the path of: Roguelike-frontend/my-app/src/assets/
