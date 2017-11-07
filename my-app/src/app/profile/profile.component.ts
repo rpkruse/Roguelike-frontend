@@ -2,7 +2,7 @@
   This component shows the user all of their information such as email, number of characters, etc
   *Not finished yet*
 */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { ApiService } from '../shared/api.service';
@@ -27,7 +27,7 @@ declare var window: any;
   styleUrls: ['./profile.component.css'],
   templateUrl: './profile.component.html'
 })
-export class ProfileComponent implements OnInit{
+export class ProfileComponent implements OnInit, OnDestroy{
 
   private character_history: ICharacter_History[] = [];
   private characters: ICharacter[] = [];
@@ -62,11 +62,22 @@ export class ProfileComponent implements OnInit{
     window.componentHandler.upgradeAllRegistered();
   }
 
-  characterClicked(index: number){
+  characterClicked(index: number): void{
     if(index < this.character_history.length){
       this.selectedCharacter = this.character_history[index].character;
-      console.log(this.selectedCharacter);
     }
   }
 
+  /*
+    When the page is destoryed, we will update the user's name/email if we have changed it
+    this will be implemented when we have a working backend with POST
+  */
+  ngOnDestroy(){
+    let oldUsr: IUser = this._userService.getUser();
+    
+    //NEED TO ADD GUARD TO MAKE SURE PASSWORD ISN'T EMPTY
+    if(oldUsr.email !== this.user.email || oldUsr.display_name !== this.user.display_name || oldUsr.password !== this.user.password){
+      console.log("Need to update user");
+    }
+  }
 }

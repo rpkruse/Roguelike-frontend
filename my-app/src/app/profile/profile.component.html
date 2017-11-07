@@ -13,12 +13,16 @@
 
             <div class="panel-body" *ngIf="this.user">
                 <div class="input-group">
-                <span class="input-group-addon" id="basic">Email</span>
-                <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
+                    <span class="input-group-addon" id="basic">Email</span>
+                    <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
                 </div>
                 <div class="input-group">
-                <span class="input-group-addon" id="asdf">User name</span>
-                <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
+                    <span class="input-group-addon" id="asdf">User name</span>
+                    <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="asdf">Password</span>
+                    <input type="password" class="form-control" placeholder="Password" [value]="this.user.password" (input)="this.user.password = $event.target.value" aria-describedby="basic">
                 </div>
             </div>
         </div>
