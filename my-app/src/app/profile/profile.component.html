@@ -5,47 +5,22 @@
         </div>
     </div>
     <div class="row">
-        <div class="panel panel-default input-group">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Profile Details:</h3>
             </div>
+            
+
             <div class="panel-body" *ngIf="this.user">
+                <div class="input-group">
                 <span class="input-group-addon" id="basic">Email</span>
                 <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
-                
-                <span class="input-group-addon" id="basic">User name</span>
+                </div>
+                <div class="input-group">
+                <span class="input-group-addon" id="asdf">User name</span>
                 <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
+                </div>
             </div>
         </div>
     </div>
-    <!--<div class="row">
-        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-            <div class="mdl-tabs__tab-bar">
-                <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
-                <a href="#lannisters-panel" class="mdl-tabs__tab">Past Characters</a>
-                <a href="#targaryens-panel" class="mdl-tabs__tab">Games</a>
-            </div>
-            <div class="mdl-tabs__panel is-active" id="current-panel">
-                <div class="list-group container-bordered">
-                    <button type="button" class="list-group-item character-button" *ngFor="let character of character_history; index as i" (click)="characterClicked(i)">
-                        {{character.character.name}}
-                    </button>
-                </div>
-            </div>
-            <div class="mdl-tabs__panel" id="lannisters-panel">
-              <ul>
-                <li>Tywin</li>
-                <li>Cersei</li>
-                <li>Jamie</li>
-                <li>Tyrion</li>
-              </ul>
-            </div>
-            <div class="mdl-tabs__panel" id="targaryens-panel">
-              <ul>
-                <li>Viserys</li>
-                <li>Daenerys</li>
-              </ul>
-            </div>
-        </div>
-    </div>-->
 </div>

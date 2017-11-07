@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService } from './shared/session-storage.service';
 import { UserService } from './user/user.service';
 
+import 'material-design-lite/material.js';
 
 declare var window: any;
 
