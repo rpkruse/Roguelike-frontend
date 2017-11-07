@@ -1,3 +1,7 @@
+/*
+  This component shows the user all of their information such as email, number of characters, etc
+  *Not finished yet*
+*/
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
@@ -34,6 +38,7 @@ export class ProfileComponent implements OnInit{
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
   
   ngOnInit(){
+    //All below this will be removed with backend
     let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
     let char = this._apiService.getAllEntities<ICharacter>('character.json');
 

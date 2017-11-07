@@ -1,3 +1,8 @@
+/*
+  I have not started this yet, but this component will hold the stats for the user and the current 
+  and past characters they have played. The user will be able to click on a current character and
+  see everything they currently have and their stats.
+*/
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 

@@ -1,4 +1,8 @@
 import { ICharacter_History } from '../interfaces/Character_History';
+/*
+  This service is called from the homepage tables, it sorts them from highest to lowest
+  so that we can see the top 10 players
+*/
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({

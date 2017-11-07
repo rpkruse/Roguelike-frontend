@@ -1,3 +1,6 @@
+/*
+  Standard routing service
+*/
 import { Routes } from '@angular/router';
 import { SessionGuard } from './shared/session-guard.service';
 

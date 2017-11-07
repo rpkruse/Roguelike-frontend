@@ -1,3 +1,7 @@
+/*
+  The login component validates user login, hopefully we can do this on the backend, if not I have the 
+  pretty bad way that I do it here...
+*/
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -26,13 +30,14 @@ export class LoginComponent implements OnInit{
   private users: IUser[];
   private user: IUser;
 
-  private username: string = "";
-  private password: string = "test";
+  private username: string = "test@test.com"; //Use test@test.com
+  private password: string = "test"; //temp so we don't have to type it each time
   private rememberMe: boolean = true;
 
   constructor(private _apiService: ApiService, private _storage: StorageService, private _router: Router, private _userService: UserService) {}
 
   ngOnInit(){
+    //Check to see if we have the user name saved (via the remember me toggle)
     let usrName = this._storage.getFromLocal('savedUsername');
 
     if(usrName)
@@ -50,6 +55,7 @@ export class LoginComponent implements OnInit{
      window.componentHandler.upgradeAllRegistered();
   }
 
+  //If we login validate the usrname/pass and update our storage
   private loginClicked(): void{
     let u: IUser;
     for(let i=0; i < this.users.length; i++){

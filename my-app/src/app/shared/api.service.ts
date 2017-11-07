@@ -1,3 +1,8 @@
+/*
+    This service is used to consume the backend, it will be changed once we have one working
+    Note:
+        All of the methods below will be changed to work with the backend API => you shouldn't worry about them yet
+*/
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Response } from '@angular/http';
@@ -47,25 +52,6 @@ export class ApiService {
     getAllEntities<T>(path: string): Observable<T[]>{
         return this._http.get(this._api + path) as Observable<T[]>;
     }
-
-    getAllEntities2<T>(path: string){
-        return this._http.get<T[]>(this._api + path);
-    }
-
-    private handleResponse(res: Response){
-        return res.json();
-    }
-
-    /*getAll(path: string): Observable<ICharacter[]> {
-        return this._http.get<ICharacter[]>(this._productUrl + path)
-            .do(data => console.log('All: ' + JSON.stringify(data)))
-            .catch(this.handleError);
-    }
-
-    getOne(path: string, name: string): Observable<ICharacter> {
-        return this.getAll(path)
-            .map((objs: ICharacter[]) => objs.find(p => p.name === name));
-    }*/
 
     private handleError(err: HttpErrorResponse) {
         // in a real world app, we may send the server to some remote logging infrastructure

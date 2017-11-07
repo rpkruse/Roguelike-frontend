@@ -1,4 +1,7 @@
 /*
+    This service allows us to read and write to local and session storage so we can easily 
+    "talk" between pages, it is mainly called from the user service.
+
     What is stored (per sesson):
         user: The current user 
         loggedIn: If we are logged in our not
@@ -9,7 +12,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/share';
 
 export class StorageService{
-    //Used to allow dynamic updates on our playlist
+    //Might not be used later
     public playObservable: Observable<any>;
     private _playObserver: any;
     private _playing: boolean;
@@ -21,9 +24,7 @@ export class StorageService{
     }
 
     /*
-        Sets the playlist to a new value and notifies all subscribers
-        @param key: string - '_playlist'
-        @param value: any - The value to set it to 
+        
     */
     public setPlaying(key: string, value: any){
         this.setValue(key, value);

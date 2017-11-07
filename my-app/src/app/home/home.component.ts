@@ -1,3 +1,9 @@
+/*
+  This component is used to display the top 10 from a given category (subject to change)
+  Note:
+    They do go in order, the only reason the first one does not is because I am using local data
+    this will be fixed with the backend
+*/
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
@@ -22,6 +28,7 @@ declare var window: any;
   styleUrls: ['./home.component.css'],
   templateUrl: './home.component.html'
 })
+
 export class HomeComponent implements OnInit{
   private classes: Observable<ICharacter_Class[]>;
   private characters: Observable<ICharacter[]>
@@ -55,6 +62,8 @@ export class HomeComponent implements OnInit{
     this.classes = this._apiService.getAllEntities<ICharacter_Class>('character_class.json');
     this.characters = this._apiService.getAllEntities<ICharacter>('character.json');
     //this.character_history = this._apiService.getCharacterHistoriesWithUser(); //this._apiService.getAllEntities<ICharacter_History>('character_history.json');
+    
+    //Everything below this will be removed when we have a proper backend!
     let s: Subscription;
 
     let ch_test = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
@@ -78,6 +87,10 @@ export class HomeComponent implements OnInit{
     });
   }
   
+  /*
+    This method is required for ALL components, it updates the Design lite entities and allows
+    them to have animations (I can explain in person if needed)
+  */
   ngAfterViewInit(){
      window.componentHandler.upgradeAllRegistered();
   }

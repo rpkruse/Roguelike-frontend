@@ -9,16 +9,13 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Profile Details:</h3>
             </div>
-            <div class="panel-body">
-                <!-- Fix below, we get undefined error...need to add check above to make sure we pull after we get the usr obj-->
+            <div class="panel-body" *ngIf="this.user">
                 <span class="input-group-addon" id="basic">Email</span>
                 <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
+                
+                <span class="input-group-addon" id="basic">User name</span>
+                <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
             </div>
-            <!--<div class="panel-body">
-                Email: {{this.user.email}}
-            </div>
-            <div class="panel-body">Display Name: {{this.user.display_name}}</div>-->
-
         </div>
     </div>
     <!--<div class="row">

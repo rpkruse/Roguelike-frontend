@@ -1,3 +1,7 @@
+/*
+    This service is called when we try to load certain pages, basically,
+    if we try to view any page but the home page it redirects us to the login screen
+*/
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 
