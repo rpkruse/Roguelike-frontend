@@ -11,7 +11,7 @@ var weaponPickUp = new Audio();
 var armorPickUp = new Audio();
 var attackSound = new Audio();
 var click = new Audio();
-var backgroundMusicOnLoop = new Audio('sounds/tempBGMusicLoop.wav');
+var backgroundMusicOnLoop = new Audio('assets/sounds/tempBGMusicLoop.wav');
 var volume = 3;
 
 var volumeMatrix = [
