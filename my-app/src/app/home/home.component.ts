@@ -11,7 +11,7 @@ import { ApiService } from '../shared/api.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
-import { IUser } from '../user/User';
+import { IUser } from '../user/user';
 
 import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
 import { UserService } from '../user/user.service';
@@ -58,11 +58,11 @@ export class HomeComponent implements OnInit{
     this.topPlayerPage = 0;
     this.topKillsPage = 0;
     this.topLevelPage = 0;
-    
+
     this.classes = this._apiService.getAllEntities<ICharacter_Class>('character_class.json');
     this.characters = this._apiService.getAllEntities<ICharacter>('character.json');
     //this.character_history = this._apiService.getCharacterHistoriesWithUser(); //this._apiService.getAllEntities<ICharacter_History>('character_history.json');
-    
+
     //Everything below this will be removed when we have a proper backend!
     let s: Subscription;
 
@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit{
       this.character_history = results[1];
     });
   }
-  
+
   /*
     This method is required for ALL components, it updates the Design lite entities and allows
     them to have animations (I can explain in person if needed)
@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit{
     if(clicked === "TOP_PLAYERS"){
       if(this.topPlayerPage > 0)
         this.topPlayerPage--;
-      this.playerBackEnabled = this.topPlayerPage > 0;      
+      this.playerBackEnabled = this.topPlayerPage > 0;
     }else if(clicked === "TOP_KILLS"){
       if(this.topKillsPage > 0)
         this.topKillsPage--;

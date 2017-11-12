@@ -10,7 +10,7 @@ import { StorageService } from '../shared/session-storage.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
-import { IUser } from '../user/User';
+import { IUser } from '../user/user';
 
 import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
 import { UserService } from '../user/user.service';
@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
 
   private friendToAdd: string = "";
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
-  
+
   ngOnInit(){
     //All below this will be removed with backend
     let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
   */
   ngOnDestroy(){
     let oldUsr: IUser = this._userService.getUser();
-    
+
     //NEED TO ADD GUARD TO MAKE SURE PASSWORD ISN'T EMPTY
     if(oldUsr.email !== this.user.email || oldUsr.display_name !== this.user.display_name || oldUsr.password !== this.user.password){
       console.log("Need to update user");
