@@ -3801,7 +3801,7 @@ var weaponPickUp = new Audio();
 var armorPickUp = new Audio();
 var attackSound = new Audio();
 var click = new Audio();
-var backgroundMusicOnLoop = new Audio('sounds/tempBGMusicLoop.wav');
+var backgroundMusicOnLoop = new Audio('assets/sounds/tempBGMusicLoop.wav');
 var volume = 3;
 
 var volumeMatrix = [
@@ -4774,8 +4774,8 @@ Weapon.prototype.toString = function () {
 module.exports={
  "tileheight":96,
  "tilewidth":96,
- "image":".\/tilesets\/grass.png",
- "images": [".\/tilesets\/grass.png", ".\/tilesets\/tset.png"],
+ "image":"assets\/tilesets\/grass.png",
+ "images": ["assets\/tilesets\/grass.png", "assets\/tilesets\/tset.png"],
  "imageheight":672,
  "imagewidth":768,
  "edges":{
