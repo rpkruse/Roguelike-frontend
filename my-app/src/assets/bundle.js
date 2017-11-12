@@ -4233,7 +4233,7 @@ Tilemap.prototype.changeTileset = function () {
   this.idx++;
   this.idx %= this.tileset.images.length;
   var tset = new Image();
-  tset.src = "assets/" + this.tileset.images[this.idx];
+  tset.src = this.tileset.images[this.idx];
   this.tiles.forEach(function (tile) {
     tile.image = tset;
   })
