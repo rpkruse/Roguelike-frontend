@@ -11,7 +11,7 @@ import { StorageService } from '../shared/session-storage.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
-import { IUser } from '../user/User';
+import { IUser } from '../user/user';
 
 import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
 import { UserService } from '../user/user.service';
@@ -41,7 +41,7 @@ export class StatsComponent implements OnInit{
   private deleteCharacterString: string = "";
 
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
-  
+
   ngOnInit(){
     //All below this will be removed with backend
     let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
@@ -77,7 +77,7 @@ export class StatsComponent implements OnInit{
     let toReturn: ICharacter_History[] = [];
 
     for(let i=0; i<this.character_history.length; i++){
-      ch = this.character_history[i];  
+      ch = this.character_history[i];
       if(ch.character.killed_by === null){
         toReturn.push(ch);
       }
@@ -94,7 +94,7 @@ export class StatsComponent implements OnInit{
     let toReturn: ICharacter_History[] = [];
 
     for(let i=0; i<this.character_history.length; i++){
-      ch = this.character_history[i];  
+      ch = this.character_history[i];
       if(ch.character.killed_by !== null){
         toReturn.push(ch);
       }

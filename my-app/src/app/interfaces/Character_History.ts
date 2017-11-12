@@ -1,4 +1,4 @@
-import { IUser } from '../user/User';
+import { IUser } from '../user/user';
 import { ICharacter } from '../interfaces/Character';
 
 export interface ICharacter_History{

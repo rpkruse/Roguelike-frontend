@@ -1,13 +1,13 @@
 /*
     This service class is used to get any user details and make API requests,
-    it is created to make communication between pages much easier and only dependent 
+    it is created to make communication between pages much easier and only dependent
     on one service
 */
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs";
 
-import {IUser } from './User';
+import {IUser } from './user';
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -27,7 +27,7 @@ export class UserService{
     public logIn(): void{
         this.user = this._storage.getValue('user');
         this.loggedIn = this._storage.getValue('loggedIn');
-    } 
+    }
 
     /*
         Clear the storage to update our DOM and set values
@@ -75,7 +75,7 @@ export class UserService{
             return this.user;
         return null;
     }
-    
+
     /*
         Called when we want to consume the backend
         @return: any - the data consumed

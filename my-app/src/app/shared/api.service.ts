@@ -11,7 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
-import { IUser } from '../user/User';
+import { IUser } from '../user/user';
 
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
