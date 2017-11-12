@@ -17,7 +17,7 @@ function Stairs(position, travelStairs) {
     this.travelStairs = travelStairs;
 
     this.spritesheet = new Image();
-    this.spritesheet.src = './spritesheets/powerup.png';
+    this.spritesheet.src = 'assets/spritesheets/powerup.png';
 
     this.beginTransition = false
     this.time = 0;

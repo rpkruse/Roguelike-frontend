@@ -719,7 +719,7 @@ window.sfx = new SFX();
 window.entityManager = new EntityManager();
 var fadeAnimationProgress = new ProgressManager(0, function () { });
 var isFadeOut = true;
-var screenSize = { width: 1056, height: 1056 }; //1056 1056
+var screenSize = { width: 1056, height: 1056 };
 var stairs;
 
 window.combatController = new CombatController();
@@ -973,10 +973,10 @@ function render(elapsedTime, ctx) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
 
-    ctx.fillRect(1060, 0, 732, canvas.height); //1060 0 732 1116 CHANGED
+    ctx.fillRect(1060, 0, 732, 1116);
 
     ctx.fillStyle = "white";
-    ctx.fillRect(1057, 0, 2, canvas.height); //1057 0 2 1116 CHANGED
+    ctx.fillRect(1057, 0, 2, 1116);
     window.terminal.render(elapsedTime, ctx);
 
     gui.render(elapsedTime, ctx);
@@ -2264,10 +2264,12 @@ function Game(screen, updateFunction, renderFunction) {
   // Set up buffers
   this.frontBuffer = screen;
   this.frontCtx = screen.getContext('2d');
+
   this.backBuffer = document.createElement('canvas');
   this.backBuffer.width = screen.width;
   this.backBuffer.height = screen.height;
   this.backCtx = this.backBuffer.getContext('2d');
+
   // Start the game loop
   this.oldTime = performance.now();
   this.paused = false;
@@ -2321,7 +2323,7 @@ function GUI(size) {
   this.startSprites.src = 'assets/spritesheets/start.png';
   this.highlightSize = 10;
   this.startBackground = new Image();
-  this.startBackground.src = 'assets//spritesheets/start_background.png';
+  this.startBackground.src = 'assets/spritesheets/start_background.png';
   this.swordHighlights = [0, 0, 0];
   this.swordYPos = [480, 576, 672];
 
@@ -3280,7 +3282,7 @@ function Player(position, combatClass) {
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = './assets/spritesheets/player_animations.png';
+    this.spritesheet.src = 'assets/spritesheets/player_animations.png';
     this.type = "Player";
     this.walk = [];
     this.changeClass(combatClass);
@@ -3792,7 +3794,7 @@ var weaponPickUp = new Audio();
 var armorPickUp = new Audio();
 var attackSound = new Audio();
 var click = new Audio();
-var backgroundMusicOnLoop = new Audio('assets/sounds/tempBGMusicLoop.wav');
+var backgroundMusicOnLoop = new Audio('sounds/tempBGMusicLoop.wav');
 var volume = 3;
 
 var volumeMatrix = [
@@ -4765,7 +4767,7 @@ Weapon.prototype.toString = function () {
 module.exports={
  "tileheight":96,
  "tilewidth":96,
- "image":"assets/.\/tilesets\/grass.png",
+ "image":".\/tilesets\/grass.png",
  "images": [".\/tilesets\/grass.png", ".\/tilesets\/tset.png"],
  "imageheight":672,
  "imagewidth":768,
