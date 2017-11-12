@@ -6,6 +6,7 @@ export interface ICharacter_History{
     character_id: number;
     score: number;
     level_id: number;
+    //add two time stamps from the api here!
     user: IUser;
     character: ICharacter;
 }

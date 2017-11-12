@@ -128,6 +128,9 @@ export class StatsComponent implements OnInit{
     if(this.selectedCharacter.character.name === this.deleteCharacterString){
       //Will delete when we get backend API
       console.log("I CAN DELETE NOW!");
+    }else{
+      alert("Names do not match, please re-enter to delete");
+      this.deleteCharacterString = "";
     }
   }
 

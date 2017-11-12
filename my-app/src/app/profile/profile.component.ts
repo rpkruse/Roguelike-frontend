@@ -35,6 +35,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
   private user: IUser;
   private selectedCharacter: ICharacter;
 
+  private friendToAdd: string = "";
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
   
   ngOnInit(){
@@ -66,6 +67,10 @@ export class ProfileComponent implements OnInit, OnDestroy{
     if(index < this.character_history.length){
       this.selectedCharacter = this.character_history[index].character;
     }
+  }
+
+  private deleteFriend(){ //Will take ID of friend when we have backend
+    console.log("removing...")
   }
 
   /*

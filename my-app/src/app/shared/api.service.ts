@@ -25,7 +25,26 @@ export class ApiService {
 
     constructor(private _http: HttpClient) { }
 
-    //Works well, but super slow
+    getAllEntities<T>(path: string): Observable<T[]>{
+        return this._http.get(this._api + path) as Observable<T[]>;
+    }
+
+    getSingleEntity<T>(path: string, id: number): Observable<T>{
+        return null; //return this._http.get(this._api + path + '/' + id) as Observable<T>;
+    }
+
+    putEntity<T>(path: string, obj: Object){
+        let body = JSON.stringify(obj);
+        console.log("Sending: " + body);
+        //return this._http.post(_this.api + path, body) as Observable<T>?
+    }
+
+    deleteEntity<T>(path: string, id: number){
+        //return this._http.delete(this._api + path + '/' + id) as OBservable<T>??
+    }
+}
+
+/*//Works well, but super slow
     getCharacterHistoriesWithUser(): Observable<ICharacter_History[]>{
         return this.getAllEntities<ICharacter_History>('character_history.json')
             .flatMap((CHs: ICharacter_History[]) => {
@@ -47,25 +66,4 @@ export class ApiService {
     assignCharacterHistoryValues(id: number): Observable<IUser>{
         return this.getAllEntities<IUser>('user.json').map((users: IUser[]) =>
             users.find(u => u.id === id));
-    }
-
-    getAllEntities<T>(path: string): Observable<T[]>{
-        return this._http.get(this._api + path) as Observable<T[]>;
-    }
-
-    private handleError(err: HttpErrorResponse) {
-        // in a real world app, we may send the server to some remote logging infrastructure
-        // instead of just logging it to the console
-        let errorMessage = '';
-        if (err.error instanceof Error) {
-            // A client-side or network error occurred. Handle it accordingly.
-            errorMessage = `An error occurred: ${err.error.message}`;
-        } else {
-            // The backend returned an unsuccessful response code.
-            // The response body may contain clues as to what went wrong,
-            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-        }
-        console.error(errorMessage);
-        return Observable.throw(errorMessage);
-    }
-}
+    }*/

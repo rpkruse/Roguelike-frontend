@@ -4,5 +4,6 @@ export interface IUser{
     id: number;
     email: string;
     display_name: string;
-    password: string; //will change to something secure later   
+    password: string; //will change to something secure later 
+    //add timestamp   
 }

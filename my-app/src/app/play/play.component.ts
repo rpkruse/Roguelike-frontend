@@ -8,8 +8,9 @@ import { StorageService } from '../shared/session-storage.service';
   templateUrl: './play.component.html'
 })
 export class PlayComponent implements OnInit, OnDestroy{
-    private _width: number = window.innerWidth;
-    private _height: number = window.innerHeight;
+    private _width: number = 1788/2;//window.innerWidth;
+    private _height: number = 1116/2;//window.innerHeight;
+
 
     constructor(private _storage: StorageService) {}
 
@@ -23,19 +24,23 @@ export class PlayComponent implements OnInit, OnDestroy{
     }
 
     ngOnInit(): void {
-        console.log('preparing to load...')
         let node = document.createElement('script');
         node.src = "../assets/bundle.js";
         node.type = 'text/javascript';
         node.async = true;
         node.charset = 'utf-8';
+        node.id = "bundleScript";
         document.getElementsByTagName('head')[0].appendChild(node);
 
-        this._storage.setPlaying('_playing', true);
+        this._storage.setValue('_playing', true);
     }
 
     //Fire on page change
     ngOnDestroy(): void{
-        document
+        //let node = document.getElementById("bundleScript");
+        //document.removeChild(node);
+        //node.remove();
+        //console.log(node);
+        this._storage.setValue('_playing', false);
     }
 }

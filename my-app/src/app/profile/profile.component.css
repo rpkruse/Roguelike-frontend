@@ -11,6 +11,23 @@
     max-width: 25vw;
 }
 
-.panel{
+.panel-small{
     max-width: 25vw;
+}
+
+.panel-tall{
+    height: 50vh;
+}
+
+.list-setHeight{
+    max-height: 75%;
+    overflow-y: scroll;
+}
+
+.list-setWidth{
+    max-width: 100%;
+}
+
+.list-group-item{
+    width: 100%;
 }

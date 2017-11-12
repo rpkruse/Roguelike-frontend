@@ -4,30 +4,33 @@
         <h1><small>{{this._userService.getUserName()}}</small></h1>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-          <div class="mdl-tabs__tab-bar">
-            <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
-            <a href="#past-panel" class="mdl-tabs__tab">Past Characters</a>
+
+    <!--Character history panel -->
+    <div class="row col-md-4">
+      <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+        <div class="mdl-tabs__tab-bar">
+          <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
+          <a href="#past-panel" class="mdl-tabs__tab">Past Characters</a>
+        </div>
+        <div class="mdl-tabs__panel is-active" id="current-panel">
+          <div class="list-group container-bordered">
+            <button type="button" class="list-group-item character-button" *ngFor="let character of getAliveCharacters(); index as i" (click)="characterClicked(character)">
+            {{character.character.name}}
+            </button>
           </div>
-          <div class="mdl-tabs__panel is-active" id="current-panel">
-            <div class="list-group container-bordered">
-              <button type="button" class="list-group-item character-button" *ngFor="let character of getAliveCharacters(); index as i" (click)="characterClicked(character)">
-              {{character.character.name}}
-              </button>
-            </div>
-          </div>
-          <div class="mdl-tabs__panel" id="past-panel">
-            <div class="list-group container-bordered">
-              <button type="button" class="list-group-item character-button" *ngFor="let character of getDeadCharacters(); index as i" (click)="characterClicked(character)">
-              {{character.character.name}}
-              </button>
-            </div>
+        </div>
+        <div class="mdl-tabs__panel" id="past-panel">
+          <div class="list-group container-bordered">
+            <button type="button" class="list-group-item character-button" *ngFor="let character of getDeadCharacters(); index as i" (click)="characterClicked(character)">
+            {{character.character.name}}
+            </button>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+    </div>
+    
+    <!--Character detail panel -->
+    <div class="row col-md-4">
         <div class="panel panel-default" *ngIf="this.selectedCharacter">
           <div class="panel-heading">
             <h4 class="panel-title">{{this.selectedCharacter.character.name}}</h4>
@@ -54,5 +57,4 @@
           </div>
         </div>
       </div>
-    </div>
   </div>

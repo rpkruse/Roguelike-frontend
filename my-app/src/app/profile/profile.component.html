@@ -4,8 +4,61 @@
             <h1><small>{{this._userService.getUserName()}}</small></h1>
         </div>
     </div>
-    <div class="row">
-        <div class="panel panel-default">
+    <div class="row col-md-6">
+        <div class="panel panel-default panel-tall">
+            <div class="panel-heading">
+                <h3 class="panel-title">Friends List:</h3>
+            </div>
+            <div class="panel-body list-group list-setHeight list-setWidth" *ngIf="this.user"><!-- will change to if friends -->
+                <li class="list-group-item">
+                    <div>
+                        Friend 1
+                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        Friend 2
+                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        Friend 3
+                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        Friend 4
+                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        Friend 5
+                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div>
+                        ...                                                                                   
+                    </div>
+                </li>
+            </div> 
+
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-success" (click)="deleteCharacterClicked()">
+                        Add Friend
+                    </button>
+                </span>
+            </div>  
+        </div>  
+    </div>
+    <div class="row col-md-4 col-md-offset-1">
+        <div class="panel panel-default panel-small panel-tall">
             <div class="panel-heading">
                 <h3 class="panel-title">Profile Details:</h3>
             </div>
@@ -17,11 +70,11 @@
                     <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" id="asdf">User name</span>
+                    <span class="input-group-addon">Display name</span>
                     <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" id="asdf">Password</span>
+                    <span class="input-group-addon">Password</span>
                     <input type="password" class="form-control" placeholder="Password" [value]="this.user.password" (input)="this.user.password = $event.target.value" aria-describedby="basic">
                 </div>
             </div>
