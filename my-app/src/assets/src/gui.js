@@ -54,51 +54,51 @@ volumeMute.src = encodeURI('assets/healthbar/speakerMute.png');
 
 
 var x, y;
-GUI.prototype.onmousemove = function(event)
+GUI.prototype.onmousemove = function(event, scale)
 {
-	x = event.offsetX;
-	y = event.offsetY;
-	if(this.state == "start")
-	{
-		if(x >= 753 && x <= 1041)
-		{
-
-			if(y >= this.swordYPos[0] + 20 && y <= this.swordYPos[0] + 76)
-			{
-				this.swordHighlights[0] = this.highlightSize;
-			}
-			else if(y >= this.swordYPos[1] + 20 && y <= this.swordYPos[1] + 76)
-			{
-				this.swordHighlights[1] = this.highlightSize;
-			}
-			else if(y >= this.swordYPos[2] + 20 && y <= this.swordYPos[2] + 76)
-			{
-				this.swordHighlights[2] = this.highlightSize;
-			}
-			else this.swordHighlights = [0, 0, 0];
-		}
-		else this.swordHighlights = [0, 0, 0];
-	}
-	else if(this.state == "choose class")
-	{
-		if(y >= 480 && y <= 576)
-		{
-			if(x >= this.playerXPos[0] + 20 && x <= this.playerXPos[0] + 76)
-			{
-				this.playerHighlights[0] = this.highlightSize;
-			}
-			else if(x >= this.playerXPos[1] + 20 && x <= this.playerXPos[1] + 76)
-			{
-				this.playerHighlights[1] = this.highlightSize;
-			}
-			else if(x >= this.playerXPos[2] + 20 && x <= this.playerXPos[2] + 76)
-			{
-				this.playerHighlights[2] = this.highlightSize;
-			}
-			else this.playerHighlights = [0, 0, 0];
-		}
-		else this.playerHighlights = [0, 0, 0];
-	}
+    x = event.offsetX;
+    y = event.offsetY;
+    if(this.state == "start")
+    {
+        if(x >= 753 * scale && x <= 1041 * scale)
+        {
+            
+            if(y >= (this.swordYPos[0] + 20) * scale && y <= (this.swordYPos[0] + 76) * scale)
+            {
+                this.swordHighlights[0] = this.highlightSize;
+            }
+            else if(y >= (this.swordYPos[1] + 20) * scale && y <= (this.swordYPos[1] + 76) * scale)
+            {
+                this.swordHighlights[1] = this.highlightSize;
+            }
+            else if(y >= (this.swordYPos[2] + 20) * scale && y <= (this.swordYPos[2] + 76) * scale)
+            {
+                this.swordHighlights[2] = this.highlightSize;
+            }
+            else this.swordHighlights = [0, 0, 0];
+        }
+        else this.swordHighlights = [0, 0, 0];
+    }
+    else if(this.state == "choose class")
+    {
+        if(y >= 480 * scale && y <= 576 * scale)
+        {
+            if(x >= (this.playerXPos[0] + 20) * scale && x <= (this.playerXPos[0] + 76) * scale)
+            {
+                this.playerHighlights[0] = this.highlightSize;
+            }
+            else if(x >= (this.playerXPos[1] + 20) * scale && x <= (this.playerXPos[1] + 76) * scale)
+            {
+                this.playerHighlights[1] = this.highlightSize;
+            }
+            else if(x >= (this.playerXPos[2] + 20) * scale && x <= (this.playerXPos[2] + 76) * scale)
+            {
+                this.playerHighlights[2] = this.highlightSize;
+            }
+            else this.playerHighlights = [0, 0, 0];
+        }
+        else this.playerHighlights = [0, 0, 0];
+    }
 }
 
 GUI.prototype.onmousedown = function(event)
