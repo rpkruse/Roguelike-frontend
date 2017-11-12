@@ -24,7 +24,7 @@ function Player(position, combatClass) {
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = './spritesheets/player_animations.png';
+    this.spritesheet.src = 'assets/spritesheets/player_animations.png';
     this.type = "Player";
     this.walk = [];
     this.changeClass(combatClass);

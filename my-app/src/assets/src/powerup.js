@@ -17,7 +17,7 @@ function Powerup(position, pType) {
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = './spritesheets/powerup.png';
+    this.spritesheet.src = 'assets/spritesheets/powerup.png';
     this.type = "Powerup";
     this.animation = true;
     this.currY = 0;

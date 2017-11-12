@@ -14,12 +14,12 @@ function GUI(size) {
   this.state = "start";
   this.size = size;
   this.playerSprites = new Image();
-  this.playerSprites.src = './spritesheets/sprites.png';
+  this.playerSprites.src = 'assets/spritesheets/sprites.png';
   this.startSprites = new Image();
-  this.startSprites.src = './spritesheets/start.png';
+  this.startSprites.src = 'assets/spritesheets/start.png';
   this.highlightSize = 10;
   this.startBackground = new Image();
-  this.startBackground.src = './spritesheets/start_background.png';
+  this.startBackground.src = 'assets/spritesheets/start_background.png';
   this.swordHighlights = [0, 0, 0];
   this.swordYPos = [480, 576, 672];
 
@@ -45,12 +45,12 @@ var volume1 = new Image();
 var volume2 = new Image();
 var volume3 = new Image();
 var volumeMute = new Image();
-crest.src = encodeURI('healthbar/crest.png');
-pow.src = encodeURI('healthbar/pow.png');
-volume1.src = encodeURI('healthbar/speakerVol1.png');
-volume2.src = encodeURI('healthbar/speakerVol2.png');
-volume3.src = encodeURI('healthbar/speakerVol3.png');
-volumeMute.src = encodeURI('healthbar/speakerMute.png');
+crest.src = encodeURI('assets/healthbar/crest.png');
+pow.src = encodeURI('assets/healthbar/pow.png');
+volume1.src = encodeURI('assets/healthbar/speakerVol1.png');
+volume2.src = encodeURI('assets/healthbar/speakerVol2.png');
+volume3.src = encodeURI('assets/healthbar/speakerVol3.png');
+volumeMute.src = encodeURI('assets/healthbar/speakerMute.png');
 
 
 var x, y;

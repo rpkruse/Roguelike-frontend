@@ -24,23 +24,23 @@ var volumeMatrix = [
 
 
 function SFX() {
-    background.src = encodeURI('sounds/tempBGMusic.wav');
+    background.src = encodeURI('assets/sounds/tempBGMusic.wav');
     background.addEventListener('ended', function() {
-        backgroundMusicOnLoop = new Audio('sounds/tempBGMusicLoop.wav');
+        backgroundMusicOnLoop = new Audio('assets/sounds/tempBGMusicLoop.wav');
         backgroundMusicOnLoop.volume = volumeMatrix[volume][1];
         backgroundMusicOnLoop.loop = true;
         backgroundMusicOnLoop.play();
     }, false);
     background.play();
 
-    healthPickup.src = encodeURI('sounds/Powerup3.wav');
-    attackPowerup.src = encodeURI('sounds/Powerup4.wav');
-    damageBonusPowerup.src = encodeURI('sounds/Powerup1.wav');
-    defensePowerup.src = encodeURI('sounds/Powerup2.wav');
-    click.src = encodeURI("sounds/click.wav");
-    weaponPickUp.src = encodeURI("sounds/weapon-pickup.wav");
-    armorPickUp.src = encodeURI("sounds/armor-pickup.wav");
-    attackSound.src = encodeURI("sounds/EnemyHit.wav");
+    healthPickup.src = encodeURI('assets/sounds/Powerup3.wav');
+    attackPowerup.src = encodeURI('assets/sounds/Powerup4.wav');
+    damageBonusPowerup.src = encodeURI('assets/sounds/Powerup1.wav');
+    defensePowerup.src = encodeURI('assets/sounds/Powerup2.wav');
+    click.src = encodeURI("assets/sounds/click.wav");
+    weaponPickUp.src = encodeURI("assets/sounds/weapon-pickup.wav");
+    armorPickUp.src = encodeURI("assets/sounds/armor-pickup.wav");
+    attackSound.src = encodeURI("assets/sounds/EnemyHit.wav");
 
     this.setVolume(["volume", "3"]);
     window.terminal.addCommand("volume", "Set the volume", this.setVolume.bind(this));

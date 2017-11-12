@@ -223,7 +223,7 @@ function Weapon(aName, aLevel) {
     this.position = { x: -1, y: -1 };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = './spritesheets/powerup.png';
+    this.spritesheet.src = 'assets/spritesheets/powerup.png';
     this.resolveCollision = false;
 
     this.currY = 0;

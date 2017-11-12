@@ -10,7 +10,7 @@ function Enemy(position, combatClass, target, onDeathCB) {
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
     this.spritesheet = new Image();
-    this.spritesheet.src = "./spritesheets/enemy_animations.png";
+    this.spritesheet.src = "assets/spritesheets/enemy_animations.png";
     this.type = "Enemy";
     this.class = combatClass;
     this.combat = new CombatClass(this.class, target.level);
