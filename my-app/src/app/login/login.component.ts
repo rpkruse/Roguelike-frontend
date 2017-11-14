@@ -15,6 +15,7 @@ import { UserService } from '../user/user.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
+import { ILogin } from '../interfaces/login';
 import { IUser } from '../user/user';
 
 declare var window: any;
@@ -31,7 +32,7 @@ export class LoginComponent implements OnInit{
   private user: IUser;
 
   private username: string = "test@test.com"; //Use test@test.com
-  private password: string = "test"; //temp so we don't have to type it each time
+  private password: string = "password"; //temp so we don't have to type it each time
   private rememberMe: boolean = true;
 
   constructor(private _apiService: ApiService, private _storage: StorageService, private _router: Router, private _userService: UserService) {}
@@ -77,5 +78,43 @@ export class LoginComponent implements OnInit{
         break;
       }
     }
+  }
+  
+  private apiLoginClicked(){
+    let s: Subscription;
+
+    let loginCred: ILogin = {
+      email: this.username,
+      password: this.password
+    }
+
+    //convert to json to send to api service
+    let cred: string = JSON.stringify(loginCred);
+
+    //TEST LOGIN:
+    let token: any;
+    s = this._apiService.getLoginToken(cred).subscribe(
+      d => token = JSON.stringify(d),
+      err => console.log("CANT LOGIN", err),
+      () => {
+        console.log("LOGGED IN", token)
+        alert('Valid usr/pass, now going to validate the user');
+        this.validateLogin(token);
+        s.unsubscribe();
+      }
+    );
+  }
+
+  private validateLogin(token: any){
+    let valid: any;
+    let s: Subscription = this._apiService.getLoginToken(token).subscribe(
+      d => valid = JSON.stringify(d),
+      err => console.log("CANT LOGIN", err),
+      () => {
+        console.log("LOGGED IN", valid)
+        alert('valid token')
+        s.unsubscribe();
+      }
+    );
   }
 }

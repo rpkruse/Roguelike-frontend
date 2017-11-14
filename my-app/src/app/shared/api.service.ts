@@ -4,13 +4,15 @@
         All of the methods below will be changed to work with the backend API => you shouldn't worry about them yet
 */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
+import { ILogin} from '../interfaces/login';
 import { IUser } from '../user/user';
 
 import 'rxjs/add/observable/throw';
@@ -21,12 +23,24 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ApiService {
-    private _api = './assets/tmp_data/';
-
+    private _api2 = './assets/tmp_data/';
+    private _api = 'https://rogueapi.keisenb.io/api/';
+    
     constructor(private _http: HttpClient) { }
 
+    //Look at: https://angular.io/guide/http for header guide
+    //NOTE: for all post/puts you will need to include the header {headers: new HttpHeaders().set('Content-Type', 'application/json')}
+    getLoginToken(cred: string): Observable<ILogin>{
+        console.log("SENDING TO POST: " + cred);
+        return this._http.post(this._api + 'login', '{"email":"test@test.com","password":"password"}', {headers: new HttpHeaders().set('Content-Type', 'application/json')}) as Observable<ILogin>; //URL, body, Header
+    }
+
+    validateToken(token: any): Observable<any>{
+        return this._http.get(this._api, token) as Observable<any>;
+    }
+
     getAllEntities<T>(path: string): Observable<T[]>{
-        return this._http.get(this._api + path) as Observable<T[]>;
+        return this._http.get(this._api2 + path) as Observable<T[]>;
     }
 
     getSingleEntity<T>(path: string, id: number): Observable<T>{
