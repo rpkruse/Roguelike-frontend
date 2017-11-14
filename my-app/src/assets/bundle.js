@@ -1,6 +1,75 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+module.exports = exports = HttpClient;
+
+function HttpClient() {
+    this.baseURL = "https://rogueapi.keisenb.io/api";
+}
+
+HttpClient.prototype.get = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function() {
+        if (this.readyState === 4) {
+            callback(this.status, JSON.parse(this.responseText));
+        }
+    });
+
+    xhr.open('GET', url);
+    xhr.send(null);
+}
+
+HttpClient.prototype.post = function(url, params, callback) {
+    var data = new FormData();
+
+    Object.entries(params).forEach(function([key, value]) {
+        data.append(key, value);
+    });
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            callback(this.status, JSON.parse(this.responseText));
+        }
+    });
+
+    xhr.open("POST", url);
+    xhr.setRequestHeader("accept", "application/json");
+
+    xhr.send(data);
+}
+
+HttpClient.prototype.log = function(msg) {
+    if (window.debug) console.log(msg);
+}
+
+HttpClient.prototype.listPowerups = function(callback) {
+    this.get(this.baseURL + "/powerups", function(status, json){
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting powerups. Code: " + status); 
+        callback([]);
+    });
+}
+
+HttpClient.prototype.listPowerup = function(id, callback) { 
+    this.get(this.baseURL + "/powerups/" + id, function(status, json){
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting powerup. Code: " + status); 
+        callback([]);
+    });
+}
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
 module.exports = exports = CellularAutomata;
 
 
@@ -107,7 +176,7 @@ function rand(upper){
   return Math.floor(Math.random() * upper);
 }
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = DebugMap;
@@ -149,7 +218,7 @@ DebugMap.prototype.fillMap = function(){
   }
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 const Vector = require('./../vector');
@@ -480,7 +549,7 @@ function pickAdjacent(room) {
   return {x: x, y: y};
 }
 
-},{"./../vector":26}],4:[function(require,module,exports){
+},{"./../vector":27}],5:[function(require,module,exports){
 "use strict";
 
 const sheetColumns = 10;
@@ -672,7 +741,7 @@ Animator.prototype.changeDirection = function(direction)
   }
 }
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 window.debug = false;
@@ -685,18 +754,20 @@ const EntitySpawner = require('./entity_spawner');
 const Tilemap = require('./tilemap');
 const tileset = require('../tilemaps/tiledef.json');
 const Player = require('./player');
-const Pathfinder = require('./pathfinder.js');
+const Pathfinder = require('./pathfinder');
 const CombatController = require("./combat_controller");
 const Vector = require('./vector');
 const Click = require('./click');
 const Stairs = require('./stairs');
 const ProgressManager = require('./progress_manager');
 const GUI = require('./gui');
-const Terminal = require('./terminal.js');
+const Terminal = require('./terminal');
 const SFX = require("./sfx");
 const Enemy = require("./enemy");
+const HttpClient = require("./HttpClient");
 
 /* Global variables */
+window.client = new HttpClient();
 // Terminal MUST be defined first so that anyone can add commands at any point
 window.terminal = new Terminal();
 window.terminal.log("Welcome to Roguelike");
@@ -726,12 +797,6 @@ var stairs;
 window.combatController = new CombatController();
 
 var gui = new GUI(screenSize);
-
-window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
-    onload: function () {
-        masterLoop(performance.now());
-    }
-});
 
 var pathfinder = new Pathfinder();
 window.pathfinder = pathfinder;
@@ -1117,8 +1182,19 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
+window.client.listPowerups(function(powerups){
+    window.data = {};
+    window.data.powerups = powerups;
 
-},{"../tilemaps/tiledef.json":28,"./click":7,"./combat_controller":9,"./enemy":10,"./entity_manager":11,"./entity_spawner":12,"./game":13,"./gui":14,"./pathfinder.js":17,"./player":18,"./progress_manager":20,"./sfx":22,"./stairs":23,"./terminal.js":24,"./tilemap":25,"./vector":26}],6:[function(require,module,exports){
+    window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
+        onload: function () {
+            masterLoop(performance.now());
+        }
+    });
+});
+
+
+},{"../tilemaps/tiledef.json":29,"./HttpClient":1,"./click":8,"./combat_controller":10,"./enemy":11,"./entity_manager":12,"./entity_spawner":13,"./game":14,"./gui":15,"./pathfinder":18,"./player":19,"./progress_manager":21,"./sfx":23,"./stairs":24,"./terminal":25,"./tilemap":26,"./vector":27}],7:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = Armor;
@@ -1222,7 +1298,7 @@ Armor.prototype.toString = function () {
     return `Level ${this.level} ${this.name} with ${this.defense} defense`;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = Click;
@@ -1272,7 +1348,7 @@ Click.prototype.render = function (elapsedTime, ctx) {
   }
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 const Tilemap = require('./tilemap');
@@ -1552,7 +1628,7 @@ function moveToward(a, b) {
     else return a;
 }
 
-},{"./armor":6,"./rng":21,"./tilemap":25,"./vector":26,"./weapon":27}],9:[function(require,module,exports){
+},{"./armor":7,"./rng":22,"./tilemap":26,"./vector":27,"./weapon":28}],10:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = CombatController;
@@ -1790,7 +1866,7 @@ function getWeapons() {
     ];
 }
 
-},{"./armor":6,"./combat_class":8,"./rng":21,"./weapon":27}],10:[function(require,module,exports){
+},{"./armor":7,"./combat_class":9,"./rng":22,"./weapon":28}],11:[function(require,module,exports){
 "use strict";
 
 const Tilemap = require('./tilemap');
@@ -1906,7 +1982,7 @@ Enemy.prototype.render = function (elapsedTime, ctx) {
 }
 
 
-},{"./animator.js":4,"./combat_class":8,"./tilemap":25}],11:[function(require,module,exports){
+},{"./animator.js":5,"./combat_class":9,"./tilemap":26}],12:[function(require,module,exports){
 "use strict";
 
 /**
@@ -2084,7 +2160,7 @@ function collision(entity1, entity2){
 
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 const Enemy = require('./enemy');
@@ -2149,7 +2225,9 @@ function spawn(aPlayer, count, percents) {
 
 function spawnPowerup(pType) {
   pu++;
-  window.entityManager.addEntity(new Powerup(window.tilemap.findOpenSpace(), pType));
+  
+  var powerup = new Powerup(window.tilemap.findOpenSpace(), window.data.powerups.find(function(x){ return x.id == pType; }));
+  window.entityManager.addEntity(powerup);
 }
 
 function spawnEnemy(eType) {
@@ -2221,7 +2299,8 @@ function spawnCommand(args) {
           window.terminal.log("Invalid spawn location", window.colors.invalid);
           break;
         }
-        window.entityManager.addEntity(new Powerup({ x: args[3], y: args[4] }, parseInt(args[2])));
+        var powerupData = window.data.powerups.find(function(x){ return x.id == parseInt(args[2]); });
+        window.entityManager.addEntity(new Powerup({ x: args[3], y: args[4] }, powerupData));
         var potions = ["crystal", "health", "defense", "agility"];
         window.terminal.log(`Spawned ${potions[parseInt(args[2]) - 1]} potion`, window.colors.cmdResponse);
         break;
@@ -2249,7 +2328,7 @@ function spawnCommand(args) {
   }
 }
 
-},{"./armor":6,"./enemy":10,"./powerup":19,"./rng":21,"./weapon":27}],13:[function(require,module,exports){
+},{"./armor":7,"./enemy":11,"./powerup":20,"./rng":22,"./weapon":28}],14:[function(require,module,exports){
 "use strict";
 
 /**
@@ -2308,7 +2387,7 @@ Game.prototype.loop = function(newTime) {
   this.frontCtx.drawImage(this.backBuffer, 0, 0);
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 /**
@@ -2732,7 +2811,7 @@ GUI.prototype.render = function (elapsedTime, ctx) {
   }
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 /**
@@ -2922,7 +3001,7 @@ function checkInvalidArmor(aClass, aArmorName) { // class just for cleanliness
 }
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 const CellularAutomata = require('./MapGeneration/cellular_automata_generation');
@@ -3022,7 +3101,7 @@ function rand(upper){
   return Math.floor(Math.random() * upper);
 }
 
-},{"./MapGeneration/cellular_automata_generation":1,"./MapGeneration/debug_map_generation":2,"./MapGeneration/rooms_hallways_generation":3}],17:[function(require,module,exports){
+},{"./MapGeneration/cellular_automata_generation":2,"./MapGeneration/debug_map_generation":3,"./MapGeneration/rooms_hallways_generation":4}],18:[function(require,module,exports){
 /**
  * @module A pathfinding module providing
  * a visualizaiton of common tree-search
@@ -3262,7 +3341,7 @@ Pathfinder.prototype.step = function() {
   return undefined;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 const Tilemap = require('./tilemap');
@@ -3572,11 +3651,14 @@ function hasUserInput(input) {
     return input.up || input.down || input.right || input.left;
 }
 
-},{"./animator.js":4,"./armor.js":6,"./combat_class":8,"./entity_spawner":12,"./inventory.js":15,"./powerup.js":19,"./tilemap":25,"./vector":26,"./weapon.js":27}],19:[function(require,module,exports){
+},{"./animator.js":5,"./armor.js":7,"./combat_class":9,"./entity_spawner":13,"./inventory.js":16,"./powerup.js":20,"./tilemap":26,"./vector":27,"./weapon.js":28}],20:[function(require,module,exports){
 "use strict";
 
 const Tilemap = require('./tilemap');
 const RNG = require("./rng");
+
+const SPRITE_SIZE = 75;
+const TILE_SIZE = 96;
 
 /**
  * @module exports the Powerup class
@@ -3588,18 +3670,19 @@ module.exports = exports = Powerup;
  * Creates a new Powerup object
  * @param {postition} position object specifying an x and y
  */
-function Powerup(position, pType) {
-    this.position = { x: position.x, y: position.y };
-    this.size = { width: 96, height: 96 };
+function Powerup(position, data) {
+    this.size = { width: TILE_SIZE, height: TILE_SIZE };
     this.spritesheet = new Image();
     this.spritesheet.src = 'assets/spritesheets/powerup.png';
     this.type = "Powerup";
     this.animation = true;
     this.currY = 0;
     this.movingUp = true;
-    this.currPower = pType;
     this.used = false;
-	this.resolveCollision = false;
+    this.resolveCollision = false;
+    
+    this.position = { x: position.x, y: position.y };
+    this.data = JSON.parse(JSON.stringify(data)); 
 }
 
 /**
@@ -3620,36 +3703,27 @@ Powerup.prototype.processTurn = function(input) {
 Powerup.prototype.collided = function(entity) {
     if (this.used) return;
     if (entity.type == "Player") {
-        //Update player's health/strength/item
-        switch (this.currPower) {
+        window.sfx.play(this.data.name + "Pickup");
+        window.terminal.log(this.data.flavor_text, window.colors.pickup);
+
+        this.used = true;
+        switch (this.data.id) {
             case 1:
-                window.sfx.play("damagePickup");
                 entity.combat.damageBonus += 0.2;
-                window.terminal.log("The crystal radiates a bright blue and you feel its energy course through you.", window.colors.pickup);
                 if (window.debug) console.log(entity.combat.damageBonus);
-                this.used = true;
                 break;
             case 2:
-                window.sfx.play("healthPickup");
                 var potionValue = window.combatController.healthPotion(entity.level);
                 entity.combat.health += potionValue;
-                window.terminal.log("You quaff the large crimson potion and feel rejuvenated.", window.colors.pickup);
                 if (window.debug) console.log("+" + potionValue + " health = " + entity.combat.health);
-                this.used = true;
                 break;
             case 3:
-                window.sfx.play("defensePickup");
                 entity.combat.defenseBonus += 0.2;
-                window.terminal.log("As you finish the potion a faint ward forms around you.", window.colors.pickup);
                 if (window.debug) console.log(entity.combat.defenseBonus);
-                this.used = true;
                 break;
             case 4:
-                window.sfx.play("attackPickup");
                 entity.combat.attackBonus += 0.2;
-                window.terminal.log("The very smell of the verdant green potion awakens you and you feel more agile.", window.colors.pickup);
                 if (window.debug) console.log(entity.combat.attackBonus);
-                this.used = true;
                 break;
         }
     }
@@ -3669,23 +3743,10 @@ Powerup.prototype.retain = function() {
  */
 Powerup.prototype.render = function(elapsedTime, ctx) {
     var position = window.tilemap.toScreenCoords(this.position);
-    switch (this.currPower) {
-        case 1:
-            ctx.drawImage(this.spritesheet, 0, 150, 75, 75, (position.x * this.size.width), (position.y * this.size.height) + this.currY, 96, 96);
-            break;
-        case 2:
-            ctx.drawImage(this.spritesheet, 75, 150, 75, 75, (position.x * this.size.width), (position.y * this.size.height) + this.currY, 96, 96);
-            break;
-        case 3:
-            ctx.drawImage(this.spritesheet, 150, 150, 75, 75, (position.x * this.size.width), (position.y * this.size.height) + this.currY, 96, 96);
-            break;
-        case 4:
-            ctx.drawImage(this.spritesheet, 225, 150, 75, 75, (position.x * this.size.width), (position.y * this.size.height) + this.currY, 96, 96);
-            break;
-    }
+    ctx.drawImage(this.spritesheet, (this.data.id - 1) * 75, 150, SPRITE_SIZE, SPRITE_SIZE, (position.x * this.size.width), (position.y * this.size.height) + this.currY, TILE_SIZE, TILE_SIZE);
 }
 
-},{"./rng":21,"./tilemap":25}],20:[function(require,module,exports){
+},{"./rng":22,"./tilemap":26}],21:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = ProgressManager;
@@ -3719,7 +3780,7 @@ ProgressManager.prototype.reset = function(){
   this.percent = 0;
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = {
@@ -3787,7 +3848,7 @@ function oneIn(x) {
 }
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict;"
 
 module.exports = exports = SFX;
@@ -3917,7 +3978,7 @@ SFX.prototype.returnVolume = function() {
   return volume;
 }
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3991,7 +4052,7 @@ Stairs.prototype.render = function (elapsedTime, ctx) {
   ctx.drawImage(this.spritesheet, 75 + this.spriteOff, 0, 75, 75, (position.x * this.size.width), (position.y * this.size.height), 96, 96);
 }
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 window.colors = {
@@ -4169,7 +4230,7 @@ function splitMessage(message, messages, color) {
     }
 }
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 const MapGenerator = require('./map_generator');
@@ -4397,7 +4458,7 @@ Tilemap.prototype.getRandomAdjacentArray = function (aTile) {
   return adjacents;
 }
 
-},{"./map_generator":16,"./vector":26}],26:[function(require,module,exports){
+},{"./map_generator":17,"./vector":27}],27:[function(require,module,exports){
 "use strict";
 
 /**
@@ -4505,7 +4566,7 @@ function equals(a, b){
   return a.x == b.x && a.y == b.y;
 }
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 module.exports = exports = Weapon;
@@ -4770,7 +4831,7 @@ Weapon.prototype.toString = function () {
     return `Level ${this.level} ${this.name} with damage range ${this.damageMin + parseInt(this.level)}-${this.damageMax + parseInt(this.level)}, with ${this.properties}`
 }
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports={
  "tileheight":96,
  "tilewidth":96,
@@ -5039,4 +5100,4 @@ module.exports={
 	}
 }
 
-},{}]},{},[5]);
+},{}]},{},[6]);

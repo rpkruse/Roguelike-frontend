@@ -62,7 +62,9 @@ function spawn(aPlayer, count, percents) {
 
 function spawnPowerup(pType) {
   pu++;
-  window.entityManager.addEntity(new Powerup(window.tilemap.findOpenSpace(), pType));
+  
+  var powerup = new Powerup(window.tilemap.findOpenSpace(), window.data.powerups.find(function(x){ return x.id == pType; }));
+  window.entityManager.addEntity(powerup);
 }
 
 function spawnEnemy(eType) {
@@ -134,7 +136,8 @@ function spawnCommand(args) {
           window.terminal.log("Invalid spawn location", window.colors.invalid);
           break;
         }
-        window.entityManager.addEntity(new Powerup({ x: args[3], y: args[4] }, parseInt(args[2])));
+        var powerupData = window.data.powerups.find(function(x){ return x.id == parseInt(args[2]); });
+        window.entityManager.addEntity(new Powerup({ x: args[3], y: args[4] }, powerupData));
         var potions = ["crystal", "health", "defense", "agility"];
         window.terminal.log(`Spawned ${potions[parseInt(args[2]) - 1]} potion`, window.colors.cmdResponse);
         break;

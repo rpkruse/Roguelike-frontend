@@ -10,18 +10,20 @@ const EntitySpawner = require('./entity_spawner');
 const Tilemap = require('./tilemap');
 const tileset = require('../tilemaps/tiledef.json');
 const Player = require('./player');
-const Pathfinder = require('./pathfinder.js');
+const Pathfinder = require('./pathfinder');
 const CombatController = require("./combat_controller");
 const Vector = require('./vector');
 const Click = require('./click');
 const Stairs = require('./stairs');
 const ProgressManager = require('./progress_manager');
 const GUI = require('./gui');
-const Terminal = require('./terminal.js');
+const Terminal = require('./terminal');
 const SFX = require("./sfx");
 const Enemy = require("./enemy");
+const HttpClient = require("./HttpClient");
 
 /* Global variables */
+window.client = new HttpClient();
 // Terminal MUST be defined first so that anyone can add commands at any point
 window.terminal = new Terminal();
 window.terminal.log("Welcome to Roguelike");
@@ -51,12 +53,6 @@ var stairs;
 window.combatController = new CombatController();
 
 var gui = new GUI(screenSize);
-
-window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
-    onload: function () {
-        masterLoop(performance.now());
-    }
-});
 
 var pathfinder = new Pathfinder();
 window.pathfinder = pathfinder;
@@ -441,4 +437,15 @@ function unfadeFromBlack() {
     fadeAnimationProgress = new ProgressManager(1000, function () { });
     fadeAnimationProgress.isActive = true;
 }
+
+window.client.listPowerups(function(powerups){
+    window.data = {};
+    window.data.powerups = powerups;
+
+    window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
+        onload: function () {
+            masterLoop(performance.now());
+        }
+    });
+});
 
