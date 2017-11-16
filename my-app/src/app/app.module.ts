@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { StorageService } from './shared/session-storage.service';
 import { SortingCharacterPipe } from './shared/SortingCharacterPipe'
 import { SessionGuard } from './shared/session-guard.service'
+import { UserResolver } from './shared/user-resolver.service';
 import { ApiService } from './shared/api.service';
 import { UserService } from './user/user.service';
 
@@ -43,6 +44,7 @@ import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
     ApiService,
     UserService,
     SessionGuard,
+    UserResolver,
     { provide: HTTP_INTERCEPTORS, useClass: NgProgressInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

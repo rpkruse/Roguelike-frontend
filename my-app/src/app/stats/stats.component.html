@@ -1,7 +1,7 @@
 <div class="container-fluid">
-  <div class="row">
-      <div class="page-header">
-        <h1><small>{{this._userService.getUserName()}}</small></h1>
+    <div class="row">
+      <div class="page-header" *ngIf="this.user">
+        <h1><small>{{this.user.display_name}}</small></h1>
       </div>
     </div>
 
@@ -28,33 +28,58 @@
         </div>
       </div>
     </div>
-    
+
     <!--Character detail panel -->
     <div class="row col-md-4">
-        <div class="panel panel-default" *ngIf="this.selectedCharacter">
-          <div class="panel-heading">
-            <h4 class="panel-title">{{this.selectedCharacter.character.name}}</h4>
-
-            <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
-              <span class="input-group-btn">
-                <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">
-                  Delete Character
-                </button>
-              </span>
-            
-              <input type="text" class="form-control" placeholder="Enter Character Name To Delete"  [value]="deleteCharacterString" (input)="deleteCharacterString = $event.target.value" >
-            </div>
-          </div>
-          <div class="panel-body list-group">
-            <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.character.atk_bonus}}</li>
-            <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.character.dmg_bonus}}</li>
-            <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.character.def_bonus}}</li>
-            <li class="list-group-item">Health: {{this.selectedCharacter.character.health}}</li>
-            <li class="list-group-item">Weapon: {{this.selectedCharacter.character.weapon}}</li>
-            <li class="list-group-item">Armor: {{this.selectedCharacter.character.armor}}</li>
-            <li class="list-group-item">Level: {{this.selectedCharacter.level_id}}</li>
-            <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By:  {{getKilledByClass(this.selectedCharacter.character.killed_by).name}}</li>
+      <div class="panel panel-default" *ngIf="this.selectedCharacter">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{this.selectedCharacter.character.name}}</h4>
+          <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
+            </span>
+            <input type="text" class="form-control" placeholder="Enter Character Name To Delete"  [value]="deleteCharacterString" (input)="deleteCharacterString = $event.target.value" >
           </div>
         </div>
+        <div class="panel-body list-group">
+          <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.character.atk_bonus}}</li>
+          <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.character.dmg_bonus}}</li>
+          <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.character.def_bonus}}</li>
+          <li class="list-group-item">Health: {{this.selectedCharacter.character.health}}</li>
+          <li class="list-group-item" >Weapon: {{getWeapon(this.selectedCharacter.character.weapon).name}}</li>
+          <li class="list-group-item">Armor: {{getArmor(this.selectedCharacter.character.armor).name}}</li>          
+            <li class="list-group-item">Level: {{this.selectedCharacter.level_id}}</li>
+          <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.character.killed_by).name}}</li>
+        </div>
       </div>
+    </div>
+
+    <!--Weapon detail panel -->
+    <div class="row col-md-4" *ngIf="this.selectedWeapon">
+      <div class="panel panel-default detail-panel">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{this.selectedWeapon.name}}</h4>
+        </div>
+        <div class="panel-body list-group">
+          <li class="list-group-item">Damage Type: {{this.selectedWeapon.damage_type}}</li>
+          <li class="list-group-item">Damage Range: {{this.selectedWeapon.min_damage}} - {{this.selectedWeapon.max_damage}}</li>
+          <li class="list-group-item">Hit Bonus: {{this.selectedWeapon.hit_bonus}}</li>
+        </div>
+      </div>
+    </div>
+
+    <!--Weapon detail panel -->
+    <div class="row col-md-4" *ngIf="this.selectedArmor">
+      <div class="panel panel-default detail-panel">
+        <div class="panel-heading">
+          <h4 class="panel-title">{{this.selectedArmor.name}}</h4>
+        </div>
+        <div class="panel-body list-group">
+          <li class="list-group-item">Defense Value: {{this.selectedArmor.defense_value}}</li>
+          <li class="list-group-item">Strong Type: {{this.selectedArmor.strong_type}}</li>
+          <li class="list-group-item">Weak Type: {{this.selectedArmor.weak_type}}</li>
+        </div>
+      </div>
+    </div>
+    
   </div>

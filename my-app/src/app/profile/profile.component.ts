@@ -4,6 +4,7 @@
 */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import {ActivatedRoute, Router} from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -32,11 +33,15 @@ export class ProfileComponent implements OnInit, OnDestroy{
   private character_history: ICharacter_History[] = [];
   private characters: ICharacter[] = [];
 
+  private initUser: IUser;  
   private user: IUser;
+
   private selectedCharacter: ICharacter;
 
   private friendToAdd: string = "";
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
+
+  private password: string = "";
+  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
 
   ngOnInit(){
     //All below this will be removed with backend
@@ -47,15 +52,19 @@ export class ProfileComponent implements OnInit, OnDestroy{
       //results[0] --> ICharacter_History[]
       //results[1] --> ICharacter[]
 
-      let filterByUserID = results[0].filter(x => x.user_id === this._userService.getID());
+      let filterByUserID = results[0].filter(x => x.user_id === this.user.id);
 
       for(let i=0; i<filterByUserID.length; i++){
         filterByUserID[i].character = results[1].find(x => x.id === filterByUserID[i].character_id);
       }
 
       this.character_history = filterByUserID;
+    });
 
-      this.user = this._userService.getUser();
+    let usr: IUser;
+    this.route.data.subscribe((data: { user: IUser }) => {
+      this.user = data.user;
+      this.initUser = data.user;
     });
   }
 
@@ -73,15 +82,16 @@ export class ProfileComponent implements OnInit, OnDestroy{
     console.log("removing...")
   }
 
+  private addFriend(){
+    console.log(this.friendToAdd);
+  }
+
   /*
     When the page is destoryed, we will update the user's name/email if we have changed it
     this will be implemented when we have a working backend with POST
   */
   ngOnDestroy(){
-    let oldUsr: IUser = this._userService.getUser();
-
-    //NEED TO ADD GUARD TO MAKE SURE PASSWORD ISN'T EMPTY
-    if(oldUsr.email !== this.user.email || oldUsr.display_name !== this.user.display_name || oldUsr.password !== this.user.password){
+    if(this.initUser.email !== this.user.email || this.initUser.display_name !== this.user.display_name || this.password){
       console.log("Need to update user");
     }
   }

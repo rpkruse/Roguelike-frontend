@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="page-header">
-            <h1><small>{{this._userService.getUserName()}}</small></h1>
+        <div class="page-header" *ngIf="this.user">
+            <h1><small>{{this.user.display_name}}</small></h1>
         </div>
     </div>
     <div class="row col-md-6">
@@ -50,7 +50,7 @@
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-success" (click)="deleteCharacterClicked()">
+                    <button type="button" class="btn btn-success" (click)="addFriend()">
                         Add Friend
                     </button>
                 </span>
@@ -74,8 +74,8 @@
                     <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon">Password</span>
-                    <input type="password" class="form-control" placeholder="Password" [value]="this.user.password" (input)="this.user.password = $event.target.value" aria-describedby="basic">
+                    <span class="input-group-addon">Change Password</span>
+                    <input type="password" class="form-control" placeholder="Password" [value]="this.password" (input)="this.password = $event.target.value" aria-describedby="basic">
                 </div>
             </div>
         </div>

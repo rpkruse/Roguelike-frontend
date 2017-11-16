@@ -5,12 +5,16 @@
 */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import {ActivatedRoute, Router} from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
+import { IWeapon } from '../interfaces/weapon';
+import { IArmor } from '../interfaces/armor';
+
 import { IUser } from '../user/user';
 
 import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
@@ -33,16 +37,26 @@ export class StatsComponent implements OnInit{
   private characters: ICharacter[] = [];
 
   private user: IUser;
-  private selectedCharacter: ICharacter_History;
 
+  private selectedCharacter: ICharacter_History;
+  private selectedWeapon: IWeapon;
+  private selectedArmor: IArmor;
+
+  private weapons: IWeapon[] = [];
+  private armor: IArmor[] = [];
   private characterClasses: ICharacter_Class[] = [];
 
   private deleteClicked: boolean = false;
   private deleteCharacterString: string = "";
 
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService){}
+  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
 
   ngOnInit(){
+    //Get the user on ever page load
+    this.route.data.subscribe((data: { user: IUser }) => {
+      this.user = data.user;
+    });
+
     //All below this will be removed with backend
     let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
     let char = this._apiService.getAllEntities<ICharacter>('character.json');
@@ -53,16 +67,27 @@ export class StatsComponent implements OnInit{
       //results[1] --> ICharacter[]
       //results[2] --> ICharacterClass[]
 
-      let filterByUserID = results[0].filter(x => x.user_id === this._userService.getID());
+      let filterByUserID = results[0].filter(x => x.user_id === this.user.id);
 
       for(let i=0; i<filterByUserID.length; i++){
         filterByUserID[i].character = results[1].find(x => x.id === filterByUserID[i].character_id);
       }
 
       this.character_history = filterByUserID;
-      this.user = this._userService.getUser();
       this.characterClasses = results[2];
     });
+
+    let s: Subscription = this._apiService.getAllEntities2<IWeapon>("weapons").subscribe(
+      d => this.weapons = d,
+      err => console.log("unable to load weapons"),
+      () => s.unsubscribe()
+    );
+
+    let j: Subscription = this._apiService.getAllEntities2<IArmor>("armors").subscribe(
+      d => this.armor = d,
+      err => console.log("unable to load weapons"),
+      () => j.unsubscribe()
+    );
   }
 
   ngAfterViewInit(){
@@ -116,9 +141,23 @@ export class StatsComponent implements OnInit{
     return null;
   }
 
+  //Note: may reduce the code below down to one function depending on what we want to view
+  //TODO: reduce code down
+  private getWeapon(id: number): IWeapon{
+    //return this._apiService.getSingleEntity<IWeapon>("weapons", id);
+    return this.weapons[id-1];
+  }
+
+  private getArmor(id: number): IArmor{
+    //return this._apiService.getSingleEntity<IWeapon>("weapons", id);
+    return this.armor[id-1];
+  }
+  
   //When we click a character assign our value to it
   private characterClicked(ch: ICharacter_History){
     this.selectedCharacter = ch;
+    this.selectedWeapon = this.getWeapon(this.selectedCharacter.character.weapon);
+    this.selectedArmor = this.getArmor(this.selectedCharacter.character.armor);
   }
 
   /*

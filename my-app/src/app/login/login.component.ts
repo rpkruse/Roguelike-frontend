@@ -16,6 +16,7 @@ import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
 import { ILogin } from '../interfaces/login';
+import { IToken} from '../interfaces/token';
 import { IUser } from '../user/user';
 
 declare var window: any;
@@ -26,10 +27,6 @@ declare var window: any;
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit{
-
-  //NOTE THIS WILL NOT BE LIKE THIS WHEN WE HAVE A BACKEND
-  private users: IUser[];
-  private user: IUser;
 
   private username: string = "test@test.com"; //Use test@test.com
   private password: string = "password"; //temp so we don't have to type it each time
@@ -43,44 +40,13 @@ export class LoginComponent implements OnInit{
 
     if(usrName)
       this.username = usrName;
-
-    let s: Subscription;
-    s = this._apiService.getAllEntities<IUser>('user.json').subscribe(
-      users => this.users = users,
-      err => console.log("Could not load users"),
-      () => s.unsubscribe()
-    );
   }
   
   ngAfterViewInit(){
      window.componentHandler.upgradeAllRegistered();
   }
-
-  //If we login validate the usrname/pass and update our storage
-  private loginClicked(): void{
-    let u: IUser;
-    for(let i=0; i < this.users.length; i++){
-      u = this.users[i];
-
-      if(u.email === this.username && u.password === this.password){
-        this.user = u;
-
-        this._storage.setValue('user', this.user);
-        this._storage.setValue('loggedIn', true);
-
-        if(this.rememberMe)
-          this._storage.saveToLocal('savedUsername', this.username);
-        else
-          this._storage.removeFromLocal('savedUsername');
-
-        this._userService.logIn();
-        this._router.navigate(['./home']);
-        break;
-      }
-    }
-  }
   
-  private apiLoginClicked(){
+  private loginClicked(){
     let s: Subscription;
 
     let loginCred: ILogin = {
@@ -92,28 +58,35 @@ export class LoginComponent implements OnInit{
     let cred: string = JSON.stringify(loginCred);
 
     //TEST LOGIN:
-    let token: any;
+    let token: IToken;
     s = this._apiService.getLoginToken(cred).subscribe(
-      d => token = JSON.stringify(d),
+      d => token = d,
       err => console.log("CANT LOGIN", err),
       () => {
-        console.log("LOGGED IN", token)
-        alert('Valid usr/pass, now going to validate the user');
-        this.validateLogin(token);
+        this._storage.setValue("token", token["token"]);
+        this.validateLogin();
         s.unsubscribe();
       }
     );
   }
 
-  private validateLogin(token: any){
-    let valid: any;
-    let s: Subscription = this._apiService.getLoginToken(token).subscribe(
-      d => valid = JSON.stringify(d),
+  private validateLogin(){
+    let user: IUser;
+    let s: Subscription = this._apiService.validateToken().subscribe(
+      d => user = d,
       err => console.log("CANT LOGIN", err),
       () => {
-        console.log("LOGGED IN", valid)
-        alert('valid token')
+        this._storage.setValue('loggedIn', true);
+        
+        if(this.rememberMe)
+          this._storage.saveToLocal('savedUsername', this.username);
+        else
+          this._storage.removeFromLocal('savedUsername');
+        
         s.unsubscribe();
+
+        this._userService.logIn(user);
+        this._router.navigate(['./home']);
       }
     );
   }
