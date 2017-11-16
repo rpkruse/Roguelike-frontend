@@ -152,7 +152,7 @@ export class StatsComponent implements OnInit{
     //return this._apiService.getSingleEntity<IWeapon>("weapons", id);
     return this.armor[id-1];
   }
-  
+
   //When we click a character assign our value to it
   private characterClicked(ch: ICharacter_History){
     this.selectedCharacter = ch;
@@ -172,7 +172,4 @@ export class StatsComponent implements OnInit{
       this.deleteCharacterString = "";
     }
   }
-
-
-
 }

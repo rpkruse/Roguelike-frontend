@@ -33,7 +33,7 @@
     <div class="row col-md-4">
       <div class="panel panel-default" *ngIf="this.selectedCharacter">
         <div class="panel-heading">
-          <h4 class="panel-title">{{this.selectedCharacter.character.name}}</h4>
+          <h4 class="panel-title">{{this.selectedCharacter.character.name}}: level __ __</h4>
           <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
             <span class="input-group-btn">
             <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
@@ -58,7 +58,7 @@
     <div class="row col-md-4" *ngIf="this.selectedWeapon">
       <div class="panel panel-default detail-panel">
         <div class="panel-heading">
-          <h4 class="panel-title">{{this.selectedWeapon.name}}</h4>
+          <h4 class="panel-title">Weapon: {{this.selectedWeapon.name}}</h4>
         </div>
         <div class="panel-body list-group">
           <li class="list-group-item">Damage Type: {{this.selectedWeapon.damage_type}}</li>
@@ -68,11 +68,11 @@
       </div>
     </div>
 
-    <!--Weapon detail panel -->
+    <!--Armor detail panel -->
     <div class="row col-md-4" *ngIf="this.selectedArmor">
       <div class="panel panel-default detail-panel">
         <div class="panel-heading">
-          <h4 class="panel-title">{{this.selectedArmor.name}}</h4>
+          <h4 class="panel-title">Armor: {{this.selectedArmor.name}}</h4>
         </div>
         <div class="panel-body list-group">
           <li class="list-group-item">Defense Value: {{this.selectedArmor.defense_value}}</li>

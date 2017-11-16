@@ -1,3 +1,8 @@
+/*
+    This service is called when we go to a new page, it makes sure we always have the newest update of 
+    the user entity.
+    Within each component that uses this, we can get the user info from the API
+*/
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Rx';

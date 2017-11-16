@@ -50,6 +50,7 @@ export class ApiService {
         return this._http.get(this._api2 + path) as Observable<T[]>;
     }
 
+    //This will be our main method called once the backend is complete
     getAllEntities2<T>(path: string): Observable<T[]>{
         let headers: HttpHeaders = new HttpHeaders(
             {"Authorization": "Bearer " + this._storage.getValue("token")}
