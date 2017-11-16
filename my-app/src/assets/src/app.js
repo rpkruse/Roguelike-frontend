@@ -319,6 +319,8 @@ function processTurn() {
 }
 
 function nextLevel(fadeOut) {
+    if (player.level > 0)
+        player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
     //var isBossLevel = (player.level % 5 == 0);
     var init = function () {

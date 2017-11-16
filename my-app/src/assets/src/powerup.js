@@ -46,7 +46,7 @@ Powerup.prototype.processTurn = function(input) {
 
 }
 
-Powerup.prototype.collided = function(entity) {
+Powerup.prototype.collided = function (entity) {
     if (this.used) return;
     if (entity.type == "Player") {
         window.sfx.play(this.data.name + "Pickup");
@@ -72,11 +72,12 @@ Powerup.prototype.collided = function(entity) {
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
+        player.score++;
     }
-	else if(this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
-		this.resolveCollision = false;
-		this.position = window.tilemap.getRandomAdjacent(this.position);
-	}
+    else if (this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
+        this.resolveCollision = false;
+        this.position = window.tilemap.getRandomAdjacent(this.position);
+    }
 }
 
 Powerup.prototype.retain = function() {
