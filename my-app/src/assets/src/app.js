@@ -320,7 +320,7 @@ function processTurn() {
 
 function nextLevel(fadeOut) {
     player.level++;
-    var isBossLevel = (player.level % 5 == 0);
+    //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
         window.terminal.clear();
@@ -328,17 +328,18 @@ function nextLevel(fadeOut) {
         var padSpace = Math.floor((80 - msg.length) / 2);
         window.terminal.log(Array(padSpace).join(' ') + msg);
 
-        if (isBossLevel) {
+        /*if (isBossLevel) {
             window.terminal.log("You sense an erie presence...");
             window.terminal.log("The demon dragon appears to consume your soul");
-        }
+        }*/
 		
 		if(player.level == 1) window.terminal.instructions();
 
         // reset entities
         window.entityManager.reset();
 
-        (isBossLevel) ? bossLevel() : standardLevel();
+        //(isBossLevel) ? bossLevel() : standardLevel();
+        standardLevel();
 
         unfadeFromBlack();
 
