@@ -118,7 +118,7 @@ Player.prototype.walkPath = function (path, completion) {
 Player.prototype.changeClass = function (chosenClass) {
     this.level = 0;
     this.class = chosenClass;
-    this.combat = new CombatClass(chosenClass);
+    this.combat = new CombatClass(chosenClass, 1);
     this.inventory = new Inventory(this.combat.weapon, this.combat.armor);
     this.state = "idle";
 

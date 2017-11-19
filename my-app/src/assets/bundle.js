@@ -73,11 +73,32 @@ HttpClient.prototype.listArmors = function(callback) {
             callback(json);
             return;
         }
-        this.log("Error getting armor. Code: " + status);
+        this.log("Error getting armors. Code: " + status);
         callback([]);
     });
 }
 
+HttpClient.prototype.listClasses = function(callback) {
+    this.get(this.baseURL + "/classes", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting classes. Code: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.listWeapons = function(callback) {
+    this.get(this.baseURL + "/weapons", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting weapons. Code: " + status);
+        callback([]);
+    });
+}
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -1196,22 +1217,53 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
-window.client.listPowerups(function(powerups){
-    window.data = {};
-    window.data.powerups = powerups;
-console.log("tse");    
-    window.client.listArmors(function(armors) {
-        window.data.armors = armors;
-
-        window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
-            onload: function () {
-                masterLoop(performance.now());
-            }
-        });
+function loadTilemap() {
+    window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
+        onload: function () {
+            masterLoop(performance.now());
+        }
     });
-});
+}
 
+function loadGameData() {
+    var barrier = {
+        count: 0,
+        start: function() { this.count++; },
+        stop: function() {
+            this.count--;
+            if(this.count == 0) this.complete();
+        },
+        complete: function() { loadTilemap(); }
+    }
 
+    window.data = {};
+
+    barrier.start();
+    client.listPowerups(function(powerups){
+        window.data.powerups = powerups;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listArmors(function(armors) {
+        window.data.armors = armors;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listClasses(function(classes) {
+        window.data.classes = classes;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listWeapons(function(weapons) {
+        window.data.weapons = weapons;
+        barrier.stop();
+    });
+}
+
+loadGameData();
 },{"../tilemaps/tiledef.json":29,"./HttpClient":1,"./click":8,"./combat_controller":10,"./enemy":11,"./entity_manager":12,"./entity_spawner":13,"./game":14,"./gui":15,"./pathfinder":18,"./player":19,"./progress_manager":21,"./sfx":23,"./stairs":24,"./terminal":25,"./tilemap":26,"./vector":27}],7:[function(require,module,exports){
 "use strict";
 
@@ -1342,46 +1394,20 @@ function CombatClass(aName, aLevel) {
     this.difficulty = window.combatController.getDifficulty(aLevel);
     // set up random ish weapons/armor for enemies
 
+    var classData = window.data.classes.find(function(x){ return x.name == aName});
+    var weaponName = window.data.weapons.find(function(x){ return x.id == classData.starting_weapon}).name;
+    var armorName = window.data.armors.find(function(x){ return x.id == classData.starting_armor }).name;
+
+    this.health = classData.starting_health;
+    this.attackBonus = classData.starting_attack_bonus;
+    this.damageBonus = classData.starting_damage_bonus;
+    this.defenseBonus = classData.starting_defense_bonus;
+    this.weapon = new Weapon(weaponName, aLevel);
+    this.armor = new Armor(armorName, aLevel);
+    this.status = { effect: "None", timer: 0 };
+
     switch (aName) {
-        case "Knight":
-            this.health = 25;
-            this.attackBonus = 0;
-            this.damageBonus = 1;
-            this.defenseBonus = 2;
-            this.weapon = new Weapon("Longsword", 1);
-            this.armor = new Armor("Hide Armor", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-        case "Archer":
-            this.health = 10;
-            this.attackBonus = 2;
-            this.damageBonus = 0;
-            this.defenseBonus = 1;
-            this.weapon = new Weapon("Broadhead", 1);
-            this.armor = new Armor("Hide Armor", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-        case "Mage":
-            this.health = 10;
-            this.attackBonus = -1;
-            this.damageBonus = 2;
-            this.defenseBonus = 1;
-            this.weapon = new Weapon("Eldritch Blast", 1);
-            this.armor = new Armor("Robes", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-
         case "Zombie":
-            this.health = Math.max(10, 10 * this.difficulty);
-            this.attackBonus = this.difficulty;
-            this.damageBonus = this.difficulty;
-            this.defenseBonus = this.difficulty;
-            this.weapon = new Weapon("Claw", aLevel);
-            this.armor = new Armor("Flesh", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 5;
 
             this.turnAI = function (aEnemy) {
@@ -1399,13 +1425,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Skeleton":
-            this.health = Math.max(8, 8 * this.difficulty);
-            this.attackBonus = this.difficulty - 1;
-            this.damageBonus = this.difficulty - 2;
-            this.defenseBonus = this.difficulty - 1;
-            this.weapon = new Weapon("Ancient Nord", aLevel);
-            this.armor = new Armor("Bones", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 10;
             var prefDist = 4;
             var attackCooldown = 2;
@@ -1449,13 +1468,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Minotaur":
-            this.health = Math.max(25, 25 * this.difficulty - 1);
-            this.attackBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.damageBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.defenseBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.weapon = new Weapon("Battleaxe", aLevel);
-            this.armor = new Armor("Chainmail", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 15;
 
             this.turnAI = function (aEnemy) {
@@ -1473,13 +1485,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Shaman":
-            this.health = Math.max(15, 15 * this.difficulty - 1);
-            this.attackBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.damageBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.defenseBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.weapon = new Weapon("Eldritch Blast", aLevel);
-            this.armor = new Armor("Robes", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 10;
             var prefDist = 5;
             var attackCooldown = 2;
@@ -1523,13 +1528,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Fucking Dragon":
-            this.health = 30 + 2 * aLevel;
-            this.attackBonus = 3;
-            this.damageBonus = 5;
-            this.defenseBonus = 3;
-            this.weapon = new Weapon("Dragon's Breath", aLevel);
-            this.armor = new Armor("Dragonscale", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 20;
             var prefDist = 3;
             var attackCooldown = 3;
@@ -1573,6 +1571,7 @@ function CombatClass(aName, aLevel) {
 
             break;
     }
+
 }
 
 function moveBack(a, b, array) {
@@ -3460,7 +3459,7 @@ Player.prototype.walkPath = function (path, completion) {
 Player.prototype.changeClass = function (chosenClass) {
     this.level = 0;
     this.class = chosenClass;
-    this.combat = new CombatClass(chosenClass);
+    this.combat = new CombatClass(chosenClass, 1);
     this.inventory = new Inventory(this.combat.weapon, this.combat.armor);
     this.state = "idle";
 
@@ -4588,205 +4587,18 @@ function Weapon(aName, aLevel) {
         { x: 675, y: 75 }  // 5 - Another Magic Staff
     ];
 
-    switch (aName) {
-        // Melee
-        case "Longsword":
-            this.attackType = "Melee";
-            this.damageMax = 10
-            this.damageMin = 2;
-            this.damageType = "s";
-            this.range = 1;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "+1 Min Damage";
-            this.propertiesShort = "";
-            this.spriteIdx = 3;
-            break;
-
-        case "Morning Star":
-            this.attackType = "Melee";
-            this.damageMax = 8
-            this.damageMin = 1;
-            this.damageType = "b";
-            this.range = 1;
-            this.hitBonus = 2;
-            this.attackEffect = "Stunned";
-            this.properties = "+2 Accuracy, 50% Stun Chance";
-            this.propertiesShort = "50% Stun";
-            this.spriteIdx = 2;
-            break;
-
-        case "Halberd":
-            this.attackType = "Melee";
-            this.damageMax = 8
-            this.damageMin = 1;
-            this.damageType = "sp";
-            this.range = 2;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "+1 Range";
-            this.propertiesShort = "+1 Range";
-            this.spriteIdx = 4;
-            break;
-
-        case "Battleaxe":
-            this.attackType = "Melee";
-            this.damageMax = 12
-            this.damageMin = 1;
-            this.damageType = "sb";
-            this.range = 1;
-            this.hitBonus = 1;
-            this.attackEffect = "";
-            this.properties = "+2 Crit Chance";
-            this.propertiesShort = "+2 Crit";
-            this.spriteIdx = 4;
-            break;
-
-        case "Claw":
-            this.attackType = "Melee";
-            this.damageMax = 4
-            this.damageMin = 2;
-            this.damageType = "s";
-            this.range = 1;
-            this.hitBonus = 1;
-            this.attackEffect = "";
-            this.properties = "+1 Min Damage";
-            this.propertiesShort = "";
-            this.spriteIdx = 3;
-            break;
-
-        // Ranged
-        case "Bodkin": // bypass ac/dbl ab
-            this.attackType = "Ranged";
-            this.damageMax = 4
-            this.damageMin = 1;
-            this.damageType = "p";
-            this.range = 4;
-            this.hitBonus = 3;
-            this.attackEffect = "";
-            this.properties = "+3 Accuracy";
-            this.propertiesShort = "+3 Acc";
-            this.spriteIdx = 1;
-            break;
-
-        case "Broadhead":
-            this.attackType = "Ranged";
-            this.damageMax = 6
-            this.damageMin = 2;
-            this.damageType = "p";
-            this.range = 4;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "+1 Min Damage";
-            this.propertiesShort = "";
-            this.spriteIdx = 1;
-            break;
-
-        case "Poison-Tipped":
-            this.attackType = "Ranged";
-            this.damageMax = 4
-            this.damageMin = 1;
-            this.damageType = "p";
-            this.range = 4;
-            this.hitBonus = 0;
-            this.attackEffect = "Poisoned";
-            this.properties = "50% Poison Chance";
-            this.propertiesShort = "50% Poison";
-            this.spriteIdx = 1;
-            break;
-
-        case "Heavy Bolts":
-            this.attackType = "Ranged";
-            this.damageMax = 10
-            this.damageMin = 4;
-            this.damageType = "b";
-            this.range = 3;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "+3 Min Damage, -1 Range";
-            this.propertiesShort = "-1 Range";
-            this.spriteIdx = 1;
-            break;
-
-        case "Ancient Nord":
-            this.attackType = "Ranged";
-            this.damageMax = 4
-            this.damageMin = 2;
-            this.damageType = "p";
-            this.range = 4;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "+1 Min Damage";
-            this.propertiesShort = "";
-            this.spriteIdx = 1;
-            break;
-
-        // Spells
-        case "Magic Missile":
-            this.attackType = "Magic";
-            this.damageMax = 6
-            this.damageMin = 2;
-            this.damageType = "m";
-            this.range = 6;
-            this.hitBonus = 0;
-            this.attackEffect = "";
-            this.properties = "Unerring Accuracy";
-            this.propertiesShort = "100% Acc";
-            this.spriteIdx = 0;
-            break;
-
-        case "Fireball":
-            this.attackType = "Magic";
-            this.damageMax = 4
-            this.damageMin = 1;
-            this.damageType = "m";
-            this.range = 6;
-            this.hitBonus = 0;
-            this.attackEffect = "Burned";
-            this.properties = "50% Burn Chance";
-            this.propertiesShort = "50% Burn";
-            this.spriteIdx = 5;
-            break;
-
-        case "Frostbolt":
-            this.attackType = "Magic";
-            this.damageMax = 4
-            this.damageMin = 1;
-            this.damageType = "m";
-            this.range = 6;
-            this.hitBonus = 0;
-            this.attackEffect = "Frozen";
-            this.properties = "50% Freeze Chance";
-            this.propertiesShort = "50% Freeze";
-            this.spriteIdx = 5;
-            break;
-
-        case "Eldritch Blast":
-            this.attackType = "Magic";
-            this.damageMax = 10
-            this.damageMin = 2;
-            this.damageType = "m";
-            this.range = 5;
-            this.hitBonus = -2;
-            this.attackEffect = "";
-            this.properties = "-2 Accuracy, +1 Min Damage";
-            this.propertiesShort = "-2 Acc";
-            this.spriteIdx = 0;
-            break;
-
-        case "Dragon's Breath":
-            this.attackType = "Magic";
-            this.damageMax = 25
-            this.damageMin = 5;
-            this.damageType = "m";
-            this.range = 5;
-            this.hitBonus = 0;
-            this.attackEffect = "Burned";
-            this.properties = "It's fire. From a fucking dragon.";
-            this.propertiesShort = "";
-            this.spriteIdx = 0;
-            break;
-    }
+    var data = window.data.weapons.find(function(x) { return x.name == aName });
+    
+    this.attackType = data.attack_type;
+    this.damageMax = data.max_damage;
+    this.damageMin = data.min_damage;
+    this.damageType = data.damage_type;
+    this.range = data.range;
+    this.hitBonus = data.hit_bonus;
+    this.attackEffect = data.attack_effect;
+    this.properties = data.properties;
+    this.propertiesShort = data.properties_short;
+    this.spriteIdx = data.sprite_id;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };

@@ -441,18 +441,50 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
-window.client.listPowerups(function(powerups){
-    window.data = {};
-    window.data.powerups = powerups;
-console.log("tse");    
-    window.client.listArmors(function(armors) {
-        window.data.armors = armors;
-
-        window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
-            onload: function () {
-                masterLoop(performance.now());
-            }
-        });
+function loadTilemap() {
+    window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
+        onload: function () {
+            masterLoop(performance.now());
+        }
     });
-});
+}
 
+function loadGameData() {
+    var barrier = {
+        count: 0,
+        start: function() { this.count++; },
+        stop: function() {
+            this.count--;
+            if(this.count == 0) this.complete();
+        },
+        complete: function() { loadTilemap(); }
+    }
+
+    window.data = {};
+
+    barrier.start();
+    client.listPowerups(function(powerups){
+        window.data.powerups = powerups;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listArmors(function(armors) {
+        window.data.armors = armors;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listClasses(function(classes) {
+        window.data.classes = classes;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listWeapons(function(weapons) {
+        window.data.weapons = weapons;
+        barrier.stop();
+    });
+}
+
+loadGameData();

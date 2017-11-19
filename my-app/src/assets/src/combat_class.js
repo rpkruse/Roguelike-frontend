@@ -18,46 +18,20 @@ function CombatClass(aName, aLevel) {
     this.difficulty = window.combatController.getDifficulty(aLevel);
     // set up random ish weapons/armor for enemies
 
+    var classData = window.data.classes.find(function(x){ return x.name == aName});
+    var weaponName = window.data.weapons.find(function(x){ return x.id == classData.starting_weapon}).name;
+    var armorName = window.data.armors.find(function(x){ return x.id == classData.starting_armor }).name;
+
+    this.health = classData.starting_health;
+    this.attackBonus = classData.starting_attack_bonus;
+    this.damageBonus = classData.starting_damage_bonus;
+    this.defenseBonus = classData.starting_defense_bonus;
+    this.weapon = new Weapon(weaponName, aLevel);
+    this.armor = new Armor(armorName, aLevel);
+    this.status = { effect: "None", timer: 0 };
+
     switch (aName) {
-        case "Knight":
-            this.health = 25;
-            this.attackBonus = 0;
-            this.damageBonus = 1;
-            this.defenseBonus = 2;
-            this.weapon = new Weapon("Longsword", 1);
-            this.armor = new Armor("Hide Armor", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-        case "Archer":
-            this.health = 10;
-            this.attackBonus = 2;
-            this.damageBonus = 0;
-            this.defenseBonus = 1;
-            this.weapon = new Weapon("Broadhead", 1);
-            this.armor = new Armor("Hide Armor", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-        case "Mage":
-            this.health = 10;
-            this.attackBonus = -1;
-            this.damageBonus = 2;
-            this.defenseBonus = 1;
-            this.weapon = new Weapon("Eldritch Blast", 1);
-            this.armor = new Armor("Robes", 1);
-            this.status = { effect: "None", timer: 0 };
-            break;
-
-
         case "Zombie":
-            this.health = Math.max(10, 10 * this.difficulty);
-            this.attackBonus = this.difficulty;
-            this.damageBonus = this.difficulty;
-            this.defenseBonus = this.difficulty;
-            this.weapon = new Weapon("Claw", aLevel);
-            this.armor = new Armor("Flesh", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 5;
 
             this.turnAI = function (aEnemy) {
@@ -75,13 +49,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Skeleton":
-            this.health = Math.max(8, 8 * this.difficulty);
-            this.attackBonus = this.difficulty - 1;
-            this.damageBonus = this.difficulty - 2;
-            this.defenseBonus = this.difficulty - 1;
-            this.weapon = new Weapon("Ancient Nord", aLevel);
-            this.armor = new Armor("Bones", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 10;
             var prefDist = 4;
             var attackCooldown = 2;
@@ -125,13 +92,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Minotaur":
-            this.health = Math.max(25, 25 * this.difficulty - 1);
-            this.attackBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.damageBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.defenseBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 2;
-            this.weapon = new Weapon("Battleaxe", aLevel);
-            this.armor = new Armor("Chainmail", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 15;
 
             this.turnAI = function (aEnemy) {
@@ -149,13 +109,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Shaman":
-            this.health = Math.max(15, 15 * this.difficulty - 1);
-            this.attackBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.damageBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.defenseBonus = (this.difficulty <= 1) ? 0 : this.difficulty + 1;
-            this.weapon = new Weapon("Eldritch Blast", aLevel);
-            this.armor = new Armor("Robes", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 10;
             var prefDist = 5;
             var attackCooldown = 2;
@@ -199,13 +152,6 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Fucking Dragon":
-            this.health = 30 + 2 * aLevel;
-            this.attackBonus = 3;
-            this.damageBonus = 5;
-            this.defenseBonus = 3;
-            this.weapon = new Weapon("Dragon's Breath", aLevel);
-            this.armor = new Armor("Dragonscale", aLevel);
-            this.status = { effect: "None", timer: 0 };
             var senseRange = 20;
             var prefDist = 3;
             var attackCooldown = 3;
@@ -249,6 +195,7 @@ function CombatClass(aName, aLevel) {
 
             break;
     }
+
 }
 
 function moveBack(a, b, array) {
