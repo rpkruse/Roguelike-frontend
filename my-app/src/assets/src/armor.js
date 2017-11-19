@@ -7,56 +7,11 @@ function Armor(aName, aLevel) {
     this.name = aName;
     this.level = aLevel;
     this.shouldRetain = true;
-
-    switch (aName) {
-        case "Flesh":
-            this.defense = 3;
-            this.strongType = "";
-            this.weakType = "spb";
-            break;
-
-        case "Bones":
-            this.defense = 5;
-            this.strongType = "p";
-            this.weakType = "b";
-            break;
-
-        case "Robes":
-            this.defense = 5;
-            this.strongType = "spb"; // Purely for balance.
-            this.weakType = "";
-            break;
-
-        case "Hide Armor":
-            this.defense = 8;
-            this.strongType = "b";
-            this.weakType = "s";
-            break;
-
-        case "Leathers":
-            this.defense = 10;
-            this.strongType = "s";
-            this.weakType = "b";
-            break;
-
-        case "Chainmail":
-            this.defense = 12;
-            this.strongType = "s";
-            this.weakType = "p";
-            break;
-
-        case "Plate Armor":
-            this.defense = 15;
-            this.strongType = "p";
-            this.weakType = "b";
-            break;
-
-        case "Dragonscale":
-            this.defense = 18;
-            this.strongType = "spb"
-            this.weakType = "";
-            break;
-    }
+    
+    var data = window.data.armors.find(function(x){ return x.name == aName; });
+    this.defense = data.defense_value;
+    this.strongType = data.strong_type;
+    this.weakType = data.weak_type;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };

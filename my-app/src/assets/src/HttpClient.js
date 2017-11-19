@@ -65,3 +65,14 @@ HttpClient.prototype.listPowerup = function(id, callback) {
         callback([]);
     });
 }
+
+HttpClient.prototype.listArmors = function(callback) {
+    this.get(this.baseURL + "/armors", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting armor. Code: " + status);
+        callback([]);
+    });
+}

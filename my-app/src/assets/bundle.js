@@ -67,6 +67,17 @@ HttpClient.prototype.listPowerup = function(id, callback) {
     });
 }
 
+HttpClient.prototype.listArmors = function(callback) {
+    this.get(this.baseURL + "/armors", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting armor. Code: " + status);
+        callback([]);
+    });
+}
+
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -814,7 +825,7 @@ var turnDelay = defaultTurnDelay; //current time between turns
 var autoTurn = false;           //If true, reduces time between turns and turns happen automatically
 var resetTimer = true;          //Take turn immediately on movement key press if true
 
-var player = new Player({ x: 0, y: 0 }, "Mage");
+var player = new Player({ x: 0, y: 0 });
 
 window.player = player;
 player.shouldProcessTurn = false;
@@ -1188,11 +1199,15 @@ function unfadeFromBlack() {
 window.client.listPowerups(function(powerups){
     window.data = {};
     window.data.powerups = powerups;
+console.log("tse");    
+    window.client.listArmors(function(armors) {
+        window.data.armors = armors;
 
-    window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
-        onload: function () {
-            masterLoop(performance.now());
-        }
+        window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
+            onload: function () {
+                masterLoop(performance.now());
+            }
+        });
     });
 });
 
@@ -1207,56 +1222,11 @@ function Armor(aName, aLevel) {
     this.name = aName;
     this.level = aLevel;
     this.shouldRetain = true;
-
-    switch (aName) {
-        case "Flesh":
-            this.defense = 3;
-            this.strongType = "";
-            this.weakType = "spb";
-            break;
-
-        case "Bones":
-            this.defense = 5;
-            this.strongType = "p";
-            this.weakType = "b";
-            break;
-
-        case "Robes":
-            this.defense = 5;
-            this.strongType = "spb"; // Purely for balance.
-            this.weakType = "";
-            break;
-
-        case "Hide Armor":
-            this.defense = 8;
-            this.strongType = "b";
-            this.weakType = "s";
-            break;
-
-        case "Leathers":
-            this.defense = 10;
-            this.strongType = "s";
-            this.weakType = "b";
-            break;
-
-        case "Chainmail":
-            this.defense = 12;
-            this.strongType = "s";
-            this.weakType = "p";
-            break;
-
-        case "Plate Armor":
-            this.defense = 15;
-            this.strongType = "p";
-            this.weakType = "b";
-            break;
-
-        case "Dragonscale":
-            this.defense = 18;
-            this.strongType = "spb"
-            this.weakType = "";
-            break;
-    }
+    
+    var data = window.data.armors.find(function(x){ return x.name == aName; });
+    this.defense = data.defense_value;
+    this.strongType = data.strong_type;
+    this.weakType = data.weak_type;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };
@@ -3391,7 +3361,7 @@ module.exports = exports = Player;
  * Creates a new player object
  * @param {postition} position object specifying an x and y
  */
-function Player(position, combatClass) {
+function Player(position) {
     this.state = "idle";
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
@@ -3399,7 +3369,6 @@ function Player(position, combatClass) {
     this.spritesheet.src = 'assets/spritesheets/player_animations.png';
     this.type = "Player";
     this.walk = [];
-    this.changeClass(combatClass);
     this.level = 0;
     this.shouldProcessTurn = true;
     this.shouldEndGame = false;
@@ -3732,10 +3701,12 @@ Powerup.prototype.processTurn = function(input) {
 Powerup.prototype.collided = function (entity) {
     if (this.used) return;
     if (entity.type == "Player") {
+        this.used = true;
+
         window.sfx.play(this.data.name + "Pickup");
         window.terminal.log(this.data.flavor_text, window.colors.pickup);
+        entity.score++;
 
-        this.used = true;
         switch (this.data.id) {
             case 1:
                 entity.combat.damageBonus += 0.2;
@@ -3755,7 +3726,6 @@ Powerup.prototype.collided = function (entity) {
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
-        entity.score++;
     }
     else if (this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
         this.resolveCollision = false;
