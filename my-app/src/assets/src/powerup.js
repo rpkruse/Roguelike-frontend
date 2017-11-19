@@ -72,7 +72,7 @@ Powerup.prototype.collided = function (entity) {
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
-        player.score++;
+        entity.score++;
     }
     else if (this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
         this.resolveCollision = false;

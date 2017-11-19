@@ -34,7 +34,7 @@ function Player(position, combatClass) {
     this.hasMoved = false;
     this.direction = "right";
     this.oldDirection = "right";
-	this.resolveCollision = false;
+    this.resolveCollision = false;
     this.score = 0;
     window.terminal.addCommand("class", "Get your player class", this.getClass.bind(this));
     window.terminal.addCommand("kill", "Kill yourself", this.killPlayer.bind(this));
