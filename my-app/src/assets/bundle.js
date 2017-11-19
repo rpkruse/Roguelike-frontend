@@ -1063,8 +1063,10 @@ function processTurn() {
 }
 
 function nextLevel(fadeOut) {
+    if (player.level > 0)
+        player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
-    var isBossLevel = (player.level % 5 == 0);
+    //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
         window.terminal.clear();
@@ -1072,17 +1074,18 @@ function nextLevel(fadeOut) {
         var padSpace = Math.floor((80 - msg.length) / 2);
         window.terminal.log(Array(padSpace).join(' ') + msg);
 
-        if (isBossLevel) {
+        /*if (isBossLevel) {
             window.terminal.log("You sense an erie presence...");
             window.terminal.log("The demon dragon appears to consume your soul");
-        }
+        }*/
 		
 		if(player.level == 1) window.terminal.instructions();
 
         // reset entities
         window.entityManager.reset();
 
-        (isBossLevel) ? bossLevel() : standardLevel();
+        //(isBossLevel) ? bossLevel() : standardLevel();
+        standardLevel();
 
         unfadeFromBlack();
 
@@ -1718,7 +1721,32 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
         }
     }
 
-    if (aDefenderClass.health <= 0) message = message.replace(".", ", killing it.");
+    if (aDefenderClass.health <= 0) {
+        message = message.replace(".", ", killing it.");
+        if (playerAttacker) {
+            switch (defender) {
+                case "Zombie":
+                    player.score += 5;
+                    break;
+
+                case "Skeleton":
+                    player.score += 10;
+                    break;
+
+                case "Shaman":
+                    player.score += 20;
+                    break;
+
+                case "Minotaur":
+                    player.score += 35;
+                    break;
+
+                case "Dragon":
+                    player.score += 100;
+                    break;
+            }
+        }
+    }
     window.terminal.log(message, window.colors.combat);
     if (lApplyEffect) {
         aDefenderClass.status.effect = lAttackEffect;
@@ -3378,7 +3406,8 @@ function Player(position, combatClass) {
     this.hasMoved = false;
     this.direction = "right";
     this.oldDirection = "right";
-	  this.resolveCollision = false;
+    this.resolveCollision = false;
+    this.score = 0;
     window.terminal.addCommand("class", "Get your player class", this.getClass.bind(this));
     window.terminal.addCommand("kill", "Kill yourself", this.killPlayer.bind(this));
     window.terminal.addCommand("look", "Get info about the item at your feet", this.lookCommand.bind(this));
@@ -3700,7 +3729,7 @@ Powerup.prototype.processTurn = function(input) {
 
 }
 
-Powerup.prototype.collided = function(entity) {
+Powerup.prototype.collided = function (entity) {
     if (this.used) return;
     if (entity.type == "Player") {
         window.sfx.play(this.data.name + "Pickup");
@@ -3726,11 +3755,12 @@ Powerup.prototype.collided = function(entity) {
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
+        entity.score++;
     }
-	else if(this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
-		this.resolveCollision = false;
-		this.position = window.tilemap.getRandomAdjacent(this.position);
-	}
+    else if (this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
+        this.resolveCollision = false;
+        this.position = window.tilemap.getRandomAdjacent(this.position);
+    }
 }
 
 Powerup.prototype.retain = function() {
