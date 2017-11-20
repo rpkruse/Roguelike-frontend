@@ -70,7 +70,7 @@ var turnDelay = defaultTurnDelay; //current time between turns
 var autoTurn = false;           //If true, reduces time between turns and turns happen automatically
 var resetTimer = true;          //Take turn immediately on movement key press if true
 
-var player = new Player({ x: 0, y: 0 }, "Mage");
+var player = new Player({ x: 0, y: 0 });
 
 window.player = player;
 player.shouldProcessTurn = false;
@@ -441,14 +441,50 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
-window.client.listPowerups(function(powerups){
-    window.data = {};
-    window.data.powerups = powerups;
-
+function loadTilemap() {
     window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
         onload: function () {
             masterLoop(performance.now());
         }
     });
-});
+}
 
+function loadGameData() {
+    var barrier = {
+        count: 0,
+        start: function() { this.count++; },
+        stop: function() {
+            this.count--;
+            if(this.count == 0) this.complete();
+        },
+        complete: function() { loadTilemap(); }
+    }
+
+    window.data = {};
+
+    barrier.start();
+    client.listPowerups(function(powerups){
+        window.data.powerups = powerups;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listArmors(function(armors) {
+        window.data.armors = armors;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listClasses(function(classes) {
+        window.data.classes = classes;
+        barrier.stop();
+    });
+
+    barrier.start();
+    client.listWeapons(function(weapons) {
+        window.data.weapons = weapons;
+        barrier.stop();
+    });
+}
+
+loadGameData();

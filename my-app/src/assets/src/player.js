@@ -19,7 +19,7 @@ module.exports = exports = Player;
  * Creates a new player object
  * @param {postition} position object specifying an x and y
  */
-function Player(position, combatClass) {
+function Player(position) {
     this.state = "idle";
     this.position = { x: position.x, y: position.y };
     this.size = { width: 96, height: 96 };
@@ -27,7 +27,6 @@ function Player(position, combatClass) {
     this.spritesheet.src = 'assets/spritesheets/player_animations.png';
     this.type = "Player";
     this.walk = [];
-    this.changeClass(combatClass);
     this.level = 0;
     this.shouldProcessTurn = true;
     this.shouldEndGame = false;
@@ -119,7 +118,7 @@ Player.prototype.walkPath = function (path, completion) {
 Player.prototype.changeClass = function (chosenClass) {
     this.level = 0;
     this.class = chosenClass;
-    this.combat = new CombatClass(chosenClass);
+    this.combat = new CombatClass(chosenClass, 1);
     this.inventory = new Inventory(this.combat.weapon, this.combat.armor);
     this.state = "idle";
 

@@ -65,3 +65,36 @@ HttpClient.prototype.listPowerup = function(id, callback) {
         callback([]);
     });
 }
+
+HttpClient.prototype.listArmors = function(callback) {
+    this.get(this.baseURL + "/armors", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting armors. Code: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.listClasses = function(callback) {
+    this.get(this.baseURL + "/classes", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting classes. Code: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.listWeapons = function(callback) {
+    this.get(this.baseURL + "/weapons", function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting weapons. Code: " + status);
+        callback([]);
+    });
+}

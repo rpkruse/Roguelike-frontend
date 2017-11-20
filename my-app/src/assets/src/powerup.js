@@ -49,10 +49,12 @@ Powerup.prototype.processTurn = function(input) {
 Powerup.prototype.collided = function (entity) {
     if (this.used) return;
     if (entity.type == "Player") {
+        this.used = true;
+
         window.sfx.play(this.data.name + "Pickup");
         window.terminal.log(this.data.flavor_text, window.colors.pickup);
+        entity.score++;
 
-        this.used = true;
         switch (this.data.id) {
             case 1:
                 entity.combat.damageBonus += 0.2;
@@ -72,7 +74,6 @@ Powerup.prototype.collided = function (entity) {
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
-        entity.score++;
     }
     else if (this.resolveCollision && entity.type != "Enemy" && entity.type != "Click") {
         this.resolveCollision = false;
