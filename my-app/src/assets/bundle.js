@@ -1405,10 +1405,14 @@ function CombatClass(aName, aLevel) {
     this.weapon = new Weapon(weaponName, aLevel);
     this.armor = new Armor(armorName, aLevel);
     this.status = { effect: "None", timer: 0 };
+    this.options = {};
+    if(classData.options != "") {
+        this.options = JSON.parse(classData.options);
+    }
 
     switch (aName) {
         case "Zombie":
-            var senseRange = 5;
+            var senseRange = this.options.sense_range;
 
             this.turnAI = function (aEnemy) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
@@ -1425,10 +1429,10 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Skeleton":
-            var senseRange = 10;
-            var prefDist = 4;
-            var attackCooldown = 2;
-            var moveOrAttack = 0;
+            var senseRange = this.options.sense_range;
+            var prefDist = this.options.prefDist;
+            var attackCooldown = this.options.attackCooldown;
+            var moveOrAttack = this.options.moveOrAttack;
 
             this.turnAI = function (aEnemy) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
@@ -1468,7 +1472,7 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Minotaur":
-            var senseRange = 15;
+            var senseRange = this.options.sense_range;
 
             this.turnAI = function (aEnemy) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
@@ -1485,10 +1489,10 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Shaman":
-            var senseRange = 10;
-            var prefDist = 5;
-            var attackCooldown = 2;
-            var moveOrAttack = 0;
+            var senseRange = this.options.sense_range;
+            var prefDist = this.options.prefDist;
+            var attackCooldown = this.options.attackCooldown;
+            var moveOrAttack = this.options.moveOrAttack;
 
             this.turnAI = function (aEnemy) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
@@ -1528,10 +1532,10 @@ function CombatClass(aName, aLevel) {
             break;
 
         case "Fucking Dragon":
-            var senseRange = 20;
-            var prefDist = 3;
-            var attackCooldown = 3;
-            var moveOrAttack = 0;
+            var senseRange = this.options.sense_range;
+            var prefDist = this.options.prefDist;
+            var attackCooldown = this.options.attackCooldown;
+            var moveOrAttack = this.options.moveOrAttack;
 
             this.turnAI = function (aEnemy) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
