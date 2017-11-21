@@ -43,6 +43,7 @@ export class StatsComponent implements OnInit{
   private user: IUser;
 
   private selectedCharacter: ICharacter;
+  private selectedHistory: ICharacter_History;
   private selectedWeapon: IWeapon;
   private selectedArmor: IArmor;
   private selectedLevel: ILevel;
@@ -166,6 +167,12 @@ export class StatsComponent implements OnInit{
         this.getWeapon(this.selectedCharacter.weapon_id);
         s.unsubscribe();
       }
+    );
+
+    let j: Subscription = this._apiService.getSingleEntity<ICharacter_History>("characters/history", ch.id).subscribe(
+      d => this.selectedHistory = d,
+      err => console.log("Unable to load history"),
+      () => j.unsubscribe()
     );
   }
 

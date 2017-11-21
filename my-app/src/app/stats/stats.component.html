@@ -33,7 +33,7 @@
     <div class="row col-md-4">
       <div class="panel panel-default" *ngIf="this.selectedCharacter">
         <div class="panel-heading">
-          <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.name}}: level __ __</h4>
+          <h4 class="panel-title" *ngIf="this.selectedHistory && this.selectedCharacter">{{this.selectedCharacter.name}}: level __ {{this.selectedHistory.character.name}}</h4>
           <div class="input-group" *ngIf="!this.selectedCharacter.killed_by">
             <span class="input-group-btn">
               <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>

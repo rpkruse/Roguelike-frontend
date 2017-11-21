@@ -1,3 +1,5 @@
+<script src="node_modules/chart.js/src/chart.js"></script>
+
 <div class="container-fluid">
     <div class="row">
         
@@ -12,10 +14,10 @@
                         <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Score</th>                            
                     </tr>
                 </thead>
-                <tbody *ngIf = "this.character_history && character_history.length">
-                    <ng-container *ngFor="let character of character_history | sortingCharacter: 'score'; index as i">
+                <tbody>
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'score'; index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topPlayerPage && i <= (this.numPerPage * this.topPlayerPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.user.display_name}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.user_id}}</td><td class="col-xs-2 text-center">{{character.score}}</td>
                         </tr>
                     </ng-container>
                 </tbody>
@@ -33,35 +35,13 @@
             </div>
         </div>
 
-        <!-- Top Kills Players -->
+        <!-- Class Distribution -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
-                <h4 class="text-center">Most Deaths</h4>
+                <h4 class="text-center">Class Distribution</h4>
             </div>
-            <table class="table table-condensed table-fixed">
-                <thead>
-                    <tr>
-                        <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Deaths</th>                            
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngFor="let character of characters | async | sortingCharacter: 'killed_by'; index as i">
-                        <tr *ngIf="i >= this.numPerPage * this.topKillsPage && i <= (this.numPerPage * this.topKillsPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.name}}</td><td class="col-xs-2 text-center">{{character.killed_by}}</td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-            <div class="previous">
-                <button ng-disabled="true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="previous('TOP_KILLS')" [disabled]="!killBackEnabled">
-                    <span aria-hidden="true">&larr;</span>Previous
-                </button>
-            </div>
-            <div class="next">
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="next('TOP_KILLS')" [disabled]="!killNextEnabled">
-                    Next
-                    <span aria-hidden="true">&rarr;</span>
-                </button>
+            <div class="panel-body">
+                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
             </div>
         </div>
 
@@ -76,10 +56,10 @@
                         <th class="col-xs-2">#</th><th class="col-xs-8">Name</th><th class="col-xs-2">Level</th>                            
                     </tr>
                 </thead>
-                <tbody *ngIf = "character_history && character_history.length"> 
-                    <ng-container *ngFor="let character of character_history | sortingCharacter: 'level_id';  index as i">
+                <tbody> 
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'level_id'; index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topLevelPage && i <= (this.numPerPage * this.topLevelPage) + this.numPerPage - 1">
-                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.user.display_name}}</td><td class="col-xs-2 text-center">{{character.level_id}}</td>
+                            <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.character_id}}</td><td class="col-xs-2 text-center">{{character.level_id}}</td>
                         </tr>
                     </ng-container>
                 </tbody>

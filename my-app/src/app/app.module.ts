@@ -21,6 +21,8 @@ import { ApiService } from './shared/api.service';
 import { UserService } from './user/user.service';
 
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
+import { ChartsModule } from 'ng2-charts';
+
 
 @NgModule({ //PIE CHART: https://www.npmjs.com/package/ng2modules-easypiechart
   declarations: [
@@ -36,6 +38,7 @@ import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
     BrowserModule,
     HttpClientModule,
     NgProgressModule,
+    ChartsModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true })
   ],
   providers: [
