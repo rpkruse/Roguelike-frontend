@@ -9,6 +9,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
+
 import { ICharacter_Class } from '../interfaces/Character_Class';
 import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
@@ -168,6 +169,21 @@ export class StatsComponent implements OnInit{
     );
   }
 
+  private continuePlaying(){
+    this._storage.setValue('character', this.selectedCharacter);
+    this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.id));
+
+  }
+
+  private getSpecificCharacterHistory(id: number): ICharacter_History{
+    let ch: ICharacter_History;
+    for(let i=0; i<this.character_history.length; i++){
+      ch = this.character_history[i];
+      if(ch.character_id === id){
+        return ch;
+      }
+    }
+  }
   /*
     Once we have a backend, we will call our api service to delete the character
   */

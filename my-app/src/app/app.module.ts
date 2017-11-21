@@ -20,7 +20,6 @@ import { UserResolver } from './shared/user-resolver.service';
 import { ApiService } from './shared/api.service';
 import { UserService } from './user/user.service';
 
-
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
 @NgModule({ //PIE CHART: https://www.npmjs.com/package/ng2modules-easypiechart

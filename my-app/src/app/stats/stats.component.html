@@ -36,9 +36,9 @@
           <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.name}}: level __ __</h4>
           <div class="input-group" *ngIf="!this.selectedCharacter.killed_by">
             <span class="input-group-btn">
-            <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
+              <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
             </span>
-            <input type="text" class="form-control" placeholder="Enter Character Name To Delete"  [value]="deleteCharacterString" (input)="deleteCharacterString = $event.target.value" >
+            <input type="text" class="form-control" placeholder="Enter Character Name To Delete"  [value]="deleteCharacterString" (input)="deleteCharacterString = $event.target.value">
           </div>
         </div>
         <div class="panel-body list-group">
@@ -50,6 +50,7 @@
           <li *ngIf="this.selectedArmor" class="list-group-item">Armor: {{this.selectedArmor.name}}</li>          
           <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.id).id}}</li>
           <li class="list-group-item" *ngIf="this.selectedCharacter.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.killed_by).name}}</li>
+          <button type="button" class="btn btn-success center-block" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.killed_by">Continue Playing</button>                          
         </div>
       </div>
     </div>

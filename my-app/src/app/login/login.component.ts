@@ -64,6 +64,7 @@ export class LoginComponent implements OnInit{
       err => console.log("CANT LOGIN", err),
       () => {
         this._storage.setValue("token", token["token"]);
+        //this._storage.saveToLocal("token", token["token"]); //save to local for game pull
         this.validateLogin();
         s.unsubscribe();
       }
