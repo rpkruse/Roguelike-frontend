@@ -14,15 +14,15 @@
         </div>
         <div class="mdl-tabs__panel is-active" id="current-panel">
           <div class="list-group container-bordered">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of getAliveCharacters(); index as i" (click)="characterClicked(character)">
-            {{character.character.name}}
+            <button type="button" class="list-group-item character-button" *ngFor="let character of this.aliveCharacters; index as i" (click)="characterClicked(character)">
+            {{character.name}}
             </button>
           </div>
         </div>
         <div class="mdl-tabs__panel" id="past-panel">
           <div class="list-group container-bordered">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of getDeadCharacters(); index as i" (click)="characterClicked(character)">
-            {{character.character.name}}
+            <button type="button" class="list-group-item character-button" *ngFor="let character of this.deadCharacters; index as i" (click)="characterClicked(character)">
+            {{character.name}}
             </button>
           </div>
         </div>
@@ -33,8 +33,8 @@
     <div class="row col-md-4">
       <div class="panel panel-default" *ngIf="this.selectedCharacter">
         <div class="panel-heading">
-          <h4 class="panel-title">{{this.selectedCharacter.character.name}}: level __ __</h4>
-          <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
+          <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.name}}: level __ __</h4>
+          <div class="input-group" *ngIf="!this.selectedCharacter.killed_by">
             <span class="input-group-btn">
             <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
             </span>
@@ -42,14 +42,14 @@
           </div>
         </div>
         <div class="panel-body list-group">
-          <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.character.atk_bonus}}</li>
-          <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.character.dmg_bonus}}</li>
-          <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.character.def_bonus}}</li>
-          <li class="list-group-item">Health: {{this.selectedCharacter.character.health}}</li>
-          <li class="list-group-item" >Weapon: {{getWeapon(this.selectedCharacter.character.weapon).name}}</li>
-          <li class="list-group-item">Armor: {{getArmor(this.selectedCharacter.character.armor).name}}</li>          
-            <li class="list-group-item">Level: {{this.selectedCharacter.level_id}}</li>
-          <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.character.killed_by).name}}</li>
+          <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.attack_bonus}}</li>
+          <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.damage_bonus}}</li>
+          <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.defense_bonus}}</li>
+          <li class="list-group-item">Health: {{this.selectedCharacter.health}}</li>
+          <li *ngIf="this.selectedWeapon" class="list-group-item" >Weapon: {{this.selectedWeapon.name}}</li>
+          <li *ngIf="this.selectedArmor" class="list-group-item">Armor: {{this.selectedArmor.name}}</li>          
+          <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.id).id}}</li>
+          <li class="list-group-item" *ngIf="this.selectedCharacter.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.killed_by).name}}</li>
         </div>
       </div>
     </div>

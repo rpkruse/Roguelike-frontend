@@ -58,9 +58,16 @@ export class ApiService {
         return this._http.get(this._api + path, {headers}) as Observable<T[]>;
     }
 
-    getSingleEntity<T>(path: string, id: number): Observable<T>{
+    getAllWithID<T>(path: string, id: number): Observable<T[]>{
         let headers: HttpHeaders = new HttpHeaders(
             {'Content-Type': 'application/json'}
+        );
+        return this._http.get(this._api + path + "/" + id, {headers}) as Observable<T[]>;
+    }
+
+    getSingleEntity<T>(path: string, id: number): Observable<T>{
+        let headers: HttpHeaders = new HttpHeaders(
+            {"Authorization": "Bearer " + this._storage.getValue("token")}
         );
         return this._http.get(this._api + path + "/" + id, {headers}) as Observable<T>;
     }

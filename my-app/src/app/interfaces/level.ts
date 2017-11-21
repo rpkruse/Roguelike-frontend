@@ -1,18 +1,14 @@
 import { IUser } from '../user/user';
 import { ICharacter } from '../interfaces/Character';
-import { ILevel } from '../interfaces/level';
 
-
-export interface ICharacter_History{
+export interface ILevel{
     id: number;
-    user_id: number;
-    character_id: number;
+    user_id: string;
+    seed: string;
     score: number;
-    level_id: number;
     created_at: string;
     updated_at: string;
-    character: ICharacter;
-    level: ILevel;
+    user: IUser;
 }
 
 /*export interface ICharacter_History{

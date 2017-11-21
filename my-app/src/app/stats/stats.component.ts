@@ -14,6 +14,7 @@ import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
 import { IWeapon } from '../interfaces/weapon';
 import { IArmor } from '../interfaces/armor';
+import { ILevel } from '../interfaces/level';
 
 import { IUser } from '../user/user';
 
@@ -35,15 +36,16 @@ declare var window: any;
 export class StatsComponent implements OnInit{
   private character_history: ICharacter_History[] = [];
   private characters: ICharacter[] = [];
+  private aliveCharacters: ICharacter[] = [];
+  private deadCharacters: ICharacter[] = [];
 
   private user: IUser;
 
-  private selectedCharacter: ICharacter_History;
+  private selectedCharacter: ICharacter;
   private selectedWeapon: IWeapon;
   private selectedArmor: IArmor;
+  private selectedLevel: ILevel;
 
-  private weapons: IWeapon[] = [];
-  private armor: IArmor[] = [];
   private characterClasses: ICharacter_Class[] = [];
 
   private deleteClicked: boolean = false;
@@ -52,42 +54,25 @@ export class StatsComponent implements OnInit{
   constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
 
   ngOnInit(){
-    //Get the user on ever page load
+    //Get the user on every page load
     this.route.data.subscribe((data: { user: IUser }) => {
       this.user = data.user;
     });
 
-    //All below this will be removed with backend
-    let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
-    let char = this._apiService.getAllEntities<ICharacter>('character.json');
+    let ch = this._apiService.getAllEntities2<ICharacter_History>('characters/history');
     let cc = this._apiService.getAllEntities<ICharacter_Class>('character_class.json');
 
-    Observable.forkJoin([ch, char, cc]).subscribe(results => {
+    //Pull the character history, keep all that match our user ID
+    Observable.forkJoin([ch, cc]).subscribe(results => {
       //results[0] --> ICharacter_History[]
-      //results[1] --> ICharacter[]
-      //results[2] --> ICharacterClass[]
+      //results[1] --> ICharacterClass[]
 
       let filterByUserID = results[0].filter(x => x.user_id === this.user.id);
 
-      for(let i=0; i<filterByUserID.length; i++){
-        filterByUserID[i].character = results[1].find(x => x.id === filterByUserID[i].character_id);
-      }
-
       this.character_history = filterByUserID;
-      this.characterClasses = results[2];
+      this.characterClasses = results[1];
+      this.getCharacterStatus();
     });
-
-    let s: Subscription = this._apiService.getAllEntities2<IWeapon>("weapons").subscribe(
-      d => this.weapons = d,
-      err => console.log("unable to load weapons"),
-      () => s.unsubscribe()
-    );
-
-    let j: Subscription = this._apiService.getAllEntities2<IArmor>("armors").subscribe(
-      d => this.armor = d,
-      err => console.log("unable to load weapons"),
-      () => j.unsubscribe()
-    );
   }
 
   ngAfterViewInit(){
@@ -95,37 +80,29 @@ export class StatsComponent implements OnInit{
   }
 
   /*
-    Returns all of the user's currently alive characters
+    Called oninit, will save two arrays one for dead characters, one for alive characters
+    both are used to display on HUD.
   */
-  private getAliveCharacters(): ICharacter_History[]{
+  private getCharacterStatus(){
+    let toGet: Observable<ICharacter>[] = [];
     let ch: ICharacter_History;
-    let toReturn: ICharacter_History[] = [];
 
     for(let i=0; i<this.character_history.length; i++){
       ch = this.character_history[i];
-      if(ch.character.killed_by === null){
-        toReturn.push(ch);
-      }
+      toGet.push(this._apiService.getSingleEntity<ICharacter>("characters", ch.character_id));
     }
 
-    return toReturn;
-  }
-
-  /*
-    Returns all of the user's dead characters
-  */
-  private getDeadCharacters(): ICharacter_History[]{
-    let ch: ICharacter_History;
-    let toReturn: ICharacter_History[] = [];
-
-    for(let i=0; i<this.character_history.length; i++){
-      ch = this.character_history[i];
-      if(ch.character.killed_by !== null){
-        toReturn.push(ch);
+    let user_Character: ICharacter;
+    Observable.forkJoin(toGet).subscribe(results => {
+      for(let i=0; i<results.length; i++){
+        user_Character = results[i];
+        if(user_Character.killed_by){
+          this.deadCharacters.push(user_Character);
+        }else{
+          this.aliveCharacters.push(user_Character);
+        }
       }
-    }
-
-    return toReturn;
+    });
   }
 
   /*
@@ -141,30 +118,61 @@ export class StatsComponent implements OnInit{
     return null;
   }
 
-  //Note: may reduce the code below down to one function depending on what we want to view
-  //TODO: reduce code down
-  private getWeapon(id: number): IWeapon{
-    //return this._apiService.getSingleEntity<IWeapon>("weapons", id);
-    return this.weapons[id-1];
+  /*
+    Returns details about a given level ID
+  */
+  private getLevel(id: number): ILevel{
+    let ch: ICharacter_History;
+    let level_id: number;
+    for(let i=0; i<this.character_history.length; i++){
+      ch = this.character_history[i];
+      if(ch.character_id === id){
+        return ch.level;
+      }
+    }
+    return null;
   }
 
-  private getArmor(id: number): IArmor{
-    //return this._apiService.getSingleEntity<IWeapon>("weapons", id);
-    return this.armor[id-1];
+  /*
+    Returns details about a given weapon ID
+  */
+  private getWeapon(id: number){
+    let s: Subscription = this._apiService.getSingleEntity<IWeapon>("weapons", id).subscribe(
+      d => this.selectedWeapon = d,
+      err => console.log("Unable to load weapon", err),
+      () => s.unsubscribe()
+    );
+  }
+
+  /*
+    Returns details about a given armor ID
+  */
+  private getArmor(id: number){
+    let s: Subscription = this._apiService.getSingleEntity<IArmor>("armors", id).subscribe(
+      d => this.selectedArmor = d,
+      err => console.log("Unable to load weapon", err),
+      () => s.unsubscribe()
+    );
   }
 
   //When we click a character assign our value to it
-  private characterClicked(ch: ICharacter_History){
-    this.selectedCharacter = ch;
-    this.selectedWeapon = this.getWeapon(this.selectedCharacter.character.weapon);
-    this.selectedArmor = this.getArmor(this.selectedCharacter.character.armor);
+  private characterClicked(ch: ICharacter){
+    let s: Subscription = this._apiService.getSingleEntity<ICharacter>("characters", ch.id).subscribe(
+      d => this.selectedCharacter = d,
+      err => console.log("Unable to find character"),
+      () => {
+        this.getArmor(this.selectedCharacter.armor_id);
+        this.getWeapon(this.selectedCharacter.weapon_id);
+        s.unsubscribe();
+      }
+    );
   }
 
   /*
     Once we have a backend, we will call our api service to delete the character
   */
   private deleteCharacterClicked(){
-    if(this.selectedCharacter.character.name === this.deleteCharacterString){
+    if(this.selectedCharacter.name === this.deleteCharacterString){
       //Will delete when we get backend API
       console.log("I CAN DELETE NOW!");
     }else{
