@@ -52,7 +52,7 @@ export class StatsComponent implements OnInit{
   private deleteClicked: boolean = false;
   private deleteCharacterString: string = "";
 
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
+  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
 
   ngOnInit(){
     //Get the user on every page load
@@ -172,7 +172,7 @@ export class StatsComponent implements OnInit{
   private continuePlaying(){
     this._storage.setValue('character', this.selectedCharacter);
     this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.id));
-
+    this._router.navigate(['/play']);
   }
 
   private getSpecificCharacterHistory(id: number): ICharacter_History{
