@@ -15,8 +15,11 @@ HttpClient.prototype.get = function(url, callback) {
             callback(this.status, JSON.parse(this.responseText));
         }
     });
+    var token = sessionStorage.getItem("token");
 
     xhr.open('GET', url);
+    xhr.setRequestHeader("Authorization", "Bearer " + token);
+
     xhr.send(null);
 }
 
@@ -35,8 +38,11 @@ HttpClient.prototype.post = function(url, params, callback) {
         }
     });
 
+    var token = sessionStorage.getItem("token");
+
     xhr.open("POST", url);
     xhr.setRequestHeader("accept", "application/json");
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
 
     xhr.send(data);
 }
@@ -96,6 +102,39 @@ HttpClient.prototype.listWeapons = function(callback) {
             return;
         }
         this.log("Error getting weapons. Code: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.createCharacterHistory = function(characterID, score, levelID, callback) {
+    var params = {
+        character_id: characterID,
+        score: score,
+        level_id: levelID
+    };
+
+    this.post(this.baseURL + "/characters/history", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating CharacterHistory: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, callback) {
+    var params = {
+        character_id: characterID,
+        power_up_id: powerupID
+    }
+
+    this.post(this.baseURL + "/powerups", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error posting picked up powerup: " + status);
         callback([]);
     });
 }
@@ -1410,6 +1449,20 @@ function CombatClass(aName, aLevel) {
         this.options = JSON.parse(classData.options);
     }
 
+
+    switch (aName) {
+        case "Zombie": 
+        case "Skeleton": 
+        case "Minotaur": 
+        case "Shaman":
+        case "Fucking Dragon":
+            this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
+            this.attackBonus = this.difficulty + classData.starting_attack_bonus;
+            this.damageBonus = this.difficulty + classData.starting_damage_bonus;
+            this.defenseBonus = this.difficulty + classData.starting_defense_bonus;
+            break;
+    }
+
     switch (aName) {
         case "Zombie":
             var senseRange = this.options.sense_range;
@@ -1697,27 +1750,7 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
     if (aDefenderClass.health <= 0) {
         message = message.replace(".", ", killing it.");
         if (playerAttacker) {
-            switch (defender) {
-                case "Zombie":
-                    player.score += 5;
-                    break;
-
-                case "Skeleton":
-                    player.score += 10;
-                    break;
-
-                case "Shaman":
-                    player.score += 20;
-                    break;
-
-                case "Minotaur":
-                    player.score += 35;
-                    break;
-
-                case "Dragon":
-                    player.score += 100;
-                    break;
-            }
+            player.score += aDefenderClass.options.score;
         }
     }
     window.terminal.log(message, window.colors.combat);

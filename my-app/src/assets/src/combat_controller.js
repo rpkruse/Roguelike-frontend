@@ -90,27 +90,7 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
     if (aDefenderClass.health <= 0) {
         message = message.replace(".", ", killing it.");
         if (playerAttacker) {
-            switch (defender) {
-                case "Zombie":
-                    player.score += 5;
-                    break;
-
-                case "Skeleton":
-                    player.score += 10;
-                    break;
-
-                case "Shaman":
-                    player.score += 20;
-                    break;
-
-                case "Minotaur":
-                    player.score += 35;
-                    break;
-
-                case "Dragon":
-                    player.score += 100;
-                    break;
-            }
+            player.score += aDefenderClass.options.score;
         }
     }
     window.terminal.log(message, window.colors.combat);

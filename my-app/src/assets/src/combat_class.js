@@ -34,6 +34,20 @@ function CombatClass(aName, aLevel) {
         this.options = JSON.parse(classData.options);
     }
 
+
+    switch (aName) {
+        case "Zombie": 
+        case "Skeleton": 
+        case "Minotaur": 
+        case "Shaman":
+        case "Fucking Dragon":
+            this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
+            this.attackBonus = this.difficulty + classData.starting_attack_bonus;
+            this.damageBonus = this.difficulty + classData.starting_damage_bonus;
+            this.defenseBonus = this.difficulty + classData.starting_defense_bonus;
+            break;
+    }
+
     switch (aName) {
         case "Zombie":
             var senseRange = this.options.sense_range;

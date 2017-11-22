@@ -14,8 +14,11 @@ HttpClient.prototype.get = function(url, callback) {
             callback(this.status, JSON.parse(this.responseText));
         }
     });
+    var token = sessionStorage.getItem("token");
 
     xhr.open('GET', url);
+    xhr.setRequestHeader("Authorization", "Bearer " + token);
+
     xhr.send(null);
 }
 
@@ -34,8 +37,11 @@ HttpClient.prototype.post = function(url, params, callback) {
         }
     });
 
+    var token = sessionStorage.getItem("token");
+
     xhr.open("POST", url);
     xhr.setRequestHeader("accept", "application/json");
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
 
     xhr.send(data);
 }
@@ -95,6 +101,39 @@ HttpClient.prototype.listWeapons = function(callback) {
             return;
         }
         this.log("Error getting weapons. Code: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.createCharacterHistory = function(characterID, score, levelID, callback) {
+    var params = {
+        character_id: characterID,
+        score: score,
+        level_id: levelID
+    };
+
+    this.post(this.baseURL + "/characters/history", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating CharacterHistory: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, callback) {
+    var params = {
+        character_id: characterID,
+        power_up_id: powerupID
+    }
+
+    this.post(this.baseURL + "/powerups", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error posting picked up powerup: " + status);
         callback([]);
     });
 }
