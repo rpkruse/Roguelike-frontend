@@ -46,6 +46,25 @@ HttpClient.prototype.post = function(url, params, callback) {
     xhr.send(data);
 }
 
+HttpClient.prototype.put = function(url, params, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            callback(this.status, JSON.parse(this.responseText));
+        }
+    });
+
+    var token = sessionStorage.getItem("token");
+
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("accept", "application/json");
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
+
+    xhr.send(JSON.stringify(params));
+}
+
 HttpClient.prototype.log = function(msg) {
     if (window.debug) console.log(msg);
 }
@@ -134,6 +153,56 @@ HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, call
             return;
         }
         this.log("Error posting picked up powerup: " + status);
+        callback([]);
+    });
+}
+
+// TODO: Waiting on api update
+HttpClient.prototype.createLevel = function(levelNumber, seed, callback) {
+    var params = {
+        level_number: levelNumber,
+        seed: seed
+    };
+
+    this.post(this.baseURL + "/levels", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating level: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.createCharacter = function(name, health, attackBonus, damageBonus, defenseBonus, weaponID, armorID, classID, callback) {
+    var params = {
+        name: name,
+        health: health,
+        attack_bonus: attackBonus,
+        damage_bonus: damageBonus,
+        defense_bonus: defenseBonus,
+        weapon_id: weaponID,
+        armor_id: armorID,
+        class_id: classID
+    };
+
+    this.post(this.baseURL + "/characters", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating character: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.updateCharacter = function(character_id, params, callback) {
+    this.put(this.baseURL + "/characters/" + character_id, params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error updating character: " + status);
         callback([]);
     });
 }
