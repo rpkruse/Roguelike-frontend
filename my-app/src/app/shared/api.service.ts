@@ -26,7 +26,6 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ApiService {
-    private _api2 = './assets/tmp_data/';
     private _api = 'https://rogueapi.keisenb.io/api/';
     
     constructor(private _http: HttpClient, private _storage: StorageService) { }
@@ -46,23 +45,12 @@ export class ApiService {
         return this._http.get(this._api + "user", {headers}) as Observable<IUser>;
     }
 
-    getAllEntities<T>(path: string): Observable<T[]>{
-        return this._http.get(this._api2 + path) as Observable<T[]>;
-    }
-
     //This will be our main method called once the backend is complete
-    getAllEntities2<T>(path: string): Observable<T[]>{
+    getAllEntities<T>(path: string): Observable<T[]>{
         let headers: HttpHeaders = new HttpHeaders(
             {"Authorization": "Bearer " + this._storage.getValue("token")}
         );
         return this._http.get(this._api + path, {headers}) as Observable<T[]>;
-    }
-
-    getAllWithID<T>(path: string, id: number): Observable<T[]>{
-        let headers: HttpHeaders = new HttpHeaders(
-            {'Content-Type': 'application/json'}
-        );
-        return this._http.get(this._api + path + "/" + id, {headers}) as Observable<T[]>;
     }
 
     getSingleEntity<T>(path: string, id: number): Observable<T>{

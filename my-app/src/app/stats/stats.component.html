@@ -14,27 +14,43 @@
         </div>
         <div class="mdl-tabs__panel is-active" id="current-panel">
           <div class="list-group container-bordered">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of this.aliveCharacters; index as i" (click)="characterClicked(character)">
-            {{character.name}}
+            <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('alive'); index as i" (click)="characterClicked(character)">
+            {{character.character.name}}
             </button>
+            <button type="button" class="list-group-item character-button" (click)="createNewCharacterClicked()">Create New Character</button>
           </div>
         </div>
         <div class="mdl-tabs__panel" id="past-panel">
           <div class="list-group container-bordered">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of this.deadCharacters; index as i" (click)="characterClicked(character)">
-            {{character.name}}
+            <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('dead'); index as i" (click)="characterClicked(character)">
+            {{character.character.name}}
             </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!--New Character panel -->
+    <div class="row col-md-4" *ngIf="createNewClicked">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">New Character</h4>
+        </div>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Character Name"  [value]="newCharacterString" (input)="newCharacterString = $event.target.value">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-success" (click)="createCharacter()">Create Character</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
     <!--Character detail panel -->
     <div class="row col-md-4">
-      <div class="panel panel-default" *ngIf="this.selectedCharacter">
+      <div class="panel panel-default" *ngIf="this.selectedCharacter && !this.createNewClicked">
         <div class="panel-heading">
-          <h4 class="panel-title" *ngIf="this.selectedHistory && this.selectedCharacter">{{this.selectedCharacter.name}}: level __ {{this.selectedHistory.character.name}}</h4>
-          <div class="input-group" *ngIf="!this.selectedCharacter.killed_by">
+          <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.character.name}}: level __ {{this.selectedCharacter.character.class.name}}</h4>
+          <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
             <span class="input-group-btn">
               <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
             </span>
@@ -42,21 +58,21 @@
           </div>
         </div>
         <div class="panel-body list-group">
-          <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.attack_bonus}}</li>
-          <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.damage_bonus}}</li>
-          <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.defense_bonus}}</li>
-          <li class="list-group-item">Health: {{this.selectedCharacter.health}}</li>
+          <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.character.attack_bonus}}</li>
+          <li class="list-group-item">Damage Bonus: {{this.selectedCharacter.character.damage_bonus}}</li>
+          <li class="list-group-item">Defense Bonus: {{this.selectedCharacter.character.defense_bonus}}</li>
+          <li class="list-group-item">Health: {{this.selectedCharacter.character.health}}</li>
           <li *ngIf="this.selectedWeapon" class="list-group-item" >Weapon: {{this.selectedWeapon.name}}</li>
           <li *ngIf="this.selectedArmor" class="list-group-item">Armor: {{this.selectedArmor.name}}</li>          
           <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.id).id}}</li>
-          <li class="list-group-item" *ngIf="this.selectedCharacter.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.killed_by).name}}</li>
-          <button type="button" class="btn btn-success center-block" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.killed_by">Continue Playing</button>                          
+          <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.character.killed_by).name}}</li>
+          <button type="button" class="btn btn-success center-block" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.character.killed_by">Continue Playing</button>                          
         </div>
       </div>
     </div>
 
     <!--Weapon detail panel -->
-    <div class="row col-md-4" *ngIf="this.selectedWeapon">
+    <div class="row col-md-4" *ngIf="this.selectedWeapon && !this.createNewClicked">
       <div class="panel panel-default detail-panel">
         <div class="panel-heading">
           <h4 class="panel-title">Weapon: {{this.selectedWeapon.name}}</h4>
@@ -70,7 +86,7 @@
     </div>
 
     <!--Armor detail panel -->
-    <div class="row col-md-4" *ngIf="this.selectedArmor">
+    <div class="row col-md-4" *ngIf="this.selectedArmor && !this.createNewClicked">
       <div class="panel panel-default detail-panel">
         <div class="panel-heading">
           <h4 class="panel-title">Armor: {{this.selectedArmor.name}}</h4>

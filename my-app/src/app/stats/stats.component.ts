@@ -5,7 +5,7 @@
 */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router} from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -19,8 +19,6 @@ import { ILevel } from '../interfaces/level';
 
 import { IUser } from '../user/user';
 
-import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
-import { UserService } from '../user/user.service';
 import { Subscription } from "rxjs";
 
 import 'rxjs/add/observable/forkJoin';
@@ -36,14 +34,10 @@ declare var window: any;
 })
 export class StatsComponent implements OnInit{
   private character_history: ICharacter_History[] = [];
-  private characters: ICharacter[] = [];
-  private aliveCharacters: ICharacter[] = [];
-  private deadCharacters: ICharacter[] = [];
 
   private user: IUser;
 
-  private selectedCharacter: ICharacter;
-  private selectedHistory: ICharacter_History;
+  private selectedCharacter: ICharacter_History;
   private selectedWeapon: IWeapon;
   private selectedArmor: IArmor;
   private selectedLevel: ILevel;
@@ -53,7 +47,10 @@ export class StatsComponent implements OnInit{
   private deleteClicked: boolean = false;
   private deleteCharacterString: string = "";
 
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
+  private createNewClicked: boolean = false;
+  private newCharacterString: string = "";
+
+  constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
 
   ngOnInit(){
     //Get the user on every page load
@@ -61,19 +58,15 @@ export class StatsComponent implements OnInit{
       this.user = data.user;
     });
 
-    let ch = this._apiService.getAllEntities2<ICharacter_History>('characters/history');
-    let cc = this._apiService.getAllEntities<ICharacter_Class>('character_class.json');
+    let ch: Observable<ICharacter_History[]> = this._apiService.getAllEntities<ICharacter_History>('characters/history');
+    let cc: Observable<ICharacter_Class[]> = this._apiService.getAllEntities<ICharacter_Class>('classes');
 
-    //Pull the character history, keep all that match our user ID
     Observable.forkJoin([ch, cc]).subscribe(results => {
       //results[0] --> ICharacter_History[]
       //results[1] --> ICharacterClass[]
 
-      let filterByUserID = results[0].filter(x => x.user_id === this.user.id);
-
-      this.character_history = filterByUserID;
+      this.character_history = results[0].filter(x => x.user_id === this.user.id);
       this.characterClasses = results[1];
-      this.getCharacterStatus();
     });
   }
 
@@ -85,26 +78,19 @@ export class StatsComponent implements OnInit{
     Called oninit, will save two arrays one for dead characters, one for alive characters
     both are used to display on HUD.
   */
-  private getCharacterStatus(){
-    let toGet: Observable<ICharacter>[] = [];
+  private getCharacterStatus(status: string): ICharacter_History[]{
+    let chs: ICharacter_History[] = [];
     let ch: ICharacter_History;
 
     for(let i=0; i<this.character_history.length; i++){
       ch = this.character_history[i];
-      toGet.push(this._apiService.getSingleEntity<ICharacter>("characters", ch.character_id));
-    }
-
-    let user_Character: ICharacter;
-    Observable.forkJoin(toGet).subscribe(results => {
-      for(let i=0; i<results.length; i++){
-        user_Character = results[i];
-        if(user_Character.killed_by){
-          this.deadCharacters.push(user_Character);
-        }else{
-          this.aliveCharacters.push(user_Character);
-        }
+      if(status === "alive" && !ch.character.killed_by){
+        chs.push(ch);
+      }else if(status === "dead" && ch.character.killed_by){
+        chs.push(ch);
       }
-    });
+    }
+    return chs;
   }
 
   /*
@@ -158,30 +144,37 @@ export class StatsComponent implements OnInit{
   }
 
   //When we click a character assign our value to it
-  private characterClicked(ch: ICharacter){
-    let s: Subscription = this._apiService.getSingleEntity<ICharacter>("characters", ch.id).subscribe(
-      d => this.selectedCharacter = d,
-      err => console.log("Unable to find character"),
-      () => {
-        this.getArmor(this.selectedCharacter.armor_id);
-        this.getWeapon(this.selectedCharacter.weapon_id);
-        s.unsubscribe();
-      }
-    );
-
-    let j: Subscription = this._apiService.getSingleEntity<ICharacter_History>("characters/history", ch.id).subscribe(
-      d => this.selectedHistory = d,
-      err => console.log("Unable to load history"),
-      () => j.unsubscribe()
-    );
+  private characterClicked(ch: ICharacter_History){
+    this.createNewClicked = false;
+    this.selectedCharacter = ch;
+    this.getArmor(ch.character.armor_id);
+    this.getWeapon(ch.character.weapon_id);
   }
 
+  /*
+    If we select continue playing from an alive character
+    we store the character and his history in storage and move to the play page
+  */
   private continuePlaying(){
     this._storage.setValue('character', this.selectedCharacter);
     this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.id));
     this._router.navigate(['/play']);
   }
 
+  /*
+    If we create a new character save his name in the storage and move to play page
+    remove character and character_history from storage to avoid confusion
+  */
+  private createCharacter(){
+    this._storage.removeValue("character");
+    this._storage.removeValue("character_history");
+    this._storage.setValue("newCharacter", this.newCharacterString);
+    this._router.navigate(['/play']);
+  }
+
+  /*
+    Called when we continue a game, will return the given history.
+  */
   private getSpecificCharacterHistory(id: number): ICharacter_History{
     let ch: ICharacter_History;
     for(let i=0; i<this.character_history.length; i++){
@@ -195,12 +188,19 @@ export class StatsComponent implements OnInit{
     Once we have a backend, we will call our api service to delete the character
   */
   private deleteCharacterClicked(){
-    if(this.selectedCharacter.name === this.deleteCharacterString){
+    if(this.selectedCharacter.character.name === this.deleteCharacterString){
       //Will delete when we get backend API
       console.log("I CAN DELETE NOW!");
     }else{
       alert("Names do not match, please re-enter to delete");
       this.deleteCharacterString = "";
     }
+  }
+
+  /*
+    Toggles on the page to show character creation
+  */
+  private createNewCharacterClicked(){
+    this.createNewClicked = true;
   }
 }

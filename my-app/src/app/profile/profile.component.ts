@@ -4,7 +4,7 @@
 */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute } from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -13,8 +13,6 @@ import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
 import { IUser } from '../user/user';
 
-import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
-import { UserService } from '../user/user.service';
 import { Subscription } from "rxjs";
 
 import 'rxjs/add/observable/forkJoin';
@@ -30,52 +28,25 @@ declare var window: any;
 })
 export class ProfileComponent implements OnInit, OnDestroy{
 
-  private character_history: ICharacter_History[] = [];
-  private characters: ICharacter[] = [];
-
   private initUser: IUser;  
   private user: IUser;
-
-  private selectedCharacter: ICharacter;
 
   private friendToAdd: string = "";
 
   private password: string = "";
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
+
+  constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
 
   ngOnInit(){
-    //All below this will be removed with backend
-    let ch = this._apiService.getAllEntities<ICharacter_History>('character_history.json');
-    let char = this._apiService.getAllEntities<ICharacter>('character.json');
-
-    Observable.forkJoin([ch, char]).subscribe(results => {
-      //results[0] --> ICharacter_History[]
-      //results[1] --> ICharacter[]
-
-      let filterByUserID = results[0].filter(x => x.user_id === this.user.id);
-
-      for(let i=0; i<filterByUserID.length; i++){
-        filterByUserID[i].character = results[1].find(x => x.id === filterByUserID[i].character_id);
-      }
-
-      this.character_history = filterByUserID;
-    });
-
     let usr: IUser;
     this.route.data.subscribe((data: { user: IUser }) => {
       this.user = data.user;
-      this.initUser = data.user;
+      this.initUser = Object.assign({}, this.user); //Make it clone the object so they have different references
     });
   }
 
   ngAfterViewInit(){
     window.componentHandler.upgradeAllRegistered();
-  }
-
-  characterClicked(index: number): void{
-    if(index < this.character_history.length){
-      this.selectedCharacter = this.character_history[index].character;
-    }
   }
 
   private deleteFriend(){ //Will take ID of friend when we have backend
@@ -84,6 +55,23 @@ export class ProfileComponent implements OnInit, OnDestroy{
 
   private addFriend(){
     console.log(this.friendToAdd);
+  }
+
+  /*
+    If we have made changes to the user info (emial, name, password), return true to toggle the confim button on
+  */
+  private areChanges(): boolean{
+    if(this.initUser.email !== this.user.email || this.initUser.display_name !== this.user.display_name || this.password){
+      return true;
+    }
+    return false;
+  }
+
+  /*
+    When we click the confirm button, we will update the user information in the backend
+  */
+  private confirmChanges(){
+    console.log("Need to update user");
   }
 
   /*
