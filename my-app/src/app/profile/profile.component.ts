@@ -4,7 +4,7 @@
 */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute } from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -13,8 +13,6 @@ import { ICharacter } from '../interfaces/Character';
 import { ICharacter_History } from '../interfaces/Character_History';
 import { IUser } from '../user/user';
 
-import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
-import { UserService } from '../user/user.service';
 import { Subscription } from "rxjs";
 
 import 'rxjs/add/observable/forkJoin';
@@ -33,12 +31,11 @@ export class ProfileComponent implements OnInit, OnDestroy{
   private initUser: IUser;  
   private user: IUser;
 
-  private selectedCharacter: ICharacter;
-
   private friendToAdd: string = "";
 
   private password: string = "";
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
+
+  constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute){}
 
   ngOnInit(){
     let usr: IUser;
@@ -58,6 +55,23 @@ export class ProfileComponent implements OnInit, OnDestroy{
 
   private addFriend(){
     console.log(this.friendToAdd);
+  }
+
+  /*
+    If we have made changes to the user info (emial, name, password), return true to toggle the confim button on
+  */
+  private areChanges(): boolean{
+    if(this.initUser.email !== this.user.email || this.initUser.display_name !== this.user.display_name || this.password){
+      return true;
+    }
+    return false;
+  }
+
+  /*
+    When we click the confirm button, we will update the user information in the backend
+  */
+  private confirmChanges(){
+    console.log("Need to update user");
   }
 
   /*

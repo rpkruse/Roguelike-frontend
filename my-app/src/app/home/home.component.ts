@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit{
     this.topKillsPage = 0;
     this.topLevelPage = 0;
     
-    this.character_history = this._apiService.getAllEntities2<ICharacter_History>("characters/history");
+    this.character_history = this._apiService.getAllEntities<ICharacter_History>("characters/history");
    
     this.setupPieChart();
   }

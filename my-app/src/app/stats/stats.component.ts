@@ -5,7 +5,7 @@
 */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router} from "@angular/router";
 
 import { ApiService } from '../shared/api.service';
 import { StorageService } from '../shared/session-storage.service';
@@ -19,14 +19,11 @@ import { ILevel } from '../interfaces/level';
 
 import { IUser } from '../user/user';
 
-import { SortingCharacterPipe } from '../shared/SortingCharacterPipe'
-import { UserService } from '../user/user.service';
 import { Subscription } from "rxjs";
 
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
-import { Subscribable } from 'rxjs/Observable';
 
 declare var window: any;
 
@@ -53,7 +50,7 @@ export class StatsComponent implements OnInit{
   private createNewClicked: boolean = false;
   private newCharacterString: string = "";
 
-  constructor(private _userService: UserService, private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
+  constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
 
   ngOnInit(){
     //Get the user on every page load
@@ -61,8 +58,8 @@ export class StatsComponent implements OnInit{
       this.user = data.user;
     });
 
-    let ch: Observable<ICharacter_History[]> = this._apiService.getAllEntities2<ICharacter_History>('characters/history');
-    let cc: Observable<ICharacter_Class[]> = this._apiService.getAllEntities2<ICharacter_Class>('classes');
+    let ch: Observable<ICharacter_History[]> = this._apiService.getAllEntities<ICharacter_History>('characters/history');
+    let cc: Observable<ICharacter_Class[]> = this._apiService.getAllEntities<ICharacter_Class>('classes');
 
     Observable.forkJoin([ch, cc]).subscribe(results => {
       //results[0] --> ICharacter_History[]
@@ -84,6 +81,7 @@ export class StatsComponent implements OnInit{
   private getCharacterStatus(status: string): ICharacter_History[]{
     let chs: ICharacter_History[] = [];
     let ch: ICharacter_History;
+
     for(let i=0; i<this.character_history.length; i++){
       ch = this.character_history[i];
       if(status === "alive" && !ch.character.killed_by){
@@ -92,7 +90,6 @@ export class StatsComponent implements OnInit{
         chs.push(ch);
       }
     }
-
     return chs;
   }
 
@@ -154,17 +151,30 @@ export class StatsComponent implements OnInit{
     this.getWeapon(ch.character.weapon_id);
   }
 
+  /*
+    If we select continue playing from an alive character
+    we store the character and his history in storage and move to the play page
+  */
   private continuePlaying(){
     this._storage.setValue('character', this.selectedCharacter);
     this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.id));
     this._router.navigate(['/play']);
   }
 
+  /*
+    If we create a new character save his name in the storage and move to play page
+    remove character and character_history from storage to avoid confusion
+  */
   private createCharacter(){
+    this._storage.removeValue("character");
+    this._storage.removeValue("character_history");
     this._storage.setValue("newCharacter", this.newCharacterString);
     this._router.navigate(['/play']);
   }
 
+  /*
+    Called when we continue a game, will return the given history.
+  */
   private getSpecificCharacterHistory(id: number): ICharacter_History{
     let ch: ICharacter_History;
     for(let i=0; i<this.character_history.length; i++){
@@ -187,6 +197,9 @@ export class StatsComponent implements OnInit{
     }
   }
 
+  /*
+    Toggles on the page to show character creation
+  */
   private createNewCharacterClicked(){
     this.createNewClicked = true;
   }

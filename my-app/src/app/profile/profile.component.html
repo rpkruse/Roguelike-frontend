@@ -77,6 +77,7 @@
                     <span class="input-group-addon">Change Password</span>
                     <input type="password" class="form-control" placeholder="Password" [value]="this.password" (input)="this.password = $event.target.value" aria-describedby="basic">
                 </div>
+                <button type="button" class="btn btn-success pull-right" (click)="confirmChanges()" [disabled]="!this.areChanges()">Confim</button>
             </div>
         </div>
     </div>
