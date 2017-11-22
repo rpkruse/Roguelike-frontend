@@ -156,8 +156,8 @@ export class StatsComponent implements OnInit{
     we store the character and his history in storage and move to the play page
   */
   private continuePlaying(){
-    this._storage.setValue('character', this.selectedCharacter);
-    this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.id));
+    this._storage.setValue('character', this.selectedCharacter.character);
+    this._storage.setValue('character_history', this.getSpecificCharacterHistory(this.selectedCharacter.character_id));
     this._router.navigate(['/play']);
   }
 
