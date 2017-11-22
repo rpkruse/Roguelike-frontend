@@ -50,7 +50,7 @@
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-success" (click)="addFriend()">
+                    <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd">
                         Add Friend
                     </button>
                 </span>

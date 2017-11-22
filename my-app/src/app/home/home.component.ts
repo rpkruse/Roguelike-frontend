@@ -30,10 +30,8 @@ declare var window: any;
 })
 
 export class HomeComponent implements OnInit{
-  private classes: Observable<ICharacter_Class[]>;
   private characters: Observable<ICharacter[]>
   private character_history: Observable<ICharacter_History[]>;
-  //private character_history: ICharacter_History[] = [];
 
   private topPlayerPage: number;
   private topKillsPage: number;
@@ -50,8 +48,6 @@ export class HomeComponent implements OnInit{
   private levelNextEnabled: boolean = true;
   private levelBackEnabled: boolean = false;
 
-  private users: IUser[] = [];
-
   // Pie
   public pieChartLabels: string[] = ['Knight', 'Mage', 'Archer'];
   private pieChartData: number[] = [0, 0, 0];
@@ -66,7 +62,7 @@ export class HomeComponent implements OnInit{
     console.log(e);
   }
 
-  constructor(private _apiService: ApiService, private _userService: UserService) {}
+  constructor(private _apiService: ApiService) {}
 
   ngOnInit(){
     this.topPlayerPage = 0;
@@ -113,10 +109,6 @@ export class HomeComponent implements OnInit{
     );
   }
 
-  private getCharacterName(id: number): Observable<ICharacter>{
-    return this._apiService.getSingleEntity<ICharacter>("characters", id);
-  }
-
    /*
     Will pull the next page of the list from the DB for top_n to display
     @param clicked: string - Either: TOP_PLAYERS, TOP_KILLS, or TOP_LEVEL
@@ -152,21 +144,5 @@ export class HomeComponent implements OnInit{
         this.topLevelPage--;
       this.levelBackEnabled = this.topLevelPage > 0;
     }
-  }
-
-  private getCharacterInfo(id: number): ICharacter{
-    let character: ICharacter;
-    let s: Subscription;
-    let d: any;
-
-    s = this.characters.subscribe(
-        data => d = data,
-        err => console.log("Unable to get character info for: " + id),
-        () => {
-            s.unsubscribe
-            return d;
-        }
-    )
-    return character;
   }
 }
