@@ -57,7 +57,7 @@
                     </tr>
                 </thead>
                 <tbody> 
-                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'level_id'; index as i">
+                    <ng-container *ngFor="let character of character_history | async | sortingCharacter: 'level'; index as i">
                         <tr *ngIf="i >= this.numPerPage * this.topLevelPage && i <= (this.numPerPage * this.topLevelPage) + this.numPerPage - 1">
                             <td class="col-xs-2">{{i+1}}</td><td class="col-xs-8">{{character.character.name}}</td><td class="col-xs-2 text-center">{{character.level.number}}</td>
                         </tr>

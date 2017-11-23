@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit{
       () => {
         s.unsubscribe();
         for(let i=0; i<ch.length; i++){
-          let name: string = ch[i].character.name;
+          let name: string = ch[i].character.class.name;
           if(name === "Knight"){
             nKnight++;
           }else if(name === "Mage"){
