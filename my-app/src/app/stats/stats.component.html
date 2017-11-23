@@ -49,7 +49,7 @@
     <div class="row col-md-4">
       <div class="panel panel-default" *ngIf="this.selectedCharacter && !this.createNewClicked">
         <div class="panel-heading">
-          <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.character.name}}: level __ {{this.selectedCharacter.character.class.name}}</h4>
+          <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.character.name}}: level  {{this.getLevel(this.selectedCharacter.character.id).number}} {{this.selectedCharacter.character.class.name}}</h4>
           <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
             <span class="input-group-btn">
               <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
@@ -64,7 +64,7 @@
           <li class="list-group-item">Health: {{this.selectedCharacter.character.health}}</li>
           <li *ngIf="this.selectedWeapon" class="list-group-item" >Weapon: {{this.selectedWeapon.name}}</li>
           <li *ngIf="this.selectedArmor" class="list-group-item">Armor: {{this.selectedArmor.name}}</li>          
-          <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.character.id).id}}</li>
+          <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.character.id).number}}</li>
           <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By: {{getKilledByClass(this.selectedCharacter.character.killed_by).name}}</li>
           <button type="button" class="btn btn-success center-block" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.character.killed_by">Continue Playing</button>                          
         </div>
