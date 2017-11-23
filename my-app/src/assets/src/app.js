@@ -87,9 +87,7 @@ window.onmousedown = function (event) {
         gui.onmousedown(event);
         if (gui.chosenClass != "") {
             window.sfx.play("click");
-            player.changeClass(gui.chosenClass);
-            player.shouldProcessTurn = true;
-            nextLevel(false);
+            createNewCharacter(gui.chosenClass);
         }
     }
 }
@@ -322,6 +320,12 @@ function nextLevel(fadeOut) {
     if (player.level > 0)
         player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
+
+    client.createLevel(player.level, "seed", function(level){
+        client.updateCharacterHistory(player.db.characterHistoryID, 
+            {score: Math.round(player.score), level_id: level.id}, function(){});
+    });
+
     //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
@@ -441,9 +445,61 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
+function startFirstLevel() {
+    gui.state = "playing";
+    player.shouldProcessTurn = true;
+    nextLevel(false);
+}
+
+function createNewCharacter(className) {
+    // Post everything to server
+    player.changeClass(className);
+
+    var name = JSON.parse(sessionStorage.getItem("newCharacter"));
+    sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
+    if(!name) {
+        name = "Tim";
+    }
+
+    var health = player.combat.health;
+    var attackBonus = player.combat.attackBonus;
+    var damageBonus = player.combat.damageBonus;
+    var defenseBonus = player.combat.defenseBonus;
+    var weaponID = player.combat.weapon.data.id;
+    var armorID = player.combat.armor.data.id;
+    var classID = data.classes.find(function(x){ return x.name == className}).id;
+
+    client.createLevel(0, "seed", function(level){
+        client.createCharacter(name, health, attackBonus, damageBonus, 
+            defenseBonus, weaponID, armorID, classID, function(character){
+                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+                    player.db = {};
+                    player.db.characterHistoryID = history.id;
+                    player.db.characterID = character.id;
+                    startFirstLevel();
+                });
+            });
+    });
+}
+
+function loadFromSave(characterHistory) {
+    var className = characterHistory.character.class.name;
+
+    player.changeClass(className);
+    player.loadCharacter(characterHistory);
+    startFirstLevel();
+}
+
 function loadTilemap() {
     window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
         onload: function () {
+
+            var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
+            sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
+            if(characterHistory !== null) {
+                loadFromSave(characterHistory);
+            }            
+
             masterLoop(performance.now());
         }
     });

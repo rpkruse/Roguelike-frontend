@@ -15,8 +15,11 @@ HttpClient.prototype.get = function(url, callback) {
             callback(this.status, JSON.parse(this.responseText));
         }
     });
+    var token = sessionStorage.getItem("token");
 
     xhr.open('GET', url);
+    xhr.setRequestHeader("Authorization", "Bearer " + token);
+
     xhr.send(null);
 }
 
@@ -35,10 +38,32 @@ HttpClient.prototype.post = function(url, params, callback) {
         }
     });
 
+    var token = sessionStorage.getItem("token");
+
     xhr.open("POST", url);
     xhr.setRequestHeader("accept", "application/json");
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
 
     xhr.send(data);
+}
+
+HttpClient.prototype.put = function(url, params, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            callback(this.status, JSON.parse(this.responseText));
+        }
+    });
+
+    var token = sessionStorage.getItem("token");
+
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("accept", "application/json");
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
+
+    xhr.send(JSON.stringify(params));
 }
 
 HttpClient.prototype.log = function(msg) {
@@ -99,6 +124,101 @@ HttpClient.prototype.listWeapons = function(callback) {
         callback([]);
     });
 }
+
+HttpClient.prototype.createCharacterHistory = function(characterID, score, levelID, callback) {
+    var params = {
+        character_id: characterID,
+        score: score,
+        level_id: levelID
+    };
+
+    this.post(this.baseURL + "/characters/history", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating CharacterHistory: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.updateCharacterHistory = function(characterHistoryID, params, callback) {
+    this.put(this.baseURL + "/characters/history/" + characterHistoryID, params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error updating character history: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, callback) {
+    var params = {
+        character_id: characterID,
+        power_up_id: powerupID
+    }
+
+    this.post(this.baseURL + "/powerups", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error posting picked up powerup: " + status);
+        callback([]);
+    });
+}
+
+// TODO: Waiting on api update
+HttpClient.prototype.createLevel = function(levelNumber, seed, callback) {
+    var params = {
+        number: levelNumber,
+        seed: seed
+    };
+
+    this.post(this.baseURL + "/levels", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating level: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.createCharacter = function(name, health, attackBonus, damageBonus, defenseBonus, weaponID, armorID, classID, callback) {
+    var params = {
+        name: name,
+        health: health,
+        attack_bonus: attackBonus,
+        damage_bonus: damageBonus,
+        defense_bonus: defenseBonus,
+        weapon_id: weaponID,
+        armor_id: armorID,
+        class_id: classID
+    };
+
+    this.post(this.baseURL + "/characters", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error creating character: " + status);
+        callback([]);
+    });
+}
+
+HttpClient.prototype.updateCharacter = function(characterID, params, callback) {
+    this.put(this.baseURL + "/characters/" + characterID, params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error updating character: " + status);
+        callback([]);
+    });
+}
+
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -863,9 +983,7 @@ window.onmousedown = function (event) {
         gui.onmousedown(event);
         if (gui.chosenClass != "") {
             window.sfx.play("click");
-            player.changeClass(gui.chosenClass);
-            player.shouldProcessTurn = true;
-            nextLevel(false);
+            createNewCharacter(gui.chosenClass);
         }
     }
 }
@@ -1098,6 +1216,12 @@ function nextLevel(fadeOut) {
     if (player.level > 0)
         player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
+
+    client.createLevel(player.level, "seed", function(level){
+        client.updateCharacterHistory(player.db.characterHistoryID, 
+            {score: Math.round(player.score), level_id: level.id}, function(){});
+    });
+
     //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
@@ -1217,9 +1341,61 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
+function startFirstLevel() {
+    gui.state = "playing";
+    player.shouldProcessTurn = true;
+    nextLevel(false);
+}
+
+function createNewCharacter(className) {
+    // Post everything to server
+    player.changeClass(className);
+
+    var name = JSON.parse(sessionStorage.getItem("newCharacter"));
+    sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
+    if(!name) {
+        name = "Tim";
+    }
+
+    var health = player.combat.health;
+    var attackBonus = player.combat.attackBonus;
+    var damageBonus = player.combat.damageBonus;
+    var defenseBonus = player.combat.defenseBonus;
+    var weaponID = player.combat.weapon.data.id;
+    var armorID = player.combat.armor.data.id;
+    var classID = data.classes.find(function(x){ return x.name == className}).id;
+
+    client.createLevel(0, "seed", function(level){
+        client.createCharacter(name, health, attackBonus, damageBonus, 
+            defenseBonus, weaponID, armorID, classID, function(character){
+                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+                    player.db = {};
+                    player.db.characterHistoryID = history.id;
+                    player.db.characterID = character.id;
+                    startFirstLevel();
+                });
+            });
+    });
+}
+
+function loadFromSave(characterHistory) {
+    var className = characterHistory.character.class.name;
+
+    player.changeClass(className);
+    player.loadCharacter(characterHistory);
+    startFirstLevel();
+}
+
 function loadTilemap() {
     window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
         onload: function () {
+
+            var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
+            sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
+            if(characterHistory !== null) {
+                loadFromSave(characterHistory);
+            }            
+
             masterLoop(performance.now());
         }
     });
@@ -1275,10 +1451,10 @@ function Armor(aName, aLevel) {
     this.level = aLevel;
     this.shouldRetain = true;
     
-    var data = window.data.armors.find(function(x){ return x.name == aName; });
-    this.defense = data.defense_value;
-    this.strongType = data.strong_type;
-    this.weakType = data.weak_type;
+    this.data = window.data.armors.find(function(x){ return x.name == aName; });
+    this.defense = this.data.defense_value;
+    this.strongType = this.data.strong_type;
+    this.weakType = this.data.weak_type;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };
@@ -1408,6 +1584,22 @@ function CombatClass(aName, aLevel) {
     this.options = {};
     if(classData.options != "") {
         this.options = JSON.parse(classData.options);
+    }
+
+    this.attacked = false;
+
+
+    switch (aName) {
+        case "Zombie": 
+        case "Skeleton": 
+        case "Minotaur": 
+        case "Shaman":
+        case "Fucking Dragon":
+            this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
+            this.attackBonus = this.difficulty + classData.starting_attack_bonus;
+            this.damageBonus = this.difficulty + classData.starting_damage_bonus;
+            this.defenseBonus = this.difficulty + classData.starting_defense_bonus;
+            break;
     }
 
     switch (aName) {
@@ -1578,6 +1770,21 @@ function CombatClass(aName, aLevel) {
 
 }
 
+CombatClass.prototype.loadCharacter = function(character, level) {
+    this.difficulty = window.combatController.getDifficulty(level)
+
+    this.health = character.health;
+    this.attackBonus = character.attack_bonus;
+    this.damageBonus = character.damage_bonus;
+    this.defenseBonus = character.defense_bonus;
+
+    var weaponName = window.data.weapons.find(function(x){ return x.id == character.weapon_id}).name;
+    var armorName = window.data.armors.find(function(x){ return x.id == character.armor_id }).name;
+
+    this.weapon = new Weapon(weaponName, level);
+    this.armor = new Armor(armorName, level);
+}
+
 function moveBack(a, b, array) {
     var adj;
 
@@ -1644,6 +1851,8 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
     var defender = aDefenderClass.name;
     var playerAttacker = (attacker == "Knight" || attacker == "Archer" || attacker == "Mage");
 
+    aAttackerClass.attacked = true;
+
     if (lAttackRoll == 1) {
         var lSelfDamage = RNG.rollMultiple(1, 3, Math.max(1, aAttackerClass.weapon.level / 5));
         aAttackerClass.health -= lSelfDamage;
@@ -1697,27 +1906,7 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
     if (aDefenderClass.health <= 0) {
         message = message.replace(".", ", killing it.");
         if (playerAttacker) {
-            switch (defender) {
-                case "Zombie":
-                    player.score += 5;
-                    break;
-
-                case "Skeleton":
-                    player.score += 10;
-                    break;
-
-                case "Shaman":
-                    player.score += 20;
-                    break;
-
-                case "Minotaur":
-                    player.score += 35;
-                    break;
-
-                case "Dragon":
-                    player.score += 100;
-                    break;
-            }
+            player.score += aDefenderClass.options.score;
         }
     }
     window.terminal.log(message, window.colors.combat);
@@ -1901,14 +2090,30 @@ function Enemy(position, combatClass, target, onDeathCB) {
     } else if (this.class == "Fucking Dragon") {
         this.animator = new Animator(12, "idle", "Fucking Dragon");
     }
+
+    var classID = data.classes.find(function(x){ return x.name == combatClass}).id;
+
+    var self = this;
+    client.createCharacter(this.class, this.combat.health, this.combat.attackBonus,
+        this.combat.damageBonus, this.combat.defenseBonus, this.combat.weapon.data.id,
+        this.combat.armor.data.id, classID, function(character) {
+            self.characterID = character.id;
+    });
 }
 
 Enemy.prototype.processTurn = function () {
     if (this.combat.status.effect != "None") window.combatController.handleStatus(this.combat);
-    if (this.combat.health <= 0) this.state = "dead";
+    if (this.combat.health <= 0) {
+        this.state = "dead";
+        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function(){});
+    } 
     if (this.state == "dead" || this.combat.status.effect == "Frozen" || this.combat.status.effect == "Stunned") return;
 
     this.combat.turnAI(this);
+    if(player.combat.health <= 0 && this.combat.attacked) {
+        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function(){});
+    }
+    this.combat.attacked = false;
 
     if (this.position.x < this.oldX) this.changeDirection("left");
     else if (this.position.x > this.oldX) this.changeDirection("right");
@@ -2515,19 +2720,19 @@ GUI.prototype.onmousedown = function(event)
 		{
 			//Knight
             this.chosenClass = "Knight";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[1] != 0)
 		{
             //Archer
             this.chosenClass = "Archer";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[2] != 0)
 		{
             //Mage
             this.chosenClass = "Mage";
-            this.state = "playing";
+            this.state = "waiting";
 		}
     }
 }
@@ -2618,7 +2823,7 @@ GUI.prototype.render = function (elapsedTime, ctx) {
 		288 +this.swordHighlights[2], 96 + this.swordHighlights[2]
 	);
   }
-  else if(this.state == "choose class")
+  else if(this.state == "choose class" || this.state == "waiting")
   {
   	//Background
     ctx.drawImage(
@@ -2848,6 +3053,8 @@ Inventory.prototype.addWeapon = function (weapon) {
     weaponToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     weaponToDrop.shouldRetain = true;
     window.entityManager.addEntity(weaponToDrop);
+
+    client.updateCharacter(player.db.characterID, { weapon_id: weapon.data.id }, function(){});
 }
 
 /**
@@ -2866,6 +3073,8 @@ Inventory.prototype.addArmor = function (armor) {
     armorToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     armorToDrop.shouldRetain = true;
     window.entityManager.addEntity(armorToDrop);
+
+    client.updateCharacter(player.db.characterID, { armor_id: armor.data.id }, function(){});
 }
 
 /**
@@ -3479,6 +3688,16 @@ Player.prototype.changeClass = function (chosenClass) {
     }
 };
 
+Player.prototype.loadCharacter = function(characterHistory) {
+    // TODO: Remove following line
+    player.level = characterHistory.level.number - 1;
+    player.score = characterHistory.score;
+    player.db = {};
+    player.db.characterHistoryID = characterHistory.id;
+    player.db.characterID = characterHistory.character.id;
+    this.combat.loadCharacter(characterHistory.character, player.level + 1);
+}
+
 Player.prototype.lookCommand = function () {
     if (typeof this.collidingWith == "undefined") {
         window.terminal.log("Nothing at your feet", window.colors.invalid);
@@ -3709,6 +3928,8 @@ Powerup.prototype.collided = function (entity) {
         window.sfx.play(this.data.name + "Pickup");
         window.terminal.log(this.data.flavor_text, window.colors.pickup);
         entity.score++;
+
+        client.postPickedUpPowerup(entity.db.characterID, this.data.id, function(){});
 
         switch (this.data.id) {
             case 1:
@@ -4591,18 +4812,22 @@ function Weapon(aName, aLevel) {
         { x: 675, y: 75 }  // 5 - Another Magic Staff
     ];
 
-    var data = window.data.weapons.find(function(x) { return x.name == aName });
+    this.data = window.data.weapons.find(function(x) { return x.name == aName });
     
-    this.attackType = data.attack_type;
-    this.damageMax = data.max_damage;
-    this.damageMin = data.min_damage;
-    this.damageType = data.damage_type;
-    this.range = data.range;
-    this.hitBonus = data.hit_bonus;
-    this.attackEffect = data.attack_effect;
-    this.properties = data.properties;
-    this.propertiesShort = data.properties_short;
-    this.spriteIdx = data.sprite_id;
+    if(!this.data) {
+        console.log(aName);
+    }
+
+    this.attackType = this.data.attack_type;
+    this.damageMax = this.data.max_damage;
+    this.damageMin = this.data.min_damage;
+    this.damageType = this.data.damage_type;
+    this.range = this.data.range;
+    this.hitBonus = this.data.hit_bonus;
+    this.attackEffect = this.data.attack_effect;
+    this.properties = this.data.properties;
+    this.propertiesShort = this.data.properties_short;
+    this.spriteIdx = this.data.sprite_id;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };

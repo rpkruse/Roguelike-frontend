@@ -124,19 +124,19 @@ GUI.prototype.onmousedown = function(event)
 		{
 			//Knight
             this.chosenClass = "Knight";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[1] != 0)
 		{
             //Archer
             this.chosenClass = "Archer";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[2] != 0)
 		{
             //Mage
             this.chosenClass = "Mage";
-            this.state = "playing";
+            this.state = "waiting";
 		}
     }
 }
@@ -227,7 +227,7 @@ GUI.prototype.render = function (elapsedTime, ctx) {
 		288 +this.swordHighlights[2], 96 + this.swordHighlights[2]
 	);
   }
-  else if(this.state == "choose class")
+  else if(this.state == "choose class" || this.state == "waiting")
   {
   	//Background
     ctx.drawImage(

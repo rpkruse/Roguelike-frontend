@@ -8,10 +8,10 @@ function Armor(aName, aLevel) {
     this.level = aLevel;
     this.shouldRetain = true;
     
-    var data = window.data.armors.find(function(x){ return x.name == aName; });
-    this.defense = data.defense_value;
-    this.strongType = data.strong_type;
-    this.weakType = data.weak_type;
+    this.data = window.data.armors.find(function(x){ return x.name == aName; });
+    this.defense = this.data.defense_value;
+    this.strongType = this.data.strong_type;
+    this.weakType = this.data.weak_type;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };
