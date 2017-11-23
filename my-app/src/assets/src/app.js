@@ -87,9 +87,7 @@ window.onmousedown = function (event) {
         gui.onmousedown(event);
         if (gui.chosenClass != "") {
             window.sfx.play("click");
-            player.changeClass(gui.chosenClass);
-            player.shouldProcessTurn = true;
-            nextLevel(false);
+            createNewCharacter(gui.chosenClass);
         }
     }
 }
@@ -441,9 +439,36 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
+function startFirstLevel() {
+    player.shouldProcessTurn = true;
+    nextLevel(false);
+}
+
+function createNewCharacter(className) {
+    // Post everything to server
+    player.changeClass(className);
+
+    startFirstLevel();
+}
+function loadFromSave(characterHistory) {
+    var className = characterHistory.character.class.name;
+
+    player.changeClass(className);
+    player.loadCharacter(characterHistory);
+    gui.state = "playing";
+    startFirstLevel();
+}
+
 function loadTilemap() {
     window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
         onload: function () {
+
+            var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
+            sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
+            if(characterHistory !== null) {
+                loadFromSave(characterHistory);
+            }            
+
             masterLoop(performance.now());
         }
     });

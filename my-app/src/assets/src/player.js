@@ -134,6 +134,14 @@ Player.prototype.changeClass = function (chosenClass) {
     }
 };
 
+Player.prototype.loadCharacter = function(characterHistory) {
+    // TODO: Remove following line
+    characterHistory.level.level_number = 1;
+    player.level = characterHistory.level.level_number - 1;
+    player.score = characterHistory.score;
+    this.combat.loadCharacter(characterHistory.character, player.level + 1);
+}
+
 Player.prototype.lookCommand = function () {
     if (typeof this.collidingWith == "undefined") {
         window.terminal.log("Nothing at your feet", window.colors.invalid);

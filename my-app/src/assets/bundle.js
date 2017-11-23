@@ -972,9 +972,7 @@ window.onmousedown = function (event) {
         gui.onmousedown(event);
         if (gui.chosenClass != "") {
             window.sfx.play("click");
-            player.changeClass(gui.chosenClass);
-            player.shouldProcessTurn = true;
-            nextLevel(false);
+            createNewCharacter(gui.chosenClass);
         }
     }
 }
@@ -1326,9 +1324,36 @@ function unfadeFromBlack() {
     fadeAnimationProgress.isActive = true;
 }
 
+function startFirstLevel() {
+    player.shouldProcessTurn = true;
+    nextLevel(false);
+}
+
+function createNewCharacter(className) {
+    // Post everything to server
+    player.changeClass(className);
+
+    startFirstLevel();
+}
+function loadFromSave(characterHistory) {
+    var className = characterHistory.character.class.name;
+
+    player.changeClass(className);
+    player.loadCharacter(characterHistory);
+    gui.state = "playing";
+    startFirstLevel();
+}
+
 function loadTilemap() {
     window.tilemap = new Tilemap(screenSize, 65, 65, tileset, false, {
         onload: function () {
+
+            var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
+            sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
+            if(characterHistory !== null) {
+                loadFromSave(characterHistory);
+            }            
+
             masterLoop(performance.now());
         }
     });
@@ -1699,6 +1724,21 @@ function CombatClass(aName, aLevel) {
             break;
     }
 
+}
+
+CombatClass.prototype.loadCharacter = function(character, level) {
+    this.difficulty = window.combatController.getDifficulty(level)
+
+    this.health = character.health;
+    this.attackBonus = character.attack_bonus;
+    this.damageBonus = character.damage_bonus;
+    this.defenseBonus = character.defense_bonus;
+
+    var weaponName = window.data.weapons.find(function(x){ return x.id == character.weapon_id}).name;
+    var armorName = window.data.armors.find(function(x){ return x.id == character.armor_id }).name;
+
+    this.weapon = new Weapon(weaponName, level);
+    this.armor = new Armor(armorName, level);
 }
 
 function moveBack(a, b, array) {
@@ -3581,6 +3621,14 @@ Player.prototype.changeClass = function (chosenClass) {
         this.animator = new Animator(0, this.state, this.class);
     }
 };
+
+Player.prototype.loadCharacter = function(characterHistory) {
+    // TODO: Remove following line
+    characterHistory.level.level_number = 1;
+    player.level = characterHistory.level.level_number - 1;
+    player.score = characterHistory.score;
+    this.combat.loadCharacter(characterHistory.character, player.level + 1);
+}
 
 Player.prototype.lookCommand = function () {
     if (typeof this.collidingWith == "undefined") {

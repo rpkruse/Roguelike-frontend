@@ -216,6 +216,21 @@ function CombatClass(aName, aLevel) {
 
 }
 
+CombatClass.prototype.loadCharacter = function(character, level) {
+    this.difficulty = window.combatController.getDifficulty(level)
+
+    this.health = character.health;
+    this.attackBonus = character.attack_bonus;
+    this.damageBonus = character.damage_bonus;
+    this.defenseBonus = character.defense_bonus;
+
+    var weaponName = window.data.weapons.find(function(x){ return x.id == character.weapon_id}).name;
+    var armorName = window.data.armors.find(function(x){ return x.id == character.armor_id }).name;
+
+    this.weapon = new Weapon(weaponName, level);
+    this.armor = new Armor(armorName, level);
+}
+
 function moveBack(a, b, array) {
     var adj;
 
