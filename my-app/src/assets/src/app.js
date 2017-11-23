@@ -440,6 +440,7 @@ function unfadeFromBlack() {
 }
 
 function startFirstLevel() {
+    gui.state = "playing";
     player.shouldProcessTurn = true;
     nextLevel(false);
 }
@@ -448,14 +449,38 @@ function createNewCharacter(className) {
     // Post everything to server
     player.changeClass(className);
 
-    startFirstLevel();
+    var name = sessionStorage.getItem("newCharacter");
+    sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
+    if(!name) {
+        name = "Tim";
+    }
+
+    var health = player.combat.health;
+    var attackBonus = player.combat.attackBonus;
+    var damageBonus = player.combat.damageBonus;
+    var defenseBonus = player.combat.defenseBonus;
+    var weaponID = player.combat.weapon.data.id;
+    var armorID = player.combat.armor.data.id;
+    var classID = data.classes.find(function(x){ return x.name == className}).id;
+
+    client.createLevel(1, "seed", function(level){
+        client.createCharacter(name, health, attackBonus, damageBonus, 
+            defenseBonus, weaponID, armorID, classID, function(character){
+                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+                    player.db = {};
+                    player.db.characterHistoryID = history.id;
+                    player.db.characterID = character.id;
+                    startFirstLevel();
+                });
+            });
+    });
 }
+
 function loadFromSave(characterHistory) {
     var className = characterHistory.character.class.name;
 
     player.changeClass(className);
     player.loadCharacter(characterHistory);
-    gui.state = "playing";
     startFirstLevel();
 }
 

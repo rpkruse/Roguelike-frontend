@@ -139,6 +139,9 @@ Player.prototype.loadCharacter = function(characterHistory) {
     characterHistory.level.level_number = 1;
     player.level = characterHistory.level.level_number - 1;
     player.score = characterHistory.score;
+    player.db = {};
+    player.db.characterHistoryID = characterHistory.id;
+    player.db.characterID = characterHistory.character.id;
     this.combat.loadCharacter(characterHistory.character, player.level + 1);
 }
 

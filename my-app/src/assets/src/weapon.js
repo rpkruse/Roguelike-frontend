@@ -19,18 +19,18 @@ function Weapon(aName, aLevel) {
         { x: 675, y: 75 }  // 5 - Another Magic Staff
     ];
 
-    var data = window.data.weapons.find(function(x) { return x.name == aName });
+    this.data = window.data.weapons.find(function(x) { return x.name == aName });
     
-    this.attackType = data.attack_type;
-    this.damageMax = data.max_damage;
-    this.damageMin = data.min_damage;
-    this.damageType = data.damage_type;
-    this.range = data.range;
-    this.hitBonus = data.hit_bonus;
-    this.attackEffect = data.attack_effect;
-    this.properties = data.properties;
-    this.propertiesShort = data.properties_short;
-    this.spriteIdx = data.sprite_id;
+    this.attackType = this.data.attack_type;
+    this.damageMax = this.data.max_damage;
+    this.damageMin = this.data.min_damage;
+    this.damageType = this.data.damage_type;
+    this.range = this.data.range;
+    this.hitBonus = this.data.hit_bonus;
+    this.attackEffect = this.data.attack_effect;
+    this.properties = this.data.properties;
+    this.propertiesShort = this.data.properties_short;
+    this.spriteIdx = this.data.sprite_id;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };

@@ -1325,6 +1325,7 @@ function unfadeFromBlack() {
 }
 
 function startFirstLevel() {
+    gui.state = "playing";
     player.shouldProcessTurn = true;
     nextLevel(false);
 }
@@ -1333,14 +1334,38 @@ function createNewCharacter(className) {
     // Post everything to server
     player.changeClass(className);
 
-    startFirstLevel();
+    var name = sessionStorage.getItem("newCharacter");
+    sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
+    if(!name) {
+        name = "Tim";
+    }
+
+    var health = player.combat.health;
+    var attackBonus = player.combat.attackBonus;
+    var damageBonus = player.combat.damageBonus;
+    var defenseBonus = player.combat.defenseBonus;
+    var weaponID = player.combat.weapon.data.id;
+    var armorID = player.combat.armor.data.id;
+    var classID = data.classes.find(function(x){ return x.name == className}).id;
+
+    client.createLevel(1, "seed", function(level){
+        client.createCharacter(name, health, attackBonus, damageBonus, 
+            defenseBonus, weaponID, armorID, classID, function(character){
+                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+                    player.db = {};
+                    player.db.characterHistoryID = history.id;
+                    player.db.characterID = character.id;
+                    startFirstLevel();
+                });
+            });
+    });
 }
+
 function loadFromSave(characterHistory) {
     var className = characterHistory.character.class.name;
 
     player.changeClass(className);
     player.loadCharacter(characterHistory);
-    gui.state = "playing";
     startFirstLevel();
 }
 
@@ -1409,10 +1434,10 @@ function Armor(aName, aLevel) {
     this.level = aLevel;
     this.shouldRetain = true;
     
-    var data = window.data.armors.find(function(x){ return x.name == aName; });
-    this.defense = data.defense_value;
-    this.strongType = data.strong_type;
-    this.weakType = data.weak_type;
+    this.data = window.data.armors.find(function(x){ return x.name == aName; });
+    this.defense = this.data.defense_value;
+    this.strongType = this.data.strong_type;
+    this.weakType = this.data.weak_type;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };
@@ -2658,19 +2683,19 @@ GUI.prototype.onmousedown = function(event)
 		{
 			//Knight
             this.chosenClass = "Knight";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[1] != 0)
 		{
             //Archer
             this.chosenClass = "Archer";
-            this.state = "playing";
+            this.state = "waiting";
 		}
 		else if(this.playerHighlights[2] != 0)
 		{
             //Mage
             this.chosenClass = "Mage";
-            this.state = "playing";
+            this.state = "waiting";
 		}
     }
 }
@@ -2761,7 +2786,7 @@ GUI.prototype.render = function (elapsedTime, ctx) {
 		288 +this.swordHighlights[2], 96 + this.swordHighlights[2]
 	);
   }
-  else if(this.state == "choose class")
+  else if(this.state == "choose class" || this.state == "waiting")
   {
   	//Background
     ctx.drawImage(
@@ -3627,6 +3652,9 @@ Player.prototype.loadCharacter = function(characterHistory) {
     characterHistory.level.level_number = 1;
     player.level = characterHistory.level.level_number - 1;
     player.score = characterHistory.score;
+    player.db = {};
+    player.db.characterHistoryID = characterHistory.id;
+    player.db.characterID = characterHistory.character.id;
     this.combat.loadCharacter(characterHistory.character, player.level + 1);
 }
 
@@ -4744,18 +4772,18 @@ function Weapon(aName, aLevel) {
         { x: 675, y: 75 }  // 5 - Another Magic Staff
     ];
 
-    var data = window.data.weapons.find(function(x) { return x.name == aName });
+    this.data = window.data.weapons.find(function(x) { return x.name == aName });
     
-    this.attackType = data.attack_type;
-    this.damageMax = data.max_damage;
-    this.damageMin = data.min_damage;
-    this.damageType = data.damage_type;
-    this.range = data.range;
-    this.hitBonus = data.hit_bonus;
-    this.attackEffect = data.attack_effect;
-    this.properties = data.properties;
-    this.propertiesShort = data.properties_short;
-    this.spriteIdx = data.sprite_id;
+    this.attackType = this.data.attack_type;
+    this.damageMax = this.data.max_damage;
+    this.damageMin = this.data.min_damage;
+    this.damageType = this.data.damage_type;
+    this.range = this.data.range;
+    this.hitBonus = this.data.hit_bonus;
+    this.attackEffect = this.data.attack_effect;
+    this.properties = this.data.properties;
+    this.propertiesShort = this.data.properties_short;
+    this.spriteIdx = this.data.sprite_id;
 
     // static properties for entities
     this.position = { x: -1, y: -1 };
