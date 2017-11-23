@@ -15,9 +15,8 @@
         <div class="mdl-layout-spacer"></div>
         <!-- Navigation -->
         <nav class="mdl-navigation">
-          <a class="mdl-layout__tab" (click)="playClicked()" [routerLink]="['/play']">Play</a>
+          <a class="mdl-layout__tab" [routerLink]="['/stats']">Play</a>
           <a class="mdl-layout__tab" [routerLink]="['/profile']">Profile</a>
-          <a class="mdl-layout__tab" [routerLink]="['/stats']">Stats</a>
           <a *ngIf="!_storage.getValue('loggedIn')" class="mdl-layout__tab" [routerLink]="['/login']">Sign in</a>
           <a *ngIf="_storage.getValue('loggedIn')" class="mdl-layout__tab" [routerLink]="['/login']" (click)="this._userService.logOut()">Sign out</a>
         </nav>
@@ -27,9 +26,8 @@
     <!--Slide nav -->
     <div class="mdl-layout__drawer">
       <nav class="mdl-navigation">
-        <a class="mdl-navigation__link" (click)="playClicked()" [routerLink]="['/play']">Play</a>
+          <a class="mdl-navigation__link" [routerLink]="['/stats']">Play</a>
         <a class="mdl-navigation__link" [routerLink]="['/profile']">Profile</a>
-        <a class="mdl-navigation__link" [routerLink]="['/stats']">Stats</a>
         <a *ngIf="!_storage.getValue('loggedIn')" class="mdl-navigation__link" [routerLink]="['/login']">Sign in</a>
         <a *ngIf="_storage.getValue('loggedIn')" class="mdl-navigation__link" [routerLink]="['/login']" (click)="this._userService.logOut()">Sign out</a>
       </nav>
