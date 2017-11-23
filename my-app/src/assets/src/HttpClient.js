@@ -141,6 +141,17 @@ HttpClient.prototype.createCharacterHistory = function(characterID, score, level
     });
 }
 
+HttpClient.prototype.updateCharacterHistory = function(characterHistoryID, params, callback) {
+    this.put(this.baseURL + "/characters/history/" + characterHistoryID, params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error updating character history: " + status);
+        callback([]);
+    });
+}
+
 HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, callback) {
     var params = {
         character_id: characterID,
@@ -160,7 +171,7 @@ HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, call
 // TODO: Waiting on api update
 HttpClient.prototype.createLevel = function(levelNumber, seed, callback) {
     var params = {
-        level_number: levelNumber,
+        number: levelNumber,
         seed: seed
     };
 
@@ -196,8 +207,8 @@ HttpClient.prototype.createCharacter = function(name, health, attackBonus, damag
     });
 }
 
-HttpClient.prototype.updateCharacter = function(character_id, params, callback) {
-    this.put(this.baseURL + "/characters/" + character_id, params, function(status, json) {
+HttpClient.prototype.updateCharacter = function(characterID, params, callback) {
+    this.put(this.baseURL + "/characters/" + characterID, params, function(status, json) {
         if(status == 200) {
             callback(json);
             return;

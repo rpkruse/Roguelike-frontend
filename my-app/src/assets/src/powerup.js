@@ -55,7 +55,7 @@ Powerup.prototype.collided = function (entity) {
         window.terminal.log(this.data.flavor_text, window.colors.pickup);
         entity.score++;
 
-//        client.postPickedUpPowerup(10000, this.data.id, function(x){});
+        client.postPickedUpPowerup(entity.db.characterID, this.data.id, function(){});
 
         switch (this.data.id) {
             case 1:

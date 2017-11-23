@@ -34,6 +34,8 @@ function CombatClass(aName, aLevel) {
         this.options = JSON.parse(classData.options);
     }
 
+    this.attacked = false;
+
 
     switch (aName) {
         case "Zombie": 

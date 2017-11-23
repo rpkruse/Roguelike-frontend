@@ -320,6 +320,12 @@ function nextLevel(fadeOut) {
     if (player.level > 0)
         player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
+
+    client.createLevel(player.level, "seed", function(level){
+        client.updateCharacterHistory(player.db.characterHistoryID, 
+            {score: Math.round(player.score), level_id: level.id}, function(){});
+    });
+
     //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
@@ -449,7 +455,7 @@ function createNewCharacter(className) {
     // Post everything to server
     player.changeClass(className);
 
-    var name = sessionStorage.getItem("newCharacter");
+    var name = JSON.parse(sessionStorage.getItem("newCharacter"));
     sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
     if(!name) {
         name = "Tim";
@@ -463,7 +469,7 @@ function createNewCharacter(className) {
     var armorID = player.combat.armor.data.id;
     var classID = data.classes.find(function(x){ return x.name == className}).id;
 
-    client.createLevel(1, "seed", function(level){
+    client.createLevel(0, "seed", function(level){
         client.createCharacter(name, health, attackBonus, damageBonus, 
             defenseBonus, weaponID, armorID, classID, function(character){
                 client.createCharacterHistory(character.id, player.score, level.id, function(history){

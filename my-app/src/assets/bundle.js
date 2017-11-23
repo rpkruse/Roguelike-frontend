@@ -142,6 +142,17 @@ HttpClient.prototype.createCharacterHistory = function(characterID, score, level
     });
 }
 
+HttpClient.prototype.updateCharacterHistory = function(characterHistoryID, params, callback) {
+    this.put(this.baseURL + "/characters/history/" + characterHistoryID, params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error updating character history: " + status);
+        callback([]);
+    });
+}
+
 HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, callback) {
     var params = {
         character_id: characterID,
@@ -161,7 +172,7 @@ HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, call
 // TODO: Waiting on api update
 HttpClient.prototype.createLevel = function(levelNumber, seed, callback) {
     var params = {
-        level_number: levelNumber,
+        number: levelNumber,
         seed: seed
     };
 
@@ -197,8 +208,8 @@ HttpClient.prototype.createCharacter = function(name, health, attackBonus, damag
     });
 }
 
-HttpClient.prototype.updateCharacter = function(character_id, params, callback) {
-    this.put(this.baseURL + "/characters/" + character_id, params, function(status, json) {
+HttpClient.prototype.updateCharacter = function(characterID, params, callback) {
+    this.put(this.baseURL + "/characters/" + characterID, params, function(status, json) {
         if(status == 200) {
             callback(json);
             return;
@@ -1205,6 +1216,12 @@ function nextLevel(fadeOut) {
     if (player.level > 0)
         player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
+
+    client.createLevel(player.level, "seed", function(level){
+        client.updateCharacterHistory(player.db.characterHistoryID, 
+            {score: Math.round(player.score), level_id: level.id}, function(){});
+    });
+
     //var isBossLevel = (player.level % 5 == 0);
     var init = function () {
         // clear terminal
@@ -1334,7 +1351,7 @@ function createNewCharacter(className) {
     // Post everything to server
     player.changeClass(className);
 
-    var name = sessionStorage.getItem("newCharacter");
+    var name = JSON.parse(sessionStorage.getItem("newCharacter"));
     sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
     if(!name) {
         name = "Tim";
@@ -1348,7 +1365,7 @@ function createNewCharacter(className) {
     var armorID = player.combat.armor.data.id;
     var classID = data.classes.find(function(x){ return x.name == className}).id;
 
-    client.createLevel(1, "seed", function(level){
+    client.createLevel(0, "seed", function(level){
         client.createCharacter(name, health, attackBonus, damageBonus, 
             defenseBonus, weaponID, armorID, classID, function(character){
                 client.createCharacterHistory(character.id, player.score, level.id, function(history){
@@ -1568,6 +1585,8 @@ function CombatClass(aName, aLevel) {
     if(classData.options != "") {
         this.options = JSON.parse(classData.options);
     }
+
+    this.attacked = false;
 
 
     switch (aName) {
@@ -1832,6 +1851,8 @@ CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderCla
     var defender = aDefenderClass.name;
     var playerAttacker = (attacker == "Knight" || attacker == "Archer" || attacker == "Mage");
 
+    aAttackerClass.attacked = true;
+
     if (lAttackRoll == 1) {
         var lSelfDamage = RNG.rollMultiple(1, 3, Math.max(1, aAttackerClass.weapon.level / 5));
         aAttackerClass.health -= lSelfDamage;
@@ -2069,14 +2090,30 @@ function Enemy(position, combatClass, target, onDeathCB) {
     } else if (this.class == "Fucking Dragon") {
         this.animator = new Animator(12, "idle", "Fucking Dragon");
     }
+
+    var classID = data.classes.find(function(x){ return x.name == combatClass}).id;
+
+    var self = this;
+    client.createCharacter(this.class, this.combat.health, this.combat.attackBonus,
+        this.combat.damageBonus, this.combat.defenseBonus, this.combat.weapon.data.id,
+        this.combat.armor.data.id, classID, function(character) {
+            self.characterID = character.id;
+    });
 }
 
 Enemy.prototype.processTurn = function () {
     if (this.combat.status.effect != "None") window.combatController.handleStatus(this.combat);
-    if (this.combat.health <= 0) this.state = "dead";
+    if (this.combat.health <= 0) {
+        this.state = "dead";
+        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function(){});
+    } 
     if (this.state == "dead" || this.combat.status.effect == "Frozen" || this.combat.status.effect == "Stunned") return;
 
     this.combat.turnAI(this);
+    if(player.combat.health <= 0 && this.combat.attacked) {
+        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function(){});
+    }
+    this.combat.attacked = false;
 
     if (this.position.x < this.oldX) this.changeDirection("left");
     else if (this.position.x > this.oldX) this.changeDirection("right");
@@ -3016,6 +3053,8 @@ Inventory.prototype.addWeapon = function (weapon) {
     weaponToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     weaponToDrop.shouldRetain = true;
     window.entityManager.addEntity(weaponToDrop);
+
+    client.updateCharacter(player.db.characterID, { weapon_id: weapon.data.id }, function(){});
 }
 
 /**
@@ -3034,6 +3073,8 @@ Inventory.prototype.addArmor = function (armor) {
     armorToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     armorToDrop.shouldRetain = true;
     window.entityManager.addEntity(armorToDrop);
+
+    client.updateCharacter(player.db.characterID, { armor_id: armor.data.id }, function(){});
 }
 
 /**
@@ -3649,8 +3690,7 @@ Player.prototype.changeClass = function (chosenClass) {
 
 Player.prototype.loadCharacter = function(characterHistory) {
     // TODO: Remove following line
-    characterHistory.level.level_number = 1;
-    player.level = characterHistory.level.level_number - 1;
+    player.level = characterHistory.level.number - 1;
     player.score = characterHistory.score;
     player.db = {};
     player.db.characterHistoryID = characterHistory.id;
@@ -3889,7 +3929,7 @@ Powerup.prototype.collided = function (entity) {
         window.terminal.log(this.data.flavor_text, window.colors.pickup);
         entity.score++;
 
-//        client.postPickedUpPowerup(10000, this.data.id, function(x){});
+        client.postPickedUpPowerup(entity.db.characterID, this.data.id, function(){});
 
         switch (this.data.id) {
             case 1:
@@ -4774,6 +4814,10 @@ function Weapon(aName, aLevel) {
 
     this.data = window.data.weapons.find(function(x) { return x.name == aName });
     
+    if(!this.data) {
+        console.log(aName);
+    }
+
     this.attackType = this.data.attack_type;
     this.damageMax = this.data.max_damage;
     this.damageMin = this.data.min_damage;

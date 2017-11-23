@@ -21,6 +21,10 @@ function Weapon(aName, aLevel) {
 
     this.data = window.data.weapons.find(function(x) { return x.name == aName });
     
+    if(!this.data) {
+        console.log(aName);
+    }
+
     this.attackType = this.data.attack_type;
     this.damageMax = this.data.max_damage;
     this.damageMin = this.data.min_damage;

@@ -136,8 +136,7 @@ Player.prototype.changeClass = function (chosenClass) {
 
 Player.prototype.loadCharacter = function(characterHistory) {
     // TODO: Remove following line
-    characterHistory.level.level_number = 1;
-    player.level = characterHistory.level.level_number - 1;
+    player.level = characterHistory.level.number - 1;
     player.score = characterHistory.score;
     player.db = {};
     player.db.characterHistoryID = characterHistory.id;
