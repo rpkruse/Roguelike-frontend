@@ -9,52 +9,22 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Friends List:</h3>
             </div>
-            <div class="panel-body list-group list-setHeight list-setWidth" *ngIf="this.user"><!-- will change to if friends -->
-                <li class="list-group-item">
-                    <div>
-                        Friend 1
-                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
-                    </div>
+            <div class="panel-body list-group list-setHeight list-setWidth"><!-- will change to if friends -->
+                <div *ngIf="this.friends && this.friends.length">
+                    <li class="list-group-item" *ngFor="let friend of this.friends; let i=index;">
+                    {{this.getFriendName(i)}}
+                    <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend(this.getFriendName(i), i)">Delete</button>                                                                                                        
                 </li>
-                <li class="list-group-item">
-                    <div>
-                        Friend 2
-                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div>
-                        Friend 3
-                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div>
-                        Friend 4
-                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div>
-                        Friend 5
-                        <button type="button" class="btn btn-danger btn-xs pull-right" (click)="deleteFriend()">Delete</button>                                                                                    
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div>
-                        ...                                                                                   
-                    </div>
-                </li>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd">
+                            Add Friend
+                        </button>
+                    </span>
+                </div> 
             </div> 
-
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd">
-                        Add Friend
-                    </button>
-                </span>
-            </div>  
         </div>  
     </div>
     <div class="row col-md-4 col-md-offset-1">
@@ -76,6 +46,11 @@
                 <div class="input-group">
                     <span class="input-group-addon">Change Password</span>
                     <input type="password" class="form-control" placeholder="Password" [value]="this.password" (input)="this.password = $event.target.value" aria-describedby="basic">
+                    
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Confirm Password</span>
+                    <input type="password" class="form-control" placeholder="Password" [value]="this.passwordConfirm" (input)="this.passwordConfirm = $event.target.value" aria-describedby="basic">
                 </div>
                 <button type="button" class="btn btn-success pull-right" (click)="confirmChanges()" [disabled]="!this.areChanges()">Confim</button>
             </div>

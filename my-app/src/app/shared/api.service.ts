@@ -60,13 +60,29 @@ export class ApiService {
         return this._http.get(this._api + path + "/" + id, {headers}) as Observable<T>;
     }
 
-    putEntity<T>(path: string, obj: Object){
-        let body = JSON.stringify(obj);
-        console.log("Sending: " + body);
-        //return this._http.post(_this.api + path, body) as Observable<T>?
+    putEntity<T>(path: string, obj: string): Observable<T>{
+        let headers: HttpHeaders = new HttpHeaders(
+            {"Authorization": "Bearer " + this._storage.getValue("token")}
+        );
+        //let body = JSON.stringify(obj);
+        console.log("Sending: " + obj);
+        return this._http.put(this._api + path, obj, {headers}) as Observable<T>;
     }
 
-    deleteEntity<T>(path: string, id: number){
-        //return this._http.delete(this._api + path + '/' + id) as OBservable<T>??
+    postEntity<T>(path: string, obj: any): Observable<T>{
+        let headers: HttpHeaders = new HttpHeaders(
+            {"Authorization": "Bearer " + this._storage.getValue("token")}
+        );
+        console.log("Sending", obj);
+        return this._http.post(this._api + path, obj, {headers}) as Observable<T>;
+    }
+
+    deleteEntity<T>(path: string, id: any){
+        console.log("Sending:", id);
+        let headers: HttpHeaders = new HttpHeaders(
+            {"Authorization": "Bearer " + this._storage.getValue("token")}
+        );
+        return this._http.request('delete', this._api + path, {body: id, headers: headers}) as Observable<T>;
+        //return this._http.delete(this._api + path, {headers}) as Observable<T>;
     }
 }
