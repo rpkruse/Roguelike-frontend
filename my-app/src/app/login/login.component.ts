@@ -32,6 +32,11 @@ export class LoginComponent implements OnInit{
   private password: string = "password"; //temp so we don't have to type it each time
   private rememberMe: boolean = true;
 
+  private createUser: boolean = false;
+  private display_name: string = "";
+  private newPassword: string = "";
+  private confirmPassword: string = "";
+
   constructor(private _apiService: ApiService, private _storage: StorageService, private _router: Router, private _userService: UserService) {}
 
   ngOnInit(){
@@ -71,6 +76,31 @@ export class LoginComponent implements OnInit{
     );
   }
 
+  private newClicked(){
+    this.username = "";
+    this.createUser = true;
+  }
+
+  private submitNewClicked(){
+    let cred = {
+      "email": this.username,
+      "display_name": this.display_name,
+      "password": this.newPassword,
+      "password_confirmation": this.confirmPassword
+    }
+
+    let token: IToken;
+    let s: Subscription = this._apiService.postEntity<IToken>("register", cred).subscribe(
+      d => token = d,
+      err => console.log("Unable to create user", err),
+      () => {
+        this._storage.setValue("token", token["token"]);
+        this.validateLogin();        
+        s.unsubscribe();
+      }
+    );
+  }
+
   private validateLogin(){
     let user: IUser;
     let s: Subscription = this._apiService.validateToken().subscribe(
@@ -90,5 +120,13 @@ export class LoginComponent implements OnInit{
         this._router.navigate(['./home']);
       }
     );
+  }
+
+  private canSubmit(): boolean{
+    if(this.createUser){
+      return this.username.length > 0 && this.display_name.length > 0 && 
+              this.newPassword.length > 0 && (this.newPassword === this.confirmPassword)
+    }
+    return this.username.length > 0 && this.password.length > 0;
   }
 }
