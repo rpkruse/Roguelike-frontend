@@ -35,16 +35,6 @@
             </div>
         </div>
 
-        <!-- Class Distribution -->
-        <div class="col-md-4 panel panel-default container-bordered">
-            <div class="panel-heading">
-                <h4 class="text-center">Class Distribution</h4>
-            </div>
-            <div class="panel-body">
-                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
-            </div>
-        </div>
-
         <!--Top Level Tabel -->
         <div class="col-md-4 panel panel-default container-bordered">
             <div class="panel-heading">
@@ -74,6 +64,16 @@
                     Next
                     <span aria-hidden="true">&rarr;</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Class Distribution -->
+        <div class="col-md-4 panel panel-default">
+            <div class="panel-heading">
+                <h4 class="text-center">Class Distribution</h4>
+            </div>
+            <div class="panel-body">
+                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
             </div>
         </div>
     </div>
