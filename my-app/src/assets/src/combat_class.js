@@ -181,7 +181,7 @@ function CombatClass(aName, aLevel) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
 
                 if (distance.x > senseRange && distance.y > senseRange) {
-                    var nextTile = aEnemy.tilemap.getRandomAdjacent(aEnemy.position);
+                    var nextTile = window.tilemap.getRandomAdjacent(aEnemy.position);
                     aEnemy.position = { x: nextTile.x, y: nextTile.y };
                 } else {
                     if (distance.x <= aEnemy.combat.weapon.range && distance.y <= aEnemy.combat.weapon.range) {

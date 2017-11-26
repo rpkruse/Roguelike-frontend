@@ -79,6 +79,7 @@ Enemy.prototype.retain = function () {
     if (this.combat.health <= 0) {
         if (this.class == "Fucking Dragon") {
             // add stairs
+            stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
         } else {
             this.onDeathCB(this.position, window.tilemap);
         }

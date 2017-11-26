@@ -1223,7 +1223,7 @@ function nextLevel(fadeOut) {
             {score: Math.round(player.score), level_id: level.id}, function(){});
     });
 
-    //var isBossLevel = (player.level % 5 == 0);
+    var isBossLevel = (player.level % 10 == 0);
     var init = function () {
         // clear terminal
         window.terminal.clear();
@@ -1231,18 +1231,18 @@ function nextLevel(fadeOut) {
         var padSpace = Math.floor((80 - msg.length) / 2);
         window.terminal.log(Array(padSpace).join(' ') + msg);
 
-        /*if (isBossLevel) {
+        if (isBossLevel) {
             window.terminal.log("You sense an erie presence...");
             window.terminal.log("The demon dragon appears to consume your soul");
-        }*/
+        }
 		
 		if(player.level == 1) window.terminal.instructions();
 
         // reset entities
         window.entityManager.reset();
 
-        //(isBossLevel) ? bossLevel() : standardLevel();
-        standardLevel();
+        (isBossLevel) ? bossLevel() : standardLevel();
+        //standardLevel();
 
         unfadeFromBlack();
 
@@ -1745,7 +1745,7 @@ function CombatClass(aName, aLevel) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
 
                 if (distance.x > senseRange && distance.y > senseRange) {
-                    var nextTile = aEnemy.tilemap.getRandomAdjacent(aEnemy.position);
+                    var nextTile = window.tilemap.getRandomAdjacent(aEnemy.position);
                     aEnemy.position = { x: nextTile.x, y: nextTile.y };
                 } else {
                     if (distance.x <= aEnemy.combat.weapon.range && distance.y <= aEnemy.combat.weapon.range) {
@@ -2150,6 +2150,7 @@ Enemy.prototype.retain = function () {
     if (this.combat.health <= 0) {
         if (this.class == "Fucking Dragon") {
             // add stairs
+            stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
         } else {
             this.onDeathCB(this.position, window.tilemap);
         }
