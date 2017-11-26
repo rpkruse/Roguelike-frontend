@@ -1,4 +1,10 @@
-.panel{
+.panel-tall{
     max-height: 50vh;
+    height: 50vh;
+}
+
+.static-height{
+    max-height: 69%;
+    height: 69%;
     overflow: auto;
 }

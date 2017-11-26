@@ -76,6 +76,11 @@ export class ProfileComponent implements OnInit{
   }
 
   private addFriend(){
+    if(this.friendToAdd === this.user.display_name){
+      this.friendToAdd = "";
+      return;
+    }
+    
     let af = {
       "display_name": this.friendToAdd
     }

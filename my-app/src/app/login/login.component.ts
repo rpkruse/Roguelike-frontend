@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit{
     let token: IToken;
     s = this._apiService.getLoginToken(cred).subscribe(
       d => token = d,
-      err => console.log("CANT LOGIN", err),
+      err => alert("Invalid email/password"),
       () => {
         this._storage.setValue("token", token["token"]);
         //this._storage.saveToLocal("token", token["token"]); //save to local for game pull
@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit{
     let token: IToken;
     let s: Subscription = this._apiService.postEntity<IToken>("register", cred).subscribe(
       d => token = d,
-      err => console.log("Unable to create user", err),
+      err => alert("Invalid email/password"),
       () => {
         this._storage.setValue("token", token["token"]);
         this.validateLogin();        

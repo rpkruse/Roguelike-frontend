@@ -5,12 +5,12 @@
         </div>
     </div>
     <div class="row col-md-6 col-md-offset-1">
-        <div class="panel panel-default">
+        <div class="panel panel-default panel-tall">
             <div class="panel-heading">
                 <h3 class="panel-title">Friends List:</h3>
             </div>
-            <ul class="list-group" *ngFor="let friend of this.friends; let i=index;">
-                <li class="list-group-item">
+            <ul class="list-group static-height">
+                <li class="list-group-item" *ngFor="let friend of this.friends; let i=index;">
                     {{this.getFriendName(i)}}
                     <button type="button" class="btn btn-danger btn-sm pull-right" (click)="deleteFriend(this.getFriendName(i), i)">Delete</button>                
                 </li>
@@ -19,7 +19,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd">
+                        <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd || !(this.friendToAdd !== this.user.display_name)">
                             Add Friend
                         </button>
                     </span>
