@@ -1838,21 +1838,21 @@ function CombatController() {
 }
 
 CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderClass) {
-    var lAttackBase = Math.floor(aAttackerClass.attackBonus);
+    var lAttackBase = Math.floor(aAttackerClass.attackBonus / 10);
     var lAttackBonus = aAttackerClass.weapon.hitBonus;
     var lAttackRoll = RNG.rollRandom(1, 20);
     var lAttackTotal = lAttackBase + lAttackBonus + lAttackRoll;
     var lAttackEffect = aAttackerClass.weapon.attackEffect;
 
     var lDefenseBase = aDefenderClass.armor.defense;
-    var lDefenseBonus = Math.floor(aDefenderClass.defenseBonus);
+    var lDefenseBonus = Math.floor(aDefenderClass.defenseBonus / 10);
     var lDefenseTotal = lDefenseBase + lDefenseBonus;
 
     var lDamageBase = aAttackerClass.weapon.level - 1;
     var lDamageMax = aAttackerClass.weapon.damageMax;
     var lDamageMin = aAttackerClass.weapon.damageMin;
     var lDamageRoll = RNG.rollRandom(lDamageMin, lDamageMax);
-    var lDamageBonus = Math.floor(aAttackerClass.damageBonus);
+    var lDamageBonus = Math.floor(aAttackerClass.damageBonus / 10);
     var lDamageResist = aDefenderClass.armor.level;
     var lDamageTotal = Math.max(lDamageBase + lDamageBonus + lDamageRoll - lDamageResist, 1); // DR shouldnt deal zero or negative damage
 
@@ -3952,7 +3952,7 @@ Powerup.prototype.collided = function (entity) {
 
         switch (this.data.id) {
             case 1:
-                entity.combat.damageBonus += 0.2;
+                entity.combat.damageBonus += 2;
                 if (window.debug) console.log(entity.combat.damageBonus);
                 break;
             case 2:
@@ -3961,11 +3961,11 @@ Powerup.prototype.collided = function (entity) {
                 if (window.debug) console.log("+" + potionValue + " health = " + entity.combat.health);
                 break;
             case 3:
-                entity.combat.defenseBonus += 0.2;
+                entity.combat.defenseBonus += 2;
                 if (window.debug) console.log(entity.combat.defenseBonus);
                 break;
             case 4:
-                entity.combat.attackBonus += 0.2;
+                entity.combat.attackBonus += 2;
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }
