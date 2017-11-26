@@ -22,7 +22,7 @@
     </form>
     <div>
         <div class="col-sm-offset-2 col-sm-10">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="loginClicked()" [disabled]="!canSubmit()">Submit</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="loginClicked()" [disabled]="!canSubmit()">Sign In</button>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="newClicked()">New User</button> 
         </div>
     </div>
@@ -58,6 +58,7 @@
         <div>
             <div class="col-sm-offset-2 col-sm-10">
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="submitNewClicked()" [disabled]="!canSubmit()">Submit</button>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="backClicked()">Back</button>
             </div>
         </div>
     </div>

@@ -16,3 +16,8 @@
     height: 100%;
     max-width: 25vw;
 }
+
+.character-list{
+    max-height: 50vh;
+    overflow-y: scroll;
+}

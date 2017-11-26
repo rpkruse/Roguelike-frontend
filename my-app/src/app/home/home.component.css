@@ -38,3 +38,7 @@
     border-bottom-width: 0;
     float: left;
 }
+
+.container-fixed-height{
+    max-height: 50vh;
+}

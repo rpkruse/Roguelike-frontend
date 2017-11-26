@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit{
   ngOnInit(){
     //Check to see if we have the user name saved (via the remember me toggle)
     let usrName = this._storage.getFromLocal('savedUsername');
-
+    
     if(usrName)
       this.username = usrName;
   }
@@ -79,6 +79,11 @@ export class LoginComponent implements OnInit{
   private newClicked(){
     this.username = "";
     this.createUser = true;
+  }
+
+  private backClicked(){
+    this.username = this._storage.getFromLocal('savedUsername');
+    this.createUser = false;
   }
 
   private submitNewClicked(){

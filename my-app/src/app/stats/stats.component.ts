@@ -50,6 +50,8 @@ export class StatsComponent implements OnInit{
   private createNewClicked: boolean = false;
   private newCharacterString: string = "";
 
+  private killedByName: string = "";
+
   constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
 
   ngOnInit(){
@@ -96,12 +98,13 @@ export class StatsComponent implements OnInit{
   /*
     If we have a dead character, we get what they were killed by
   */
-  private getKilledByClass(id: number): ICharacter_Class{
-    for(let i=0; i<this.characterClasses.length; i++){
-      if(this.characterClasses[i].id === id){
-        return this.characterClasses[i];
-      }
-    }
+  private getKilledByClass(id: number){
+    let c: ICharacter;
+    let s: Subscription = this._apiService.getSingleEntity<ICharacter>("characters", id).subscribe(
+      d => c = d,
+      err => console.log("Cannot find killed by character", err),
+      () => { this.killedByName = c.name; s.unsubscribe(); }
+    );
 
     return null;
   }
@@ -149,6 +152,8 @@ export class StatsComponent implements OnInit{
     this.selectedCharacter = ch;
     this.getArmor(ch.character.armor_id);
     this.getWeapon(ch.character.weapon_id);
+    if(this.selectedCharacter.character.killed_by)
+      this.getKilledByClass(this.selectedCharacter.character.killed_by);
   }
 
   /*

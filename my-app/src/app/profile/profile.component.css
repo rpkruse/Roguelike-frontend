@@ -31,3 +31,19 @@
 .list-group-item{
     width: 100%;
 }
+
+.friend-input{
+    max-width: 50%
+}
+
+.panel-holder{
+    height: 50vh;
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.panel-body-holder{
+    max-height: 75%;
+    height: 75%;
+    overflow-y: scroll;
+}

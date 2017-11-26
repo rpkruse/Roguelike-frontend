@@ -2,6 +2,8 @@ import { Component, OnInit, HostListener, OnDestroy, ViewChild, ElementRef} from
 
 import { StorageService } from '../shared/session-storage.service';
 
+declare var window: any;
+
 @Component({
   selector: 'play',
   styleUrls: ['./play.component.css'],
@@ -42,5 +44,7 @@ export class PlayComponent implements OnInit, OnDestroy{
         //node.remove();
         //console.log(node);
         this._storage.setValue('_playing', false);
+        
+        window.gameCleanup();
     }
 }

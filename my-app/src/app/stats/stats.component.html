@@ -13,7 +13,7 @@
           <a href="#past-panel" class="mdl-tabs__tab">Past Characters</a>
         </div>
         <div class="mdl-tabs__panel is-active" id="current-panel">
-          <div class="list-group container-bordered">
+          <div class="list-group container-bordered character-list">
             <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('alive'); index as i" (click)="characterClicked(character)">
             {{character.character.name}}
             </button>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="mdl-tabs__panel" id="past-panel">
-          <div class="list-group container-bordered">
+          <div class="list-group container-bordered character-list">
             <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('dead'); index as i" (click)="characterClicked(character)">
             {{character.character.name}}
             </button>
@@ -50,12 +50,6 @@
       <div class="panel panel-default" *ngIf="this.selectedCharacter && !this.createNewClicked">
         <div class="panel-heading">
           <h4 class="panel-title" *ngIf="this.selectedCharacter">{{this.selectedCharacter.character.name}}: Level  {{this.getLevel(this.selectedCharacter.character.id).number}} {{this.selectedCharacter.character.class.name}}</h4>
-          <div class="input-group" *ngIf="!this.selectedCharacter.character.killed_by">
-            <span class="input-group-btn">
-              <button type="button" class="btn btn-danger" (click)="deleteCharacterClicked()">Delete Character</button>
-            </span>
-            <input type="text" class="form-control" placeholder="Enter Character Name To Delete"  [value]="deleteCharacterString" (input)="deleteCharacterString = $event.target.value">
-          </div>
         </div>
         <div class="panel-body list-group">
           <li class="list-group-item">Attack Bonus: {{this.selectedCharacter.character.attack_bonus}}</li>
@@ -65,9 +59,10 @@
           <li *ngIf="this.selectedWeapon" class="list-group-item" >Weapon: {{this.selectedWeapon.name}}</li>
           <li *ngIf="this.selectedArmor" class="list-group-item">Armor: {{this.selectedArmor.name}}</li>          
           <li class="list-group-item">Level: {{this.getLevel(this.selectedCharacter.character.id).number}}</li>
-          <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by">Killed By: coming soon!</li> <!--{{getKilledByClass(this.selectedCharacter.character.killed_by).name}}-->
-          <button type="button" class="btn btn-success center-block" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.character.killed_by">Continue Playing</button>                          
+          <li class="list-group-item" *ngIf="this.selectedCharacter.character.killed_by && this.killedByName">Killed By: {{this.killedByName}}</li> <!--{{getKilledByClass(this.selectedCharacter.character.killed_by).name}}-->
         </div>
+        <button type="button" class="panel-footer" (click)="continuePlaying()" *ngIf="!this.selectedCharacter.character.killed_by">Continue Playing</button>                          
+        
       </div>
     </div>
 

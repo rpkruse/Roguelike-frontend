@@ -67,7 +67,7 @@ export class ProfileComponent implements OnInit{
 
     let s: Subscription = this._apiService.deleteEntity("friends", df).subscribe(
       d => d = d,
-      err => console.log("Unable to delete friend", err),
+      err => alert("Unable to delete friend"),
       () => {
         s.unsubscribe();
         this.friends.splice(index, 1);
@@ -83,10 +83,11 @@ export class ProfileComponent implements OnInit{
     let newFriend: IFriend;
     let s: Subscription = this._apiService.postEntity<IFriend>("friends", af).subscribe(
       d => newFriend = d,
-      err => console.log("Unable to add friend", err),
+      err => alert("Unable to add friend"),
       () => {
         s.unsubscribe();
         this.friends.push(newFriend);
+        this.friendToAdd = "";
       }
     )
   }
