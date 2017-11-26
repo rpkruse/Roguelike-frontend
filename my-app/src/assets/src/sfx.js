@@ -22,15 +22,16 @@ var volumeMatrix = [
     [ 1.0,      1.0,   0.15,    0.3,    0.1,     0.4,   0.3,    0.3,   0.2,         0.3 ]  // Volume 3
 ];
 
-
-function SFX() {
-    background.src = encodeURI('assets/sounds/tempBGMusic.wav');
-    background.addEventListener('ended', function() {
+function onMusicEnd() {
         backgroundMusicOnLoop = new Audio('assets/sounds/tempBGMusicLoop.wav');
         backgroundMusicOnLoop.volume = volumeMatrix[volume][1];
         backgroundMusicOnLoop.loop = true;
         backgroundMusicOnLoop.play();
-    }, false);
+}
+
+function SFX() {
+    background.src = encodeURI('assets/sounds/tempBGMusic.wav');
+    background.addEventListener('ended', onMusicEnd);
     background.play();
 
     healthPickup.src = encodeURI('assets/sounds/Powerup3.wav');
@@ -44,6 +45,11 @@ function SFX() {
 
     this.setVolume(["volume", "3"]);
     window.terminal.addCommand("volume", "Set the volume", this.setVolume.bind(this));
+}
+
+SFX.prototype.stop = function() {
+    background.removeEventListener('ended', onMusicEnd);
+    background.pause();
 }
 
 SFX.prototype.play = function(aSound) {

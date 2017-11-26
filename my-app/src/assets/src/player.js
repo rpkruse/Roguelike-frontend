@@ -313,6 +313,17 @@ Player.prototype.playAttack = function (clickPos, scale) {
     }
 }
 
+Player.prototype.checkPoint = function() {
+    client.updateCharacter(this.db.characterID, {
+        weapon_id: this.combat.weapon.data.id,
+        armor_id: this.combat.armor.data.id,
+        health: this.combat.health,
+        attack_bonus: this.combat.attackBonus,
+        damage_bonus: this.combat.damageBonus,
+        defense_bonus: this.combat.defenseBonus
+    }, function(x){console.log(x);});
+}
+
 function hasUserInput(input) {
     return input.up || input.down || input.right || input.left;
 }

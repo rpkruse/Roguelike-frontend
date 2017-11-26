@@ -33,8 +33,6 @@ Inventory.prototype.addWeapon = function (weapon) {
     weaponToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     weaponToDrop.shouldRetain = true;
     window.entityManager.addEntity(weaponToDrop);
-
-    client.updateCharacter(player.db.characterID, { weapon_id: weapon.data.id }, function(){});
 }
 
 /**
@@ -53,8 +51,6 @@ Inventory.prototype.addArmor = function (armor) {
     armorToDrop.position = { x: window.player.position.x, y: window.player.position.y };
     armorToDrop.shouldRetain = true;
     window.entityManager.addEntity(armorToDrop);
-
-    client.updateCharacter(player.db.characterID, { armor_id: armor.data.id }, function(){});
 }
 
 /**

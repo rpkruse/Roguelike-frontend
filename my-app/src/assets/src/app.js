@@ -75,11 +75,12 @@ var player = new Player({ x: 0, y: 0 });
 window.player = player;
 player.shouldProcessTurn = false;
 
-window.onmousemove = function (event) {
+// Event Listeners
+function onMouseMove(event) {
     gui.onmousemove(event, scale);
 }
 
-window.onmousedown = function (event) {
+function onMouseDown(event) { 
     // Init the level when class is chosen
     if (player.shouldProcessTurn) player.playAttack({ x: event.offsetX, y: event.offsetY }, scale);
     if (gui.state == "start" || gui.state == "choose class") {
@@ -92,38 +93,7 @@ window.onmousedown = function (event) {
     }
 }
 
-canvas.onclick = function (event) {
-    var node = {
-        x: parseInt(event.offsetX / (96 * scale)),
-        y: parseInt(event.offsetY / (96 * scale))
-    }
-
-    var clickedWorldPos = window.tilemap.toWorldCoords(node);
-    window.entityManager.addEntity(new Click(clickedWorldPos, player, function (enemy) {
-        var distance = Vector.distance(player.position, enemy.position);
-        if (distance.x <= player.combat.weapon.range && distance.y <= player.combat.weapon.range) {
-            if (player.combat.weapon.attackType != "Melee" && player.combat.weapon.name != "Magic Missile") {
-                var path = pathfinder.findPath(player.position, enemy.position);
-                if (Vector.magnitude(distance) * 2 >= path.length) {
-                    combatController.handleAttack(player.combat, enemy.combat);
-                }
-            } else {
-                combatController.handleAttack(player.combat, enemy.combat);
-            }
-            processTurn();
-        }
-    }));
-}
-
-canvas.oncontextmenu = function (event) {
-    event.preventDefault();
-}
-
-/**
- * @function onkeydown
- * Handles keydown events
- */
-window.onkeydown = function (event) {
+function onKeyDown(event) {
     if (window.terminal.onkeydown(event)) return;
     switch (event.key) {
         case "ArrowUp":
@@ -178,11 +148,7 @@ window.onkeydown = function (event) {
     }
 }
 
-/**
- * @function onkeyup
- * Handles keyup events
- */
-window.onkeyup = function (event) {
+function onKeyUp(event) {
     switch (event.key) {
         case "ArrowUp":
         case "w":
@@ -207,6 +173,40 @@ window.onkeyup = function (event) {
     }
     if (!(input.left || input.right || input.up || input.down)) resetTimer = true;
 }
+
+function canvasOnClick(event) {
+    var node = {
+        x: parseInt(event.offsetX / (96 * scale)),
+        y: parseInt(event.offsetY / (96 * scale))
+    }
+
+    var clickedWorldPos = window.tilemap.toWorldCoords(node);
+    window.entityManager.addEntity(new Click(clickedWorldPos, player, function (enemy) {
+        var distance = Vector.distance(player.position, enemy.position);
+        if (distance.x <= player.combat.weapon.range && distance.y <= player.combat.weapon.range) {
+            if (player.combat.weapon.attackType != "Melee" && player.combat.weapon.name != "Magic Missile") {
+                var path = pathfinder.findPath(player.position, enemy.position);
+                if (Vector.magnitude(distance) * 2 >= path.length) {
+                    combatController.handleAttack(player.combat, enemy.combat);
+                }
+            } else {
+                combatController.handleAttack(player.combat, enemy.combat);
+            }
+            processTurn();
+        }
+    }));
+}
+
+function canvasOnContextMenu(event) {
+    event.preventDefault();
+}
+
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('mousedown', onMouseDown);
+window.addEventListener('keydown', onKeyDown);
+window.addEventListener('keyup', onKeyUp);
+canvas.addEventListener('click', canvasOnClick);
+canvas.addEventListener('contextmenu', canvasOnContextMenu);
 
 /**
  * @function masterLoop
@@ -320,6 +320,8 @@ function nextLevel(fadeOut) {
     if (player.level > 0)
         player.score += (player.score * .1) + (Math.floor(player.level / 5 + 1) * 10);
     player.level++;
+
+    player.checkPoint();
 
     client.createLevel(player.level, "seed", function(level){
         client.updateCharacterHistory(player.db.characterHistoryID, 
@@ -543,8 +545,15 @@ function loadGameData() {
     });
 }
 
-window.test = function() {
-    console.log("test");
+window.gameCleanup = function() {
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mousedown', onMouseDown);
+    window.removeEventListener('keydown', onKeyDown);
+    window.removeEventListener('keyup', onKeyUp);
+    canvas.removeEventListener('click', canvasOnClick);
+    canvas.removeEventListener('contextmenu', canvasOnContextMenu);
+
+    sfx.stop();
 }
 
 loadGameData();
