@@ -168,7 +168,6 @@ HttpClient.prototype.postPickedUpPowerup = function(characterID, powerupID, call
     });
 }
 
-// TODO: Waiting on api update
 HttpClient.prototype.createLevel = function(levelNumber, seed, callback) {
     var params = {
         number: levelNumber,

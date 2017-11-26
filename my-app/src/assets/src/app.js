@@ -543,4 +543,8 @@ function loadGameData() {
     });
 }
 
+window.test = function() {
+    console.log("test");
+}
+
 loadGameData();
