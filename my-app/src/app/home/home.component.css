@@ -17,7 +17,7 @@
 }
 
 .row{
-    margin-top: 15vh;
+    margin-top: 10vh;
 }
 
 .table-fixed thead {
@@ -25,7 +25,8 @@
 }
 
 .table-fixed tbody {
-    max-height: 50vh; /*sets how big the tables are on the page */
+    max-height: 45vh; /*sets how big the tables are on the page */
+    height: 45vh;
     overflow-y: auto;
     width: 100%;
 }
@@ -41,4 +42,5 @@
 
 .container-fixed-height{
     max-height: 50vh;
+    height: 50vh;
 }
