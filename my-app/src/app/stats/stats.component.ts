@@ -52,6 +52,8 @@ export class StatsComponent implements OnInit{
 
   private killedByName: string = "";
 
+  private totalDeaths: number = 0;
+
   constructor(private _apiService: ApiService, private _storage: StorageService, private route: ActivatedRoute, private _router: Router){}
 
   ngOnInit(){
@@ -62,13 +64,15 @@ export class StatsComponent implements OnInit{
 
     let ch: Observable<ICharacter_History[]> = this._apiService.getAllEntities<ICharacter_History>('characters/history');
     let cc: Observable<ICharacter_Class[]> = this._apiService.getAllEntities<ICharacter_Class>('classes');
+    let deaths: Observable<any> = this._apiService.getSingleEntity<any>('statistics/deaths', this.user.id);
 
-    Observable.forkJoin([ch, cc]).subscribe(results => {
+    Observable.forkJoin([ch, cc, deaths]).subscribe(results => {
       //results[0] --> ICharacter_History[]
       //results[1] --> ICharacterClass[]
 
       this.character_history = results[0].filter(x => x.user_id === this.user.id);
       this.characterClasses = results[1];
+      this.totalDeaths = results[2]['count'];
     });
   }
 

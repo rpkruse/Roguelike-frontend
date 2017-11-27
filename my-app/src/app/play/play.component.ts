@@ -10,8 +10,8 @@ declare var window: any;
   templateUrl: './play.component.html'
 })
 export class PlayComponent implements OnInit, OnDestroy{
-    private _width: number = 1788/2;//window.innerWidth;
-    private _height: number = 1116/2;//window.innerHeight;
+    private _width: number;
+    private _height: number;
 
 
     constructor(private _storage: StorageService) {}
@@ -26,6 +26,10 @@ export class PlayComponent implements OnInit, OnDestroy{
     }
 
     ngOnInit(): void {
+        this._width = 1788/2;
+        this._height = 1116/2;
+        
+
         let node = document.createElement('script');
         node.src = "../assets/bundle.js";
         node.type = 'text/javascript';
@@ -39,10 +43,6 @@ export class PlayComponent implements OnInit, OnDestroy{
 
     //Fire on page change
     ngOnDestroy(): void{
-        //let node = document.getElementById("bundleScript");
-        //document.removeChild(node);
-        //node.remove();
-        //console.log(node);
         this._storage.setValue('_playing', false);
         
         window.gameCleanup();

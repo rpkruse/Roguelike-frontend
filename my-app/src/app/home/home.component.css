@@ -25,8 +25,8 @@
 }
 
 .table-fixed tbody {
-    max-height: 45vh; /*sets how big the tables are on the page */
-    height: 45vh;
+    max-height: 46.5vh; /*sets how big the tables are on the page */
+    height: 46.5vh;
     overflow-y: auto;
     width: 100%;
 }

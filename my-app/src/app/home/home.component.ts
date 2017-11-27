@@ -33,6 +33,14 @@ export class HomeComponent implements OnInit{
   private characters: Observable<ICharacter[]>
   private character_history: Observable<ICharacter_History[]>;
 
+  private topScores: Observable<any[]>;
+  private topLevels: Observable<any[]>;
+
+  private numUsers: number;
+  private totalDeaths: number;
+  private userDeaths: number;
+  private monsterDeaths: number;
+
   private topPlayerPage: number;
   private topKillsPage: number;
   private topLevelPage: number;
@@ -52,15 +60,6 @@ export class HomeComponent implements OnInit{
   public pieChartLabels: string[] = ['Knight', 'Mage', 'Archer'];
   private pieChartData: number[] = [0, 0, 0];
   public pieChartType: string = 'pie';
- 
-  // events
-  public chartClicked(e:any):void {
-    console.log(e);
-  }
- 
-  public chartHovered(e:any):void {
-    console.log(e);
-  }
 
   constructor(private _apiService: ApiService) {}
 
@@ -68,10 +67,32 @@ export class HomeComponent implements OnInit{
     this.topPlayerPage = 0;
     this.topKillsPage = 0;
     this.topLevelPage = 0;
+
+    this.topScores = this._apiService.getAllEntities<any>("statistics/scores");
+    this.topLevels = this._apiService.getAllEntities<any>("statistics/levels");
+    
     
     this.character_history = this._apiService.getAllEntities<ICharacter_History>("characters/history");
-   
-    this.setupPieChart();
+
+    let count = this._apiService.getAllEntities<any>("statistics/users");
+    let allDeath = this._apiService.getAllEntities<any>("statistics/deaths");
+    let monster = this._apiService.getAllEntities<any>("statistics/monsters");
+    let usrDeath = this._apiService.getAllEntities<any>("statistics/deaths/1");
+    let classCount = this._apiService.getAllEntities<any>("statistics/classes");
+
+    Observable.forkJoin([count, allDeath, monster, usrDeath, classCount]).subscribe(results => {
+      this.numUsers = results[0]['count'];
+      this.totalDeaths = results[1]['count'];
+      this.monsterDeaths = results[2]['count'];
+      this.userDeaths = results[3]['count'];
+
+      let nMage: number = results[4]['mage'];
+      let nKnight: number = results[4]['knight'];
+      let nArcher: number = results[4]['archer'];
+
+      this.pieChartData = [nKnight, nMage, nArcher];      
+    });
+
   }
 
   /*
@@ -80,33 +101,6 @@ export class HomeComponent implements OnInit{
   */
   ngAfterViewInit(){
      window.componentHandler.upgradeAllRegistered();
-  }
-
-  private setupPieChart(){
-    let nArcher: number = 0;
-    let nMage: number = 0;
-    let nKnight: number = 0;
-
-    let ch: ICharacter_History[] = [];
-
-    let s: Subscription = this.character_history.subscribe(
-      d => ch = d,
-      err => console.log("Unable to load character histories", err),
-      () => {
-        s.unsubscribe();
-        for(let i=0; i<ch.length; i++){
-          let name: string = ch[i].character.class.name;
-          if(name === "Knight"){
-            nKnight++;
-          }else if(name === "Mage"){
-            nMage++;
-          }else{
-            nArcher++;
-          }
-        }
-        this.pieChartData = [nKnight, nMage, nArcher];
-      }
-    );
   }
 
    /*
@@ -144,5 +138,14 @@ export class HomeComponent implements OnInit{
         this.topLevelPage--;
       this.levelBackEnabled = this.topLevelPage > 0;
     }
+  }
+
+  // events
+  public chartClicked(e:any):void {
+    console.log(e);
+  }
+ 
+  public chartHovered(e:any):void {
+    console.log(e);
   }
 }
