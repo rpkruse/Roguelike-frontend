@@ -26,8 +26,9 @@ function CombatClass(aName, aLevel) {
     this.attackBonus = classData.starting_attack_bonus;
     this.damageBonus = classData.starting_damage_bonus;
     this.defenseBonus = classData.starting_defense_bonus;
-    this.weapon = new Weapon(weaponName, aLevel);
-    this.armor = new Armor(armorName, aLevel);
+    var gearLevel = Math.max(0, aLevel + RNG.rollWeighted(1, 5, 10, 5, 1) - 2);
+    this.weapon = new Weapon(weaponName, gearLevel);
+    this.armor = new Armor(armorName, gearLevel);
     this.status = { effect: "None", timer: 0 };
     this.options = {};
     if (classData.options != "") {
@@ -44,9 +45,9 @@ function CombatClass(aName, aLevel) {
         case "Shaman":
         case "Fucking Dragon":
             this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
-            this.attackBonus = this.difficulty + classData.starting_attack_bonus;
-            this.damageBonus = this.difficulty + classData.starting_damage_bonus;
-            this.defenseBonus = this.difficulty + classData.starting_defense_bonus;
+            this.attackBonus = this.difficulty * 10 + classData.starting_attack_bonus;
+            this.damageBonus = this.difficulty * 10 + classData.starting_damage_bonus;
+            this.defenseBonus = this.difficulty * 10 + classData.starting_defense_bonus;
             break;
     }
 
