@@ -18,19 +18,20 @@ function CombatClass(aName, aLevel) {
     this.difficulty = window.combatController.getDifficulty(aLevel);
     // set up random ish weapons/armor for enemies
 
-    var classData = window.data.classes.find(function(x){ return x.name == aName});
-    var weaponName = window.data.weapons.find(function(x){ return x.id == classData.starting_weapon}).name;
-    var armorName = window.data.armors.find(function(x){ return x.id == classData.starting_armor }).name;
+    var classData = window.data.classes.find(function (x) { return x.name == aName });
+    var weaponName = window.data.weapons.find(function (x) { return x.id == classData.starting_weapon }).name;
+    var armorName = window.data.armors.find(function (x) { return x.id == classData.starting_armor }).name;
 
     this.health = classData.starting_health;
     this.attackBonus = classData.starting_attack_bonus;
     this.damageBonus = classData.starting_damage_bonus;
     this.defenseBonus = classData.starting_defense_bonus;
-    this.weapon = new Weapon(weaponName, aLevel);
-    this.armor = new Armor(armorName, aLevel);
+    var gearLevel = Math.max(0, aLevel + RNG.rollWeighted(1, 5, 10, 5, 1) - 2);
+    this.weapon = new Weapon(weaponName, gearLevel);
+    this.armor = new Armor(armorName, gearLevel);
     this.status = { effect: "None", timer: 0 };
     this.options = {};
-    if(classData.options != "") {
+    if (classData.options != "") {
         this.options = JSON.parse(classData.options);
     }
 
@@ -38,15 +39,15 @@ function CombatClass(aName, aLevel) {
 
 
     switch (aName) {
-        case "Zombie": 
-        case "Skeleton": 
-        case "Minotaur": 
+        case "Zombie":
+        case "Skeleton":
+        case "Minotaur":
         case "Shaman":
         case "Fucking Dragon":
             this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
-            this.attackBonus = this.difficulty + classData.starting_attack_bonus;
-            this.damageBonus = this.difficulty + classData.starting_damage_bonus;
-            this.defenseBonus = this.difficulty + classData.starting_defense_bonus;
+            this.attackBonus = this.difficulty * 10 + classData.starting_attack_bonus;
+            this.damageBonus = this.difficulty * 10 + classData.starting_damage_bonus;
+            this.defenseBonus = this.difficulty * 10 + classData.starting_defense_bonus;
             break;
     }
 
@@ -181,7 +182,7 @@ function CombatClass(aName, aLevel) {
                 var distance = Vector.distance(aEnemy.position, aEnemy.target.position);
 
                 if (distance.x > senseRange && distance.y > senseRange) {
-                    var nextTile = aEnemy.tilemap.getRandomAdjacent(aEnemy.position);
+                    var nextTile = window.tilemap.getRandomAdjacent(aEnemy.position);
                     aEnemy.position = { x: nextTile.x, y: nextTile.y };
                 } else {
                     if (distance.x <= aEnemy.combat.weapon.range && distance.y <= aEnemy.combat.weapon.range) {
@@ -196,7 +197,7 @@ function CombatClass(aName, aLevel) {
                                 moveOrAttack = 0;
                             } else {
                                 if (distance.x < prefDist && distance.y < prefDist) {
-                                    aEnemy.position = moveBack(aEnemy.position, aEnemy.target.position, aEnemy.tilemap.getRandomAdjacentArray(aEnemy.position));
+                                    aEnemy.position = moveBack(aEnemy.position, aEnemy.target.position, window.tilemap.getRandomAdjacentArray(aEnemy.position));
                                 } else if (distance.x >= prefDist && distance.y >= prefDist) {
                                     aEnemy.position = moveToward(aEnemy.position, aEnemy.target.position);
                                 }
@@ -218,7 +219,7 @@ function CombatClass(aName, aLevel) {
 
 }
 
-CombatClass.prototype.loadCharacter = function(character, level) {
+CombatClass.prototype.loadCharacter = function (character, level) {
     this.difficulty = window.combatController.getDifficulty(level)
 
     this.health = character.health;
@@ -226,8 +227,8 @@ CombatClass.prototype.loadCharacter = function(character, level) {
     this.damageBonus = character.damage_bonus;
     this.defenseBonus = character.defense_bonus;
 
-    var weaponName = window.data.weapons.find(function(x){ return x.id == character.weapon_id}).name;
-    var armorName = window.data.armors.find(function(x){ return x.id == character.armor_id }).name;
+    var weaponName = window.data.weapons.find(function (x) { return x.id == character.weapon_id }).name;
+    var armorName = window.data.armors.find(function (x) { return x.id == character.armor_id }).name;
 
     this.weapon = new Weapon(weaponName, level);
     this.armor = new Armor(armorName, level);
