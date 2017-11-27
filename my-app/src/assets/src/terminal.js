@@ -10,7 +10,7 @@ window.colors = {
 }
 
 const MAX_MSG_COUNT = 62;
-const MAX_MSG_LENGTH = 80;
+const MAX_MSG_LENGTH = 64;
 
 module.exports = exports = Terminal;
 
@@ -29,7 +29,7 @@ function Terminal() {
     this.addCommand("reply", "Reply to the last user that messaged you", this.reply.bind(this), true);
     this.addCommand("r", "Reply to the last user that messaged you", this.reply.bind(this), true);
     this.addCommand("clear", "Clear the terminal", this.clear.bind(this));
-	this.addCommand("instructions", "Displays the instruction to play the game", this.instructions.bind(this));
+	  this.addCommand("instructions", "Displays the instruction to play the game", this.instructions.bind(this));
 }
 
 Terminal.prototype.log = function (message, color) {
@@ -66,9 +66,9 @@ Terminal.prototype.reply = function(args) {
     var self = this;
     if(args.length == 1) this.log("Syntax: reply|r <message>", window.colors.invalid)
     else {
-        var recipient = this.chat[this.chat.length - 1].display_name
-        if(recipient == null) this.log(`You have no messages to reply to`, window.colors.invalid)
+        if(this.chat.length == 0) this.log(`You have no messages to reply to`, window.colors.invalid)
         else {
+            var recipient = this.chat[this.chat.length - 1].display_name
             args.shift()
             var message = args.join(' ')
             client.sendMessage(message, recipient, (json) => {
@@ -114,6 +114,7 @@ Terminal.prototype.instructions = function () {
 	this.log("Invalid command input will appear in this color", window.colors.invalid);
 	this.log("Combat information will appear in this color", window.colors.combat);
 	this.log("Any loot you pick up will appear in this color", window.colors.pickup);
+  this.log("Any chat messages will appear in this color", window.colors.chat);
 }
 
 Terminal.prototype.render = function (elapsedTime, ctx) {
@@ -161,7 +162,7 @@ Terminal.prototype.onkeydown = function (event) {
             event.preventDefault();
         default:
             if (event.key.length > 1) return;
-            if (this.active) this.input = this.input.concat(event.key)
+            if (this.active && this.input.length < MAX_MSG_LENGTH) this.input = this.input.concat(event.key)
     }
 
     return this.active;
