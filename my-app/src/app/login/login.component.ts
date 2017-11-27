@@ -28,8 +28,8 @@ declare var window: any;
 })
 export class LoginComponent implements OnInit{
 
-  private username: string = "test@test.com"; //Use test@test.com
-  private password: string = "password"; //temp so we don't have to type it each time
+  private username: string = ""; //Use test@test.com
+  private password: string = "";
   private rememberMe: boolean = true;
 
   private createUser: boolean = false;
