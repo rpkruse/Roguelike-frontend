@@ -17,7 +17,7 @@ HttpClient.prototype.get = function(url, callback) {
     var token = sessionStorage.getItem("token");
 
     xhr.open('GET', url);
-    xhr.setRequestHeader("Authorization", "Bearer " + token);
+    xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(token));
 
     xhr.send(null);
 }
@@ -214,5 +214,32 @@ HttpClient.prototype.updateCharacter = function(characterID, params, callback) {
         }
         this.log("Error updating character: " + status);
         callback([]);
+    });
+}
+
+HttpClient.prototype.updateMessages = function(callback) {
+    this.get(this.baseURL + "/messages", function(status, json){
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        this.log("Error getting messages. Code: " + status); 
+        callback([]);
+    });
+}
+
+HttpClient.prototype.sendMessage = function(message, recipient, callback) {
+    var params = {
+        content: message,
+        display_name: recipient
+    };
+
+    this.post(this.baseURL + "/messages", params, function(status, json) {
+        if(status == 200) {
+            callback(json);
+            return;
+        }
+        //this.log("Error sending message: " + status);
+        callback(null);
     });
 }

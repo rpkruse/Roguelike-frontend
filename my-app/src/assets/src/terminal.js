@@ -1,12 +1,12 @@
 "use strict";
 
 window.colors = {
-    cmd: "yellow",
+    cmd: "Yellow",
     cmdResponse: "LawnGreen",
-    invalid: "red",
+    invalid: "Red",
     combat: "Orchid",
     pickup: "SkyBlue",
-
+    chat: "Pink"
 }
 
 const MAX_MSG_COUNT = 62;
@@ -15,13 +15,16 @@ const MAX_MSG_LENGTH = 80;
 module.exports = exports = Terminal;
 
 function Terminal() {
+    this.delta = 0;
     this.messages = [];
+    this.chat = [];
     this.startPos = { x: 1063, y: 1095 };
     this.active = false;
     this.input = "";
     this.commands = {};
 
     this.addCommand("help", "Print out all available commands", this.helpCommand.bind(this));
+    this.addCommand("message", "Send a message to another user", this.sendMessage.bind(this));
     this.addCommand("clear", "Clear the terminal", this.clear.bind(this));
 	this.addCommand("instructions", "Displays the instruction to play the game", this.instructions.bind(this));
 }
@@ -39,8 +42,39 @@ Terminal.prototype.clear = function () {
     this.messages = [];
 }
 
-Terminal.prototype.update = function (time) {
+Terminal.prototype.sendMessage = function(args) {
+    var self = this;
+    if(!(args.length > 2)) this.log("Syntax: message <username> <message>", window.colors.invalid)
+    else {
+        var recipient = args[1]
+        console.log(args)
+        args = args.slice(2)
+        var message = args.join(' ')
+        client.sendMessage(message, recipient, (json) => {
+            if(json != null) {
+                self.log(`You: ${json.content}`, window.colors.chat)
+            } else {
+                self.log('You are not friends with that user', window.colors.invalid)
+            }
+        })
+    }
+}
 
+Terminal.prototype.update = function (time) {
+    this.delta += time;
+    if(this.delta > 1000) {
+        this.delta = 0;
+        client.updateMessages((json) => {
+            if(json != null) {
+                json.forEach((message) => {
+                    if(!(message.content in this.chat)) {
+                        this.chat.push(message.content)
+                        this.log(`${message.display_name}: ${message.content}`, window.colors.chat)
+                    }
+                })
+            }
+        })
+    }
 }
 
 Terminal.prototype.instructions = function () {
@@ -141,24 +175,6 @@ Terminal.prototype.processInput = function () {
     }
 
     this.log("Command not found", window.colors.invalid);
-    /*switch (this.input) {
-        case "/stats":
-            window.terminal.log("Here are your current stats:");
-            break;
-        case "/weapon":
-            window.terminal.log("Here are your weapon's current stats:");
-            break;
-        case "/armor":
-            window.terminal.log("Here are your armor's current stats:");
-            break;
-        case "/help":
-            window.terminal.log("/stats - Show's your current stats for your player");
-            window.terminal.log("/weapon - Show's the current stats of your weapon");
-            window.terminal.log("/armor - Show's the current stats of your armor");
-            break;
-        default:
-            window.terminal.log("Command not found");
-    }*/
 }
 
 function splitMessage(message, messages, color) {
