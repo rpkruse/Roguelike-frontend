@@ -32,27 +32,27 @@ function Enemy(position, combatClass, target, onDeathCB) {
         this.animator = new Animator(12, "idle", "Fucking Dragon");
     }
 
-    var classID = data.classes.find(function(x){ return x.name == combatClass}).id;
+    var classID = data.classes.find(function (x) { return x.name == combatClass }).id;
 
     var self = this;
     client.createCharacter(this.class, this.combat.health, this.combat.attackBonus,
         this.combat.damageBonus, this.combat.defenseBonus, this.combat.weapon.data.id,
-        this.combat.armor.data.id, classID, function(character) {
+        this.combat.armor.data.id, classID, function (character) {
             self.characterID = character.id;
-    });
+        });
 }
 
 Enemy.prototype.processTurn = function () {
     if (this.combat.status.effect != "None") window.combatController.handleStatus(this.combat);
     if (this.combat.health <= 0) {
         this.state = "dead";
-        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function(){});
-    } 
+        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function () { });
+    }
     if (this.state == "dead" || this.combat.status.effect == "Frozen" || this.combat.status.effect == "Stunned") return;
 
     this.combat.turnAI(this);
-    if(player.combat.health <= 0 && this.combat.attacked) {
-        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function(){});
+    if (player.combat.health <= 0 && this.combat.attacked) {
+        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function () { });
     }
     this.combat.attacked = false;
 
@@ -77,12 +77,7 @@ Enemy.prototype.collided = function (entity) {
 
 Enemy.prototype.retain = function () {
     if (this.combat.health <= 0) {
-        if (this.class == "Fucking Dragon") {
-            // add stairs
-            stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
-        } else {
-            this.onDeathCB(this.position, window.tilemap);
-        }
+        this.onDeathCB(this.position, window.tilemap);
         return false;
     } else {
         return true;

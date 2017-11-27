@@ -41,7 +41,7 @@ window.terminal.addCommand("debug", "Toggle debug",
 
 
 var canvas = document.getElementById('screen');
-var scale = canvas.width/1788;
+var scale = canvas.width / 1788;
 var game = new Game(canvas, update, render);
 window.sfx = new SFX();
 window.entityManager = new EntityManager();
@@ -80,7 +80,7 @@ function onMouseMove(event) {
     gui.onmousemove(event, scale);
 }
 
-function onMouseDown(event) { 
+function onMouseDown(event) {
     // Init the level when class is chosen
     if (player.shouldProcessTurn) player.playAttack({ x: event.offsetX, y: event.offsetY }, scale);
     if (gui.state == "start" || gui.state == "choose class") {
@@ -282,10 +282,10 @@ function update(elapsedTime) {
   * @param {CanvasRenderingContext2D} ctx the context to render to
   */
 
-function render(elapsedTime, ctx) { 
+function render(elapsedTime, ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
- 
+
     ctx.scale(scale, scale);
 
 
@@ -294,7 +294,7 @@ function render(elapsedTime, ctx) {
 
     ctx.save();
     ctx.globalAlpha = (isFadeOut) ? fadeAnimationProgress.percent : 1 - fadeAnimationProgress.percent;
-    ctx.fillRect(0, 0, canvas.width/scale, canvas.height/scale);
+    ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
     ctx.restore();
 
     ctx.fillRect(1060, 0, 732, 1116);
@@ -323,9 +323,9 @@ function nextLevel(fadeOut) {
 
     player.checkPoint();
 
-    client.createLevel(player.level, "seed", function(level){
-        client.updateCharacterHistory(player.db.characterHistoryID, 
-            {score: Math.round(player.score), level_id: level.id}, function(){});
+    client.createLevel(player.level, "seed", function (level) {
+        client.updateCharacterHistory(player.db.characterHistoryID,
+            { score: Math.round(player.score), level_id: level.id }, function () { });
     });
 
     var isBossLevel = (player.level % 10 == 0);
@@ -340,8 +340,8 @@ function nextLevel(fadeOut) {
             window.terminal.log("You sense an erie presence...");
             window.terminal.log("The demon dragon appears to consume your soul");
         }
-		
-		if(player.level == 1) window.terminal.instructions();
+
+        if (player.level == 1) window.terminal.instructions();
 
         // reset entities
         window.entityManager.reset();
@@ -379,7 +379,7 @@ function bossLevel() {
         stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
         window.entityManager.addEntity(stairs);
     });
-    dragon.size = { width: 192, height: 192 };
+    dragon.size = { width: 96, height: 96 };
     entityManager.addEntity(dragon);
 }
 
@@ -459,7 +459,7 @@ function createNewCharacter(className) {
 
     var name = JSON.parse(sessionStorage.getItem("newCharacter"));
     sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
-    if(!name) {
+    if (!name) {
         name = "Tim";
     }
 
@@ -469,12 +469,12 @@ function createNewCharacter(className) {
     var defenseBonus = player.combat.defenseBonus;
     var weaponID = player.combat.weapon.data.id;
     var armorID = player.combat.armor.data.id;
-    var classID = data.classes.find(function(x){ return x.name == className}).id;
+    var classID = data.classes.find(function (x) { return x.name == className }).id;
 
-    client.createLevel(0, "seed", function(level){
-        client.createCharacter(name, health, attackBonus, damageBonus, 
-            defenseBonus, weaponID, armorID, classID, function(character){
-                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+    client.createLevel(0, "seed", function (level) {
+        client.createCharacter(name, health, attackBonus, damageBonus,
+            defenseBonus, weaponID, armorID, classID, function (character) {
+                client.createCharacterHistory(character.id, player.score, level.id, function (history) {
                     player.db = {};
                     player.db.characterHistoryID = history.id;
                     player.db.characterID = character.id;
@@ -498,9 +498,9 @@ function loadTilemap() {
 
             var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
             sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
-            if(characterHistory !== null) {
+            if (characterHistory !== null) {
                 loadFromSave(characterHistory);
-            }            
+            }
 
             masterLoop(performance.now());
         }
@@ -510,42 +510,42 @@ function loadTilemap() {
 function loadGameData() {
     var barrier = {
         count: 0,
-        start: function() { this.count++; },
-        stop: function() {
+        start: function () { this.count++; },
+        stop: function () {
             this.count--;
-            if(this.count == 0) this.complete();
+            if (this.count == 0) this.complete();
         },
-        complete: function() { loadTilemap(); }
+        complete: function () { loadTilemap(); }
     }
 
     window.data = {};
 
     barrier.start();
-    client.listPowerups(function(powerups){
+    client.listPowerups(function (powerups) {
         window.data.powerups = powerups;
         barrier.stop();
     });
 
     barrier.start();
-    client.listArmors(function(armors) {
+    client.listArmors(function (armors) {
         window.data.armors = armors;
         barrier.stop();
     });
 
     barrier.start();
-    client.listClasses(function(classes) {
+    client.listClasses(function (classes) {
         window.data.classes = classes;
         barrier.stop();
     });
 
     barrier.start();
-    client.listWeapons(function(weapons) {
+    client.listWeapons(function (weapons) {
         window.data.weapons = weapons;
         barrier.stop();
     });
 }
 
-window.gameCleanup = function() {
+window.gameCleanup = function () {
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mousedown', onMouseDown);
     window.removeEventListener('keydown', onKeyDown);

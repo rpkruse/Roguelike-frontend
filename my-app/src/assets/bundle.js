@@ -936,7 +936,7 @@ window.terminal.addCommand("debug", "Toggle debug",
 
 
 var canvas = document.getElementById('screen');
-var scale = canvas.width/1788;
+var scale = canvas.width / 1788;
 var game = new Game(canvas, update, render);
 window.sfx = new SFX();
 window.entityManager = new EntityManager();
@@ -975,7 +975,7 @@ function onMouseMove(event) {
     gui.onmousemove(event, scale);
 }
 
-function onMouseDown(event) { 
+function onMouseDown(event) {
     // Init the level when class is chosen
     if (player.shouldProcessTurn) player.playAttack({ x: event.offsetX, y: event.offsetY }, scale);
     if (gui.state == "start" || gui.state == "choose class") {
@@ -1177,10 +1177,10 @@ function update(elapsedTime) {
   * @param {CanvasRenderingContext2D} ctx the context to render to
   */
 
-function render(elapsedTime, ctx) { 
+function render(elapsedTime, ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
- 
+
     ctx.scale(scale, scale);
 
 
@@ -1189,7 +1189,7 @@ function render(elapsedTime, ctx) {
 
     ctx.save();
     ctx.globalAlpha = (isFadeOut) ? fadeAnimationProgress.percent : 1 - fadeAnimationProgress.percent;
-    ctx.fillRect(0, 0, canvas.width/scale, canvas.height/scale);
+    ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
     ctx.restore();
 
     ctx.fillRect(1060, 0, 732, 1116);
@@ -1218,9 +1218,9 @@ function nextLevel(fadeOut) {
 
     player.checkPoint();
 
-    client.createLevel(player.level, "seed", function(level){
-        client.updateCharacterHistory(player.db.characterHistoryID, 
-            {score: Math.round(player.score), level_id: level.id}, function(){});
+    client.createLevel(player.level, "seed", function (level) {
+        client.updateCharacterHistory(player.db.characterHistoryID,
+            { score: Math.round(player.score), level_id: level.id }, function () { });
     });
 
     var isBossLevel = (player.level % 10 == 0);
@@ -1235,8 +1235,8 @@ function nextLevel(fadeOut) {
             window.terminal.log("You sense an erie presence...");
             window.terminal.log("The demon dragon appears to consume your soul");
         }
-		
-		if(player.level == 1) window.terminal.instructions();
+
+        if (player.level == 1) window.terminal.instructions();
 
         // reset entities
         window.entityManager.reset();
@@ -1274,7 +1274,7 @@ function bossLevel() {
         stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
         window.entityManager.addEntity(stairs);
     });
-    dragon.size = { width: 192, height: 192 };
+    dragon.size = { width: 96, height: 96 };
     entityManager.addEntity(dragon);
 }
 
@@ -1354,7 +1354,7 @@ function createNewCharacter(className) {
 
     var name = JSON.parse(sessionStorage.getItem("newCharacter"));
     sessionStorage.removeItem("newCharacter"); // Clear so that only loaded once 
-    if(!name) {
+    if (!name) {
         name = "Tim";
     }
 
@@ -1364,12 +1364,12 @@ function createNewCharacter(className) {
     var defenseBonus = player.combat.defenseBonus;
     var weaponID = player.combat.weapon.data.id;
     var armorID = player.combat.armor.data.id;
-    var classID = data.classes.find(function(x){ return x.name == className}).id;
+    var classID = data.classes.find(function (x) { return x.name == className }).id;
 
-    client.createLevel(0, "seed", function(level){
-        client.createCharacter(name, health, attackBonus, damageBonus, 
-            defenseBonus, weaponID, armorID, classID, function(character){
-                client.createCharacterHistory(character.id, player.score, level.id, function(history){
+    client.createLevel(0, "seed", function (level) {
+        client.createCharacter(name, health, attackBonus, damageBonus,
+            defenseBonus, weaponID, armorID, classID, function (character) {
+                client.createCharacterHistory(character.id, player.score, level.id, function (history) {
                     player.db = {};
                     player.db.characterHistoryID = history.id;
                     player.db.characterID = character.id;
@@ -1393,9 +1393,9 @@ function loadTilemap() {
 
             var characterHistory = JSON.parse(sessionStorage.getItem("character_history"));
             sessionStorage.removeItem("character_history"); // Clear so that only loaded once 
-            if(characterHistory !== null) {
+            if (characterHistory !== null) {
                 loadFromSave(characterHistory);
-            }            
+            }
 
             masterLoop(performance.now());
         }
@@ -1405,42 +1405,42 @@ function loadTilemap() {
 function loadGameData() {
     var barrier = {
         count: 0,
-        start: function() { this.count++; },
-        stop: function() {
+        start: function () { this.count++; },
+        stop: function () {
             this.count--;
-            if(this.count == 0) this.complete();
+            if (this.count == 0) this.complete();
         },
-        complete: function() { loadTilemap(); }
+        complete: function () { loadTilemap(); }
     }
 
     window.data = {};
 
     barrier.start();
-    client.listPowerups(function(powerups){
+    client.listPowerups(function (powerups) {
         window.data.powerups = powerups;
         barrier.stop();
     });
 
     barrier.start();
-    client.listArmors(function(armors) {
+    client.listArmors(function (armors) {
         window.data.armors = armors;
         barrier.stop();
     });
 
     barrier.start();
-    client.listClasses(function(classes) {
+    client.listClasses(function (classes) {
         window.data.classes = classes;
         barrier.stop();
     });
 
     barrier.start();
-    client.listWeapons(function(weapons) {
+    client.listWeapons(function (weapons) {
         window.data.weapons = weapons;
         barrier.stop();
     });
 }
 
-window.gameCleanup = function() {
+window.gameCleanup = function () {
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mousedown', onMouseDown);
     window.removeEventListener('keydown', onKeyDown);
@@ -1582,9 +1582,9 @@ function CombatClass(aName, aLevel) {
     this.difficulty = window.combatController.getDifficulty(aLevel);
     // set up random ish weapons/armor for enemies
 
-    var classData = window.data.classes.find(function(x){ return x.name == aName});
-    var weaponName = window.data.weapons.find(function(x){ return x.id == classData.starting_weapon}).name;
-    var armorName = window.data.armors.find(function(x){ return x.id == classData.starting_armor }).name;
+    var classData = window.data.classes.find(function (x) { return x.name == aName });
+    var weaponName = window.data.weapons.find(function (x) { return x.id == classData.starting_weapon }).name;
+    var armorName = window.data.armors.find(function (x) { return x.id == classData.starting_armor }).name;
 
     this.health = classData.starting_health;
     this.attackBonus = classData.starting_attack_bonus;
@@ -1594,7 +1594,7 @@ function CombatClass(aName, aLevel) {
     this.armor = new Armor(armorName, aLevel);
     this.status = { effect: "None", timer: 0 };
     this.options = {};
-    if(classData.options != "") {
+    if (classData.options != "") {
         this.options = JSON.parse(classData.options);
     }
 
@@ -1602,9 +1602,9 @@ function CombatClass(aName, aLevel) {
 
 
     switch (aName) {
-        case "Zombie": 
-        case "Skeleton": 
-        case "Minotaur": 
+        case "Zombie":
+        case "Skeleton":
+        case "Minotaur":
         case "Shaman":
         case "Fucking Dragon":
             this.health = Math.max(classData.starting_health, classData.starting_health * this.difficulty);
@@ -1760,7 +1760,7 @@ function CombatClass(aName, aLevel) {
                                 moveOrAttack = 0;
                             } else {
                                 if (distance.x < prefDist && distance.y < prefDist) {
-                                    aEnemy.position = moveBack(aEnemy.position, aEnemy.target.position, aEnemy.tilemap.getRandomAdjacentArray(aEnemy.position));
+                                    aEnemy.position = moveBack(aEnemy.position, aEnemy.target.position, window.tilemap.getRandomAdjacentArray(aEnemy.position));
                                 } else if (distance.x >= prefDist && distance.y >= prefDist) {
                                     aEnemy.position = moveToward(aEnemy.position, aEnemy.target.position);
                                 }
@@ -1782,7 +1782,7 @@ function CombatClass(aName, aLevel) {
 
 }
 
-CombatClass.prototype.loadCharacter = function(character, level) {
+CombatClass.prototype.loadCharacter = function (character, level) {
     this.difficulty = window.combatController.getDifficulty(level)
 
     this.health = character.health;
@@ -1790,8 +1790,8 @@ CombatClass.prototype.loadCharacter = function(character, level) {
     this.damageBonus = character.damage_bonus;
     this.defenseBonus = character.defense_bonus;
 
-    var weaponName = window.data.weapons.find(function(x){ return x.id == character.weapon_id}).name;
-    var armorName = window.data.armors.find(function(x){ return x.id == character.armor_id }).name;
+    var weaponName = window.data.weapons.find(function (x) { return x.id == character.weapon_id }).name;
+    var armorName = window.data.armors.find(function (x) { return x.id == character.armor_id }).name;
 
     this.weapon = new Weapon(weaponName, level);
     this.armor = new Armor(armorName, level);
@@ -2103,27 +2103,27 @@ function Enemy(position, combatClass, target, onDeathCB) {
         this.animator = new Animator(12, "idle", "Fucking Dragon");
     }
 
-    var classID = data.classes.find(function(x){ return x.name == combatClass}).id;
+    var classID = data.classes.find(function (x) { return x.name == combatClass }).id;
 
     var self = this;
     client.createCharacter(this.class, this.combat.health, this.combat.attackBonus,
         this.combat.damageBonus, this.combat.defenseBonus, this.combat.weapon.data.id,
-        this.combat.armor.data.id, classID, function(character) {
+        this.combat.armor.data.id, classID, function (character) {
             self.characterID = character.id;
-    });
+        });
 }
 
 Enemy.prototype.processTurn = function () {
     if (this.combat.status.effect != "None") window.combatController.handleStatus(this.combat);
     if (this.combat.health <= 0) {
         this.state = "dead";
-        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function(){});
-    } 
+        client.updateCharacter(this.characterID, { killed_by: player.db.characterID }, function () { });
+    }
     if (this.state == "dead" || this.combat.status.effect == "Frozen" || this.combat.status.effect == "Stunned") return;
 
     this.combat.turnAI(this);
-    if(player.combat.health <= 0 && this.combat.attacked) {
-        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function(){});
+    if (player.combat.health <= 0 && this.combat.attacked) {
+        client.updateCharacter(player.db.characterID, { killed_by: this.characterID }, function () { });
     }
     this.combat.attacked = false;
 
@@ -2148,12 +2148,7 @@ Enemy.prototype.collided = function (entity) {
 
 Enemy.prototype.retain = function () {
     if (this.combat.health <= 0) {
-        if (this.class == "Fucking Dragon") {
-            // add stairs
-            stairs = new Stairs({ x: 5, y: 2 }, function () { nextLevel(true) });
-        } else {
-            this.onDeathCB(this.position, window.tilemap);
-        }
+        this.onDeathCB(this.position, window.tilemap);
         return false;
     } else {
         return true;
