@@ -4355,6 +4355,9 @@ function Terminal() {
 
     this.addCommand("help", "Print out all available commands", this.helpCommand.bind(this));
     this.addCommand("message", "Send a message to another user", this.sendMessage.bind(this));
+    this.addCommand("m", "Send a message to another user", this.sendMessage.bind(this));
+    this.addCommand("reply", "Reply to the last user that messaged you", this.reply.bind(this));
+    this.addCommand("r", "Reply to the last user that messaged you", this.reply.bind(this));
     this.addCommand("clear", "Clear the terminal", this.clear.bind(this));
 	this.addCommand("instructions", "Displays the instruction to play the game", this.instructions.bind(this));
 }
@@ -4374,10 +4377,9 @@ Terminal.prototype.clear = function () {
 
 Terminal.prototype.sendMessage = function(args) {
     var self = this;
-    if(!(args.length > 2)) this.log("Syntax: message <username> <message>", window.colors.invalid)
+    if(!(args.length > 2)) this.log("Syntax: message|m <username> <message>", window.colors.invalid)
     else {
         var recipient = args[1]
-        console.log(args)
         args = args.slice(2)
         var message = args.join(' ')
         client.sendMessage(message, recipient, (json) => {
@@ -4390,6 +4392,26 @@ Terminal.prototype.sendMessage = function(args) {
     }
 }
 
+Terminal.prototype.reply = function(args) {
+    var self = this;
+    if(args.length == 1) this.log("Syntax: reply|r <message>", window.colors.invalid)
+    else {
+        var recipient = this.chat[this.chat.length - 1].display_name
+        if(recipient == null) this.log(`You have no messages to reply to`, window.colors.invalid)
+        else {
+            args.shift()
+            var message = args.join(' ')
+            client.sendMessage(message, recipient, (json) => {
+                if(json != null) {
+                    self.log(`You: ${json.content}`, window.colors.chat)
+                } else {
+                    self.log(`You are not friends with that user`, window.colors.invalid)
+                }
+            })
+        }
+    }
+}
+
 Terminal.prototype.update = function (time) {
     this.delta += time;
     if(this.delta > 1000) {
@@ -4397,8 +4419,8 @@ Terminal.prototype.update = function (time) {
         client.updateMessages((json) => {
             if(json != null) {
                 json.forEach((message) => {
-                    if(!(message.content in this.chat)) {
-                        this.chat.push(message.content)
+                    if(!(message in this.chat)) {
+                        this.chat.push(message)
                         this.log(`${message.display_name}: ${message.content}`, window.colors.chat)
                     }
                 })
