@@ -3909,7 +3909,7 @@ Player.prototype.checkPoint = function() {
         attack_bonus: this.combat.attackBonus,
         damage_bonus: this.combat.damageBonus,
         defense_bonus: this.combat.defenseBonus
-    }, function(x){console.log(x);});
+    }, function(){});
 }
 
 function hasUserInput(input) {
