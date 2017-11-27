@@ -4353,11 +4353,11 @@ function Terminal() {
     this.input = "";
     this.commands = {};
 
-    this.addCommand("help", "Print out all available commands", this.helpCommand.bind(this));
-    this.addCommand("message", "Send a message to another user", this.sendMessage.bind(this));
-    this.addCommand("m", "Send a message to another user", this.sendMessage.bind(this));
-    this.addCommand("reply", "Reply to the last user that messaged you", this.reply.bind(this));
-    this.addCommand("r", "Reply to the last user that messaged you", this.reply.bind(this));
+    this.addCommand("help", "Print out all available commands", this.helpCommand.bind(this), false);
+    this.addCommand("message", "Send a message to another user", this.sendMessage.bind(this), true);
+    this.addCommand("m", "Send a message to another user", this.sendMessage.bind(this), true);
+    this.addCommand("reply", "Reply to the last user that messaged you", this.reply.bind(this), true);
+    this.addCommand("r", "Reply to the last user that messaged you", this.reply.bind(this), true);
     this.addCommand("clear", "Clear the terminal", this.clear.bind(this));
 	this.addCommand("instructions", "Displays the instruction to play the game", this.instructions.bind(this));
 }
@@ -4499,8 +4499,8 @@ Terminal.prototype.onkeydown = function (event) {
 
 // Callback should accept a string and return true if it handles the Command
 // else it should return false
-Terminal.prototype.addCommand = function (command, description, callback) {
-    this.commands[command] = { command: command, description: description, callback: callback };
+Terminal.prototype.addCommand = function (command, description, callback, hideConfirm) {
+    this.commands[command] = { command: command, description: description, callback: callback, hideConfirm: hideConfirm };
 }
 
 Terminal.prototype.removeCommand = function (command) {
@@ -4519,7 +4519,7 @@ Terminal.prototype.helpCommand = function () {
 
 Terminal.prototype.processInput = function () {
     var args = this.input.split(' ');
-    this.log(args[0], window.colors.cmd);
+    if (!this.commands[args[0]].hideConfirm) this.log(args[0], window.colors.cmd);
 
     if (args[0] in this.commands) {
         this.commands[args[0]].callback(args);
