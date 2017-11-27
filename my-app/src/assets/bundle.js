@@ -4314,7 +4314,7 @@ window.colors = {
     invalid: "Red",
     combat: "Orchid",
     pickup: "SkyBlue",
-    chat: "Gold"
+    chat: "Pink"
 }
 
 const MAX_MSG_COUNT = 62;
