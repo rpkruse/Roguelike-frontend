@@ -4,63 +4,55 @@
             <h1><small>{{this.user.display_name}}</small></h1>
         </div>
     </div>
-    <div class="row col-md-4 col-md-offset-1">
-        <div class="panel-holder">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Friends List:</h3>
-                </div>
-                <div class="panel-body-holder">
-                    <div class="panel-body list-group"><!-- will change to if friends -->
-                        <div *ngIf="this.friends && this.friends.length">
-                            <li class="list-group-item" *ngFor="let friend of this.friends; let i=index;">
-                                {{this.getFriendName(i)}}
-                                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="deleteFriend(this.getFriendName(i), i)">Delete</button>                                                                                                        
-                            </li>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-group panel-footer">
-                    <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">                    
+    <div class="row col-md-6 col-md-offset-1">
+        <div class="panel panel-default panel-tall">
+            <div class="panel-heading">
+                <h3 class="panel-title">Friends List:</h3>
+            </div>
+            <ul class="list-group static-height">
+                <li class="list-group-item" *ngFor="let friend of this.friends; let i=index;">
+                    {{this.getFriendName(i)}}
+                    <button type="button" class="btn btn-danger btn-sm pull-right" (click)="deleteFriend(this.getFriendName(i), i)">Delete</button>                
+                </li>
+            </ul>
+            <div class="panel-footer">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter user to add to friends"  [value]="friendToAdd" (input)="friendToAdd = $event.target.value">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd">
+                        <button type="button" class="btn btn-success" (click)="addFriend()" [disabled]="!friendToAdd || !(this.friendToAdd !== this.user.display_name)">
                             Add Friend
                         </button>
                     </span>
-                </div> 
-            </div>  
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row col-md-4 col-md-offset-1">
-        <div class="panel-holder">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Profile Details:</h3>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Profile Details:</h3>
+            </div>
+            <div *ngIf="this.user">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic">Email</span>
+                    <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
                 </div>
-                
-                <div class="panel-body-holder">
-                    <div class="panel-body" *ngIf="this.user">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic">Email</span>
-                            <input type="text" class="form-control" placeholder="Email" [value]="this.user.email" (input)="this.user.email = $event.target.value" aria-describedby="basic">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">Display name</span>
-                            <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">Change Password</span>
-                            <input type="password" class="form-control" placeholder="Password" [value]="this.password" (input)="this.password = $event.target.value" aria-describedby="basic">
-                            
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">Confirm Password</span>
-                            <input type="password" class="form-control" placeholder="Password" [value]="this.passwordConfirm" (input)="this.passwordConfirm = $event.target.value" aria-describedby="basic">
-                        </div>
-                        <button type="button" class="btn btn-success pull-right" (click)="confirmChanges()" [disabled]="!this.areChanges()">Confim</button>
-                    </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Display name</span>
+                    <input type="text" class="form-control" placeholder="Display Name" [value]="this.user.display_name" (input)="this.user.display_name = $event.target.value" aria-describedby="basic">
                 </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Change Password</span>
+                    <input type="password" class="form-control" placeholder="Password" [value]="this.password" (input)="this.password = $event.target.value" aria-describedby="basic">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Confirm Password</span>
+                    <input type="password" class="form-control" placeholder="Password" [value]="this.passwordConfirm" (input)="this.passwordConfirm = $event.target.value" aria-describedby="basic">
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="button" class="btn btn-success" (click)="confirmChanges()" [disabled]="!this.areChanges()">Confim</button>                    
             </div>
         </div>
     </div>

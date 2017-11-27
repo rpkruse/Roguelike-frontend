@@ -76,6 +76,11 @@ export class ProfileComponent implements OnInit{
   }
 
   private addFriend(){
+    if(this.friendToAdd === this.user.display_name){
+      this.friendToAdd = "";
+      return;
+    }
+    
     let af = {
       "display_name": this.friendToAdd
     }
@@ -131,9 +136,14 @@ export class ProfileComponent implements OnInit{
         "display_name": this.user.display_name,
       }
     }
-    this._apiService.putEntity<IUser>("user", u).subscribe(
+    let s: Subscription = this._apiService.putEntity<IUser>("user", u).subscribe(
       d => this.user = d,
       err => console.log("Unable to update user", err),
+      () => {
+        this.password = "";
+        this.passwordConfirm = "";
+        s.unsubscribe();
+      }
     );
   }
 }

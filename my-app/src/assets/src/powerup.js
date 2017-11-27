@@ -59,7 +59,7 @@ Powerup.prototype.collided = function (entity) {
 
         switch (this.data.id) {
             case 1:
-                entity.combat.damageBonus += 0.2;
+                entity.combat.damageBonus += 2;
                 if (window.debug) console.log(entity.combat.damageBonus);
                 break;
             case 2:
@@ -68,11 +68,11 @@ Powerup.prototype.collided = function (entity) {
                 if (window.debug) console.log("+" + potionValue + " health = " + entity.combat.health);
                 break;
             case 3:
-                entity.combat.defenseBonus += 0.2;
+                entity.combat.defenseBonus += 2;
                 if (window.debug) console.log(entity.combat.defenseBonus);
                 break;
             case 4:
-                entity.combat.attackBonus += 0.2;
+                entity.combat.attackBonus += 2;
                 if (window.debug) console.log(entity.combat.attackBonus);
                 break;
         }

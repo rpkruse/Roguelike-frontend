@@ -12,21 +12,21 @@ function CombatController() {
 }
 
 CombatController.prototype.handleAttack = function (aAttackerClass, aDefenderClass) {
-    var lAttackBase = Math.floor(aAttackerClass.attackBonus);
+    var lAttackBase = Math.floor(aAttackerClass.attackBonus / 10);
     var lAttackBonus = aAttackerClass.weapon.hitBonus;
     var lAttackRoll = RNG.rollRandom(1, 20);
     var lAttackTotal = lAttackBase + lAttackBonus + lAttackRoll;
     var lAttackEffect = aAttackerClass.weapon.attackEffect;
 
     var lDefenseBase = aDefenderClass.armor.defense;
-    var lDefenseBonus = Math.floor(aDefenderClass.defenseBonus);
+    var lDefenseBonus = Math.floor(aDefenderClass.defenseBonus / 10);
     var lDefenseTotal = lDefenseBase + lDefenseBonus;
 
     var lDamageBase = aAttackerClass.weapon.level - 1;
     var lDamageMax = aAttackerClass.weapon.damageMax;
     var lDamageMin = aAttackerClass.weapon.damageMin;
     var lDamageRoll = RNG.rollRandom(lDamageMin, lDamageMax);
-    var lDamageBonus = Math.floor(aAttackerClass.damageBonus);
+    var lDamageBonus = Math.floor(aAttackerClass.damageBonus / 10);
     var lDamageResist = aDefenderClass.armor.level;
     var lDamageTotal = Math.max(lDamageBase + lDamageBonus + lDamageRoll - lDamageResist, 1); // DR shouldnt deal zero or negative damage
 

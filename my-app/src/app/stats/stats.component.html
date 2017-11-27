@@ -12,17 +12,17 @@
           <a href="#current-panel" class="mdl-tabs__tab is-active">Current Characters</a>
           <a href="#past-panel" class="mdl-tabs__tab">Past Characters</a>
         </div>
-        <div class="mdl-tabs__panel is-active" id="current-panel">
-          <div class="list-group container-bordered character-list">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('alive'); index as i" (click)="characterClicked(character)">
+        <div class="mdl-tabs__panel is-active container-bordered character-list" id="current-panel">
+          <div class="list-group">
+            <button type="button" class="list-group-item" (click)="createNewCharacterClicked()">Create New Character</button>              
+            <button type="button" class="list-group-item" *ngFor="let character of getCharacterStatus('alive'); index as i" (click)="characterClicked(character)">
             {{character.character.name}}
             </button>
-            <button type="button" class="list-group-item character-button" (click)="createNewCharacterClicked()">Create New Character</button>
           </div>
         </div>
-        <div class="mdl-tabs__panel" id="past-panel">
-          <div class="list-group container-bordered character-list">
-            <button type="button" class="list-group-item character-button" *ngFor="let character of getCharacterStatus('dead'); index as i" (click)="characterClicked(character)">
+        <div class="mdl-tabs__panel container-bordered character-list" id="past-panel">
+          <div class="list-group">
+            <button type="button" class="list-group-item" *ngFor="let character of getCharacterStatus('dead'); index as i" (click)="characterClicked(character)">
             {{character.character.name}}
             </button>
           </div>
@@ -37,7 +37,7 @@
           <h4 class="panel-title">New Character</h4>
         </div>
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Character Name"  [value]="newCharacterString" (input)="newCharacterString = $event.target.value">
+          <input type="text" class="form-control" placeholder="Character Name" [value]="newCharacterString" (input)="newCharacterString = $event.target.value">
           <span class="input-group-btn">
             <button type="button" class="btn btn-success" (click)="createCharacter()">Create Character</button>
           </span>

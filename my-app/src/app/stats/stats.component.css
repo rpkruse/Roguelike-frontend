@@ -1,7 +1,3 @@
-.character-button{
-    max-width: 25vw;
-}
-
 .container-bordered{
     margin-top: 2vh;
     border: 2px solid black;
@@ -12,12 +8,8 @@
     margin: 0;
 }
 
-.list-group{
-    height: 100%;
-    max-width: 25vw;
-}
-
 .character-list{
     max-height: 50vh;
-    overflow-y: scroll;
+    height: 50vh;
+    overflow: auto;
 }
